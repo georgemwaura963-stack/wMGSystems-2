@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" id="theme-color-meta" content="#059669">
 <title>Stentor Operations</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap');
@@ -20,15 +22,32 @@
   --dynamic-primary: var(--theme-chan);
   --shadow-color:rgba(0,0,0,0.1);
   --label-text:#6b7280;
+  --modal-overlay:rgba(0,0,0,0.65);
+}
+
+@media (prefers-color-scheme:dark) {
+  :root {
+    --bg-primary:#1f2937; --bg-secondary:#111827;
+    --text-primary:#f9fafb; --text-secondary:#d1d5db; --text-tertiary:#9ca3af;
+    --border-color:#374151; --input-bg:#374151; --input-border:#4b5563;
+    --button-secondary-bg:#1e3a8a;
+    --success-color:#34d399; --error-color:#f87171;
+    --warning-bg:#450a0a; --warning-border:#7f1d1d; --warning-text:#fca5a5;
+    --success-card-bg:#064e3b; --success-card-border:#065f46;
+    --modal-overlay:rgba(0,0,0,0.85); --shadow-color:rgba(0,0,0,0.5);
+    --label-text:#9ca3af;
+  }
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 body {
-  font-family: 'Nunito', -apple-system, sans-serif; color:var(--text-primary); 
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+  color:var(--text-primary); 
   min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding: env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px);
-  overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.6s ease; background-color: var(--dynamic-primary);
+  overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--dynamic-primary);
 }
 
 body.theme-hub { background: linear-gradient(135deg, #059669 0%, #2563eb 100%); }
@@ -43,27 +62,36 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
    MAIN MENU UI
    ========================================== */
 .hub-logo { font-size: 34px; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-.menu-btn-container { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; margin-top: 30px; }
+.menu-btn-container { display: flex; flex-direction: row; gap: 24px; width: 100%; align-items: center; justify-content: center; margin-top: 30px; }
 .menu-btn {
-  width: 90%; background: var(--bg-primary); color: var(--text-primary);
-  border: none; border-radius: 50px; padding: 18px 20px; height: 75px;
-  display: flex; align-items: center; justify-content: center; gap: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s;
+  width: 140px; height: 140px; aspect-ratio: 1; 
+  background: var(--bg-primary); color: var(--text-primary);
+  border: none; border-radius: 35px; padding: 18px; 
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
   -webkit-tap-highlight-color: transparent; outline: none;
 }
-.menu-btn:active { transform: scale(0.96); }
-.menu-btn .icon { font-size: 32px; }
-.menu-btn .text { font-size: 20px; font-weight: 900; }
+.menu-btn:active { transform: scale(0.92); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+.menu-btn .icon { font-size: 42px; margin-bottom: -5px; }
+.menu-btn .text { font-size: 16px; font-weight: 900; text-align: center; line-height: 1.1; }
 
-@keyframes swipeDance {
-  0% { transform: translateY(0) translateX(0) scale(1); }
-  20% { transform: translateY(-12px) translateX(-8px) rotate(-3deg); }
-  40% { transform: translateY(-15px) translateX(8px) rotate(3deg); }
-  60% { transform: translateY(-8px) translateX(-4px) rotate(-1deg); }
-  80% { transform: translateY(-4px) translateX(4px) rotate(1deg); }
-  100% { transform: translateY(0) translateX(0) scale(1); }
+@keyframes playfulDance {
+  0% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-4px) rotate(-2deg); }
+  50% { transform: translateY(0) rotate(0); }
+  75% { transform: translateY(-4px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(0); }
 }
-.btn-dance { animation: swipeDance 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
+@keyframes excitedDance {
+  0% { transform: translateY(0) rotate(0) scale(1); }
+  25% { transform: translateY(-10px) rotate(-4deg) scale(1.05); }
+  50% { transform: translateY(0) rotate(0) scale(1); }
+  75% { transform: translateY(-10px) rotate(4deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(0) scale(1); }
+}
+.menu-btn.playful { animation: playfulDance 2.5s ease-in-out infinite; }
+.menu-btn.excited { animation: excitedDance 0.5s ease-in-out infinite; }
+.menu-btn.settled { animation: none !important; transform: none; }
 
 /* ==========================================
    ORDER SCREEN UI
@@ -72,13 +100,21 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
 .scrollable-container { max-height: 85vh; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px; }
 .back-bar { width: 100%; display: flex; align-items: center; margin-bottom: 16px; color: #fff; font-weight: 900; cursor: pointer; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; z-index: 100;}
 
-.order-label { font-weight:800; font-size:11px; display:block; margin-bottom:4px; margin-top:10px; color:var(--label-text); text-transform:uppercase; }
-.order-input, .order-textarea { width:100%; padding:12px; border-radius:10px; border:1px solid var(--input-border); font-size:14px; background:var(--input-bg); color:var(--text-primary); outline:none; font-family: inherit; font-weight: 700; transition: border-color 0.2s; }
-.order-input:read-only { background: #e5e7eb; color: var(--text-secondary); }
-.order-input:focus, .order-textarea:focus { border-color:var(--dynamic-primary); box-shadow:0 0 0 3px rgba(0,0,0,0.05); }
+.section-card { border: 2px solid var(--border-color); border-radius: 18px; padding: 14px; background: var(--bg-primary); margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: border-color 0.3s; }
+.progressive-fields { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, margin-top 0.4s ease; }
+.progressive-fields.revealed { max-height: 300px; opacity: 1; margin-top: 12px; }
 
-.btn-primary { width:100%; height:50px; border-radius:12px; border:none; font-size:16px; font-weight:800; margin-top: 24px; background:#111827; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-.btn-primary:active { transform:scale(0.97); }
+.locked-form { opacity: 0.4; pointer-events: none; transition: opacity 0.4s ease, filter 0.4s ease; filter: grayscale(100%); }
+.locked-form.unlocked { opacity: 1; pointer-events: auto; filter: grayscale(0%); }
+
+.order-label { font-weight:800; font-size:11px; display:block; margin-bottom:6px; color:var(--label-text); text-transform:uppercase; }
+.order-input, .order-textarea { width:100%; padding:14px 12px; border-radius:12px; border:2px solid var(--input-border); font-size:15px; background:var(--input-bg); color:var(--text-primary); outline:none; font-family: inherit; font-weight: 700; transition: border-color 0.2s, background 0.2s; }
+.order-input:read-only { background: var(--bg-secondary); color: var(--text-secondary); border-color: transparent;}
+.order-input:focus, .order-textarea:focus { border-color:var(--dynamic-primary); background: var(--bg-primary); box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
+body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:focus {box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+
+.btn-primary { width:100%; height:54px; border-radius:14px; border:none; font-size:16px; font-weight:800; margin-top: 8px; background:var(--text-primary); color:var(--bg-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.1s, box-shadow 0.2s; }
+.tap-effect:active { transform: translateY(2px) scale(0.97); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
 /* Collapsible Bordered Sections */
 .order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--bg-primary); transition: border-color 0.3s; }
@@ -89,39 +125,42 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
 .order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
 .order-group-content { padding: 14px; border-top: 1px solid var(--border-color); }
 
-/* Juice Grid (Optimized spacing) */
-.table-container { width: 100%; max-height: 480px; overflow: auto; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); margin-bottom: 15px;}
+/* Juice Grid */
+.table-container { width: 100%; max-height: 480px; overflow: auto; border-radius: 12px; background: var(--bg-primary); margin-bottom: 0;}
 table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
-th, td { padding: 3px 2px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
+th, td { padding: 4px 2px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
 th { background: var(--bg-secondary); font-weight: 800; color: var(--text-secondary); font-size: 11px; position: sticky; top: 0; z-index: 10; width: 35%; }
 th:first-child { width: 30%; position: sticky; left: 0; z-index: 12; border-right: 2px solid var(--border-color); }
-td.flavor-name { text-align: left; font-weight: 800; font-size: 10px; padding-left: 6px; white-space: nowrap; position: sticky; left: 0; background: var(--bg-primary); z-index: 11; border-right: 2px solid var(--border-color); line-height: 1.1;}
+td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-left: 8px; white-space: nowrap; position: sticky; left: 0; background: var(--bg-primary); z-index: 11; border-right: 2px solid var(--border-color); line-height: 1.1;}
 
 /* Squircles */
 .square-input {
-  width: 52px; height: 32px; border-radius: 8px; margin: 0 auto;
+  width: 54px; height: 34px; border-radius: 10px; margin: 0 auto;
   background: var(--input-bg); border: 2px solid var(--input-border);
-  color: var(--text-tertiary); font-weight: 900; font-size: 14px;
+  color: var(--text-tertiary); font-weight: 900; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
-  user-select: none; transition: 0.1s transform, 0.2s background; -webkit-tap-highlight-color: transparent;
+  user-select: none; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s, border-color 0.2s, box-shadow 0.2s; 
+  -webkit-tap-highlight-color: transparent;
 }
-.square-input:active { transform: scale(0.9); }
+.square-input.editing { transform: scale(1.35) translateY(-5px); z-index: 50; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--dynamic-primary); background: var(--bg-primary); color: var(--dynamic-primary); position: relative;}
+.square-input:active:not(.editing) { transform: scale(0.9); }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip-label { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .chip-label input { display: none; }
-.chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 8px 14px; border-radius: 50px; font-size: 12px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
-.chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+.chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
+.chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); transform: translateY(-2px); }
+.chip-label:active .chip-span { transform: translateY(2px) scale(0.95); }
 
-.msg { font-size:12px; font-weight:800; margin-top:4px; min-height:20px; color:var(--text-tertiary); display:flex; align-items:center;}
+.msg { font-size:12px; font-weight:800; margin-top:6px; min-height:20px; color:var(--text-tertiary); display:flex; align-items:center;}
 .msg.success { color:var(--success-color); } .msg.error { color:var(--error-color); }
 
 /* Top Switcher */
 .top-bar { display:flex; justify-content:center; margin-bottom:15px; }
-.terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:44px; align-items:center; }
+.terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; }
 .pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); transition:all 0.4s cubic-bezier(0.25,1,0.5,1); z-index:1; }
-.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 18px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none; -webkit-tap-highlight-color:transparent;}
+.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none; -webkit-tap-highlight-color:transparent;}
 .pill-btn.active { color:#fff; }
 @keyframes tabNudge { 0%{transform:scale(1);} 50%{transform:scale(1.1) rotate(-3deg);} 100%{transform:scale(1);} }
 .nudge-anim { animation: tabNudge 0.4s ease; }
@@ -131,7 +170,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 10px; padding-le
 .circle-check { width: 80px; height: 80px; background: var(--success-color); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 16px; }
 
 /* ==========================================
-   ATTENDANCE SYSTEM UI (100% Identical Paste)
+   ATTENDANCE SYSTEM UI
    ========================================== */
 .page-wrapper { display: flex; flex-direction: column; align-items: center; margin-top: -24px; width: 100%; max-width: 400px; }
 .hanging-sign-wrapper { position: relative; margin-bottom: 44px; perspective: 800px; z-index: 10; width: 240px; }
@@ -148,10 +187,11 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 10px; padding-le
 .network-indicator.offline{background:var(--text-tertiary);opacity:0.4; box-shadow:none;}
 .step-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 12px}
 .step{opacity:0.3;pointer-events:none;transition:opacity 0.4s ease}
-.step.activeStep{opacity:1;pointer-events:auto;animation:fadeIn 0.45s ease}
+@keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
+.step.activeStep{opacity:1;pointer-events:auto;animation:bounceIn 0.45s ease}
 
 .att-label{font-weight:600;font-size:12px;display:block;margin-bottom:6px;color:var(--label-text);text-transform:uppercase;letter-spacing:0.5px}
-.att-input, .att-select{ width:100%;height:46px;padding:0 14px;border-radius:12px; border:1px solid var(--input-border);font-size:15px;background:var(--input-bg); color:var(--text-primary);transition:all 0.2s; -webkit-appearance:none; outline:none; }
+.att-input, .att-select{ width:100%;height:46px;padding:0 14px;border-radius:12px; border:1px solid var(--input-border);font-size:15px;background:var(--input-bg); color:var(--text-primary);transition:all 0.2s; -webkit-appearance:none; outline:none; font-family:inherit; font-weight:700;}
 .att-input:focus, .att-select:focus{border-color:var(--dynamic-primary);background:var(--bg-primary);box-shadow:0 0 0 3px rgba(16, 185, 129, 0.1)}
 body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {box-shadow:0 0 0 3px rgba(59, 130, 246, 0.1)}
 .att-button{ width:100%;height:46px;border-radius:12px;border:none; font-size:14px;font-weight:700; background:var(--button-secondary-bg);color:var(--dynamic-primary); cursor:pointer;transition:transform 0.1s, opacity 0.2s, background 0.2s; }
@@ -183,17 +223,17 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 
 /* Att Success Screen */
 #attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:flex-start; padding: 12px 4px 8px; text-align:center; width:100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.success-photo{ width: 96px; height: 96px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 10px; animation: fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; flex-shrink: 0; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
+.success-photo{ width: 96px; height: 96px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 10px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; flex-shrink: 0; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
 .success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
 #photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 19999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 #photoBackdrop.show { opacity: 1; pointer-events: auto; }
-.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:12px;font-weight:800; text-transform:uppercase;padding:5px 18px;border-radius:999px; margin-bottom: 10px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; animation:fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
-.success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:16px;padding:16px 14px;width:100%;margin-bottom:12px; animation:fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; flex-shrink: 0; }
+.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:12px;font-weight:800; text-transform:uppercase;padding:5px 18px;border-radius:999px; margin-bottom: 10px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
+.success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:16px;padding:16px 14px;width:100%;margin-bottom:12px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; flex-shrink: 0; }
 .success-name{font-size:22px;font-weight:800;color:var(--dynamic-primary);margin-bottom:6px}
 .success-msg {font-size:13px;font-weight:600;color:var(--text-secondary);line-height:1.5; word-break: break-word;}
 .success-back{ width:100%;height:44px;background:var(--button-secondary-bg); color:var(--dynamic-primary);border:none;border-radius:12px; font-size:14px;font-weight:700;cursor:pointer; flex-shrink: 0; }
 
-#guideModal{ display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65); z-index:19999;flex-direction:column;align-items:center;justify-content:center; padding:20px;backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
+#guideModal{ display:none;position:fixed;inset:0;background:var(--modal-overlay); z-index:19999;flex-direction:column;align-items:center;justify-content:center; padding:20px;backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #guideModal .modal-box{ background:var(--bg-primary);padding:28px;border-radius:20px; text-align:center;max-width:340px;width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
 #guideModal .modal-box h3{color:var(--error-color);margin:10px 0 16px;font-size:20px}
 .modal-instructions{ background:var(--input-bg);color:var(--text-secondary); padding:16px;border-radius:12px;margin-bottom:18px; font-size:13px;line-height:1.6;text-align:left; border: 1px solid var(--border-color); }
@@ -202,24 +242,54 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 <body class="theme-hub">
 
 <script>
-// 🛑 PASTE YOUR WEB APP URL HERE - THIS SINGLE LINK POWERS BOTH ATTENDANCE AND ORDERS
+// 🛑 PASTE YOUR WEB APP URL HERE
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 
 // ==========================================
-// SWIPE ANIMATION LOGIC (MAIN MENU)
+// SWIPE & DOUBLE TAP ANIMATION LOGIC (MAIN MENU)
 // ==========================================
 let touchStartX = 0, touchStartY = 0;
+let lastTapTime = 0;
+
 document.addEventListener('touchstart', e => {
   touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
 }, {passive: true});
+
 document.addEventListener('touchend', e => {
-  if (document.getElementById('view-menu').classList.contains('active')) {
-    let touchEndX = e.changedTouches[0].screenX; let touchEndY = e.changedTouches[0].screenY;
-    if(e.target.closest('.menu-btn')) return; // Ignore if tapping a button
+  const isMenu = document.getElementById('view-menu').classList.contains('active');
+  if(!isMenu) return;
+
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTapTime;
+  
+  // Double tap check
+  if (tapLength < 500 && tapLength > 0) {
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+      btn.classList.remove('playful', 'excited');
+      btn.classList.add('settled');
+    });
+    lastTapTime = currentTime;
+    return;
+  }
+  lastTapTime = currentTime;
+
+  // Swipe check
+  let touchEndX = e.changedTouches[0].screenX; let touchEndY = e.changedTouches[0].screenY;
+  if(!e.target.closest('.menu-btn')) {
     if(Math.abs(touchEndX - touchStartX) > 40 || Math.abs(touchEndY - touchStartY) > 40) {
       document.querySelectorAll('.menu-btn').forEach(btn => {
-        btn.classList.remove('btn-dance'); void btn.offsetWidth; btn.classList.add('btn-dance');
+        btn.classList.remove('playful', 'settled');
+        btn.classList.add('excited');
       });
+      clearTimeout(window.swipeExcitement);
+      window.swipeExcitement = setTimeout(() => {
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+           if(btn.classList.contains('excited')) {
+             btn.classList.remove('excited'); 
+             btn.classList.add('playful');
+           }
+        });
+      }, 2500);
     }
   }
 }, {passive: true});
@@ -230,27 +300,44 @@ document.addEventListener('touchend', e => {
 let activeStore = 'chandarana'; 
 function hideAllViews() { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); }
 function goHome() { 
-  hideAllViews(); document.body.className = 'theme-hub'; document.getElementById('view-menu').classList.add('active'); 
+  hideAllViews(); 
+  document.body.className = 'theme-hub'; 
+  document.getElementById('view-menu').classList.add('active'); 
+  
+  // Re-enable playful animation when returning to home if not settled
+  document.querySelectorAll('.menu-btn').forEach(btn => {
+      if(!btn.classList.contains('settled')) {
+          btn.classList.add('playful');
+      }
+  });
+
   if(typeof stopCamera === 'function') stopCamera(); 
+  var meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', '#059669');
 }
 
 function openOrder() {
   hideAllViews(); document.getElementById('view-orders').classList.add('active');
   document.getElementById('orderForm').reset(); document.getElementById('orderForm').style.display = 'block';
   document.getElementById('orderSuccessScreen').classList.remove('active'); document.getElementById('o-staffMsg').innerHTML = '';
+  document.getElementById('o-expanded-fields').classList.remove('revealed');
+  document.getElementById('o-locked-section').classList.remove('unlocked');
   switchTerminal('chandarana', 'order');
 }
 
 function openAttendance() {
   hideAllViews(); document.getElementById('view-attendance').classList.add('active');
-  switchTerminal('chandarana', 'attendance');
-  resetToStart(); // reset attendance form to fresh state
+  attSwitchTerminal('chandarana'); // reset attendance form to fresh state
 }
 
 function switchTerminal(store, module) {
   activeStore = store;
   document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
-  
+  var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var hexColor = store === 'chandarana' ? (isDark ? '#059669' : '#10b981') : (isDark ? '#2563eb' : '#3b82f6');
+  var meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', hexColor);
+
   if (module === 'order') {
     const btnChan = document.getElementById('o-btn-chandarana'); const btnCarr = document.getElementById('o-btn-carrefour');
     btnChan.classList.toggle('active', store === 'chandarana'); btnCarr.classList.toggle('active', store === 'carrefour');
@@ -260,9 +347,9 @@ function switchTerminal(store, module) {
     setTimeout(() => { const sl = document.getElementById('o-pillSlider'); if (activeBtn && sl) { sl.style.width = activeBtn.offsetWidth + 'px'; sl.style.left = activeBtn.offsetLeft + 'px'; } }, 50);
 
     document.getElementById('o-id').value = ''; document.getElementById('o-name').value = ''; document.getElementById('o-branch').value = ''; document.getElementById('o-phone').value = ''; document.getElementById('o-staffMsg').innerHTML = '';
+    document.getElementById('o-expanded-fields').classList.remove('revealed');
+    document.getElementById('o-locked-section').classList.remove('unlocked');
     renderDynamicOrderContent();
-  } else {
-    attSwitchTerminal(store); // Route to attendance system's native switcher
   }
 }
 
@@ -273,13 +360,32 @@ let oTypingTimer;
 function fetchOrderStaffDetails(idVal) {
   clearTimeout(oTypingTimer);
   const msgDiv = document.getElementById('o-staffMsg'); const nameInp = document.getElementById('o-name'); const branchInp = document.getElementById('o-branch'); const phoneInp = document.getElementById('o-phone');
-  if(idVal.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; return; }
+  const expFields = document.getElementById('o-expanded-fields');
+  const lockedSec = document.getElementById('o-locked-section');
+  
+  if(idVal.length < 2) { 
+    msgDiv.innerHTML = ''; nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; 
+    expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
+    return; 
+  }
+  
   msgDiv.innerHTML = 'Searching Database...'; msgDiv.className = 'msg';
+  expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
+  
   oTypingTimer = setTimeout(() => {
     fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchUser', id: idVal }) })
     .then(r => r.json()).then(res => {
-       if(res.found) { nameInp.value = res.name || ''; branchInp.value = res.branch || ''; phoneInp.value = res.phone || ''; msgDiv.innerHTML = `✓ ID Matched: ${res.name}`; msgDiv.className = 'msg success';
-       } else { nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; msgDiv.innerHTML = 'ID not found in database'; msgDiv.className = 'msg error'; }
+       if(res.found) { 
+         nameInp.value = res.name || ''; branchInp.value = res.branch || ''; phoneInp.value = res.phone || ''; 
+         msgDiv.innerHTML = `✓ ID Matched: ${res.name}`; msgDiv.className = 'msg success';
+         // Reveal user info and unlock form
+         expFields.classList.add('revealed');
+         lockedSec.classList.add('unlocked');
+       } else { 
+         nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; 
+         msgDiv.innerHTML = 'ID not found in database'; msgDiv.className = 'msg error'; 
+         expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
+       }
     }).catch(e => { msgDiv.innerHTML = 'Error checking database. Try again.'; msgDiv.className = 'msg error'; });
   }, 800); 
 }
@@ -287,16 +393,14 @@ function fetchOrderStaffDetails(idVal) {
 const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
 const VOLUMES = ["5L", "3L"];
 
-function handleJuiceTouch(e, step) {
+function handleJuicePointerDown(e, step) {
   e.preventDefault(); 
   const el = e.currentTarget;
-  let touchMoved = false;
-  const moveHandler = () => touchMoved = true;
-  el.addEventListener('touchmove', moveHandler, {once: true});
-
+  el.classList.add('editing');
+  
   el.pressTimer = setTimeout(() => {
-      if(touchMoved) return;
       el.isLong = true;
+      el.classList.remove('editing');
       let val = prompt("Edit exact quantity (or 0 to clear):", el.getAttribute('data-val') || "0");
       if(val !== null && val !== "") {
           let num = parseInt(val);
@@ -306,46 +410,30 @@ function handleJuiceTouch(e, step) {
               el.classList.toggle('has-value', num > 0);
           }
       }
-  }, 500);
-
-  const endHandler = () => {
-      el.removeEventListener('touchmove', moveHandler);
-      clearTimeout(el.pressTimer);
-      if(!el.isLong && !touchMoved) {
-          let currentVal = parseInt(el.getAttribute('data-val')) || 0;
-          currentVal += step;
-          if(currentVal > 60) currentVal = 0;
-          el.setAttribute('data-val', currentVal);
-          el.innerText = currentVal === 0 ? '-' : currentVal;
-          el.classList.toggle('has-value', currentVal > 0);
-      }
-      el.isLong = false;
-  };
-  el.addEventListener('touchend', endHandler, {once: true});
-  el.addEventListener('touchcancel', endHandler, {once: true});
+  }, 400);
 }
 
-function handleJuiceMouse(e, step) {
+function handleJuicePointerUp(e, step) {
+  e.preventDefault();
   const el = e.currentTarget;
-  el.pressTimer = setTimeout(() => {
-      el.isLong = true;
-      let val = prompt("Edit exact quantity (or 0 to clear):", el.getAttribute('data-val') || "0");
-      if(val !== null && val !== "") {
-          let num = parseInt(val);
-          if(!isNaN(num) && num >= 0) { el.setAttribute('data-val', num); el.innerText = num === 0 ? '-' : num; el.classList.toggle('has-value', num > 0); }
-      }
-  }, 500);
-  
-  const endHandler = () => {
-      clearTimeout(el.pressTimer);
-      if(!el.isLong) {
-          let currentVal = parseInt(el.getAttribute('data-val')) || 0; currentVal += step; if(currentVal > 60) currentVal = 0;
-          el.setAttribute('data-val', currentVal); el.innerText = currentVal === 0 ? '-' : currentVal; el.classList.toggle('has-value', currentVal > 0);
-      }
-      el.isLong = false;
-  };
-  el.addEventListener('mouseup', endHandler, {once: true});
-  el.addEventListener('mouseleave', endHandler, {once: true});
+  el.classList.remove('editing');
+  clearTimeout(el.pressTimer);
+  if(!el.isLong) {
+      let currentVal = parseInt(el.getAttribute('data-val')) || 0;
+      currentVal += step;
+      if(currentVal > 60) currentVal = 0;
+      el.setAttribute('data-val', currentVal);
+      el.innerText = currentVal === 0 ? '-' : currentVal;
+      el.classList.toggle('has-value', currentVal > 0);
+  }
+  el.isLong = false;
+}
+
+function handleJuicePointerCancel(e) {
+  const el = e.currentTarget;
+  el.classList.remove('editing');
+  clearTimeout(el.pressTimer);
+  el.isLong = false;
 }
 
 function renderDynamicOrderContent() {
@@ -357,37 +445,43 @@ function renderDynamicOrderContent() {
     html += `<tr><td class="flavor-name">${flavor}</td>`;
     VOLUMES.forEach(v => {
       let step = parseInt(v); 
-      html += `<td><div class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" data-val="0" ontouchstart="handleJuiceTouch(event, ${step})" onmousedown="handleJuiceMouse(event, ${step})">-</div></td>`;
+      html += `<td><div class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" data-val="0" 
+        ontouchstart="handleJuicePointerDown(event, ${step})" 
+        ontouchend="handleJuicePointerUp(event, ${step})" 
+        ontouchcancel="handleJuicePointerCancel(event)" 
+        onmousedown="handleJuicePointerDown(event, ${step})" 
+        onmouseup="handleJuicePointerUp(event, ${step})" 
+        onmouseleave="handleJuicePointerCancel(event)">-</div></td>`;
     });
     html += `</tr>`;
   });
   html += `</tbody></table></div>`;
 
-  html += `<details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<details class="order-group" open><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
-    html += `<label class="chip-label"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
-    html += `<label class="chip-label"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
   } else {
-    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
-    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
   }
   html += `</div></div></details>`;
 
   html += `<details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
-  html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
-  if(activeStore === 'carrefour') html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
+  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
+  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
+  if(activeStore === 'carrefour') html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
   html += `</div></div></details>`;
 
   html += `<details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
+  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
-    html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
-    html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
   }
   html += `</div></div></details>`;
 
@@ -437,13 +531,13 @@ async function submitOrder(e) {
 <div id="view-menu" class="view-section active">
   <div class="hub-logo">Stentor Ent Ltd.</div>
   <div class="menu-btn-container">
-    <button class="menu-btn" onclick="openOrder()">
+    <button class="menu-btn playful" onclick="openOrder()">
       <div class="icon">🛒</div>
       <div class="text">Place Order</div>
     </button>
-    <button class="menu-btn" onclick="openAttendance()">
+    <button class="menu-btn playful" onclick="openAttendance()">
       <div class="icon">⏰</div>
-      <div class="text">Clock In / Out</div>
+      <div class="text">Clock<br>In / Out</div>
     </button>
   </div>
 </div>
@@ -461,41 +555,51 @@ async function submitOrder(e) {
     </div>
 
     <form id="orderForm" onsubmit="submitOrder(event)">
-      <div style="display:flex; gap:10px;">
-        <div style="width: 50%;">
+      <!-- UPPER SECTION -->
+      <div class="section-card">
+        <div style="width: 100%;">
           <label class="order-label">Staff ID</label>
           <input type="tel" id="o-id" class="order-input" placeholder="Enter ID" required autocomplete="off" oninput="fetchOrderStaffDetails(this.value)">
         </div>
-        <div style="width: 50%;">
-          <label class="order-label">Full Name</label>
-          <input type="text" id="o-name" class="order-input" placeholder="Auto-fills" required readonly>
+        <div id="o-staffMsg" class="msg"></div>
+
+        <div id="o-expanded-fields" class="progressive-fields">
+          <div style="width: 100%;">
+            <label class="order-label">Full Name</label>
+            <input type="text" id="o-name" class="order-input" placeholder="Auto-fills" required readonly>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:10px;">
+            <div style="width: 50%;">
+              <label class="order-label">Branch / Shop</label>
+              <input type="text" id="o-branch" class="order-input" placeholder="Auto-fills" required readonly>
+            </div>
+            <div style="width: 50%;">
+              <label class="order-label">Phone No.</label>
+              <input type="tel" id="o-phone" class="order-input" placeholder="Auto-fills" required readonly>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="o-staffMsg" class="msg"></div>
 
-      <div style="display:flex; gap:10px; margin-top:4px; margin-bottom: 24px;">
-        <div style="width: 50%;">
-          <label class="order-label">Branch / Shop</label>
-          <input type="text" id="o-branch" class="order-input" placeholder="Auto-fills" required readonly>
+      <!-- LOCKED SECTION -->
+      <div id="o-locked-section" class="locked-form">
+        <div class="section-card" style="padding: 0;">
+          <div id="dynamicOrderContent"></div>
         </div>
-        <div style="width: 50%;">
-          <label class="order-label">Phone No.</label>
-          <input type="tel" id="o-phone" class="order-input" placeholder="Auto-fills" required readonly>
+
+        <div class="section-card">
+          <label class="order-label" style="margin-top: 0;">Additional Notes</label>
+          <textarea id="o-notes" class="order-textarea" rows="2" placeholder="Any special instructions..."></textarea>
+          <button type="submit" class="btn-primary tap-effect" id="orderSubmitBtn">Submit Order</button>
         </div>
       </div>
-
-      <div id="dynamicOrderContent"></div>
-
-      <label class="order-label">Additional Notes</label>
-      <textarea id="o-notes" class="order-textarea" rows="2" placeholder="Any special instructions..."></textarea>
-      <button type="submit" class="btn-primary" id="orderSubmitBtn">Submit Order</button>
     </form>
 
     <div class="success-screen" id="orderSuccessScreen">
       <div class="circle-check">✓</div>
       <h2 style="margin-bottom:8px; font-weight:800;">Order Sent!</h2>
       <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Your order has been logged successfully.</p>
-      <button class="btn-primary" onclick="goHome()">Back to Menu</button>
+      <button class="btn-primary tap-effect" onclick="goHome()">Back to Menu</button>
     </div>
   </div>
 </div>
@@ -545,13 +649,13 @@ async function submitOrder(e) {
 
           <div id="step3" class="step">
             <label class="att-label">GPS Location</label>
-            <button class="att-button" onclick="verifyGPS()">Verify</button>
+            <button class="att-button tap-effect" onclick="verifyGPS()">Verify</button>
             <div id="gpsMsg" class="att-msg"></div>
           </div>
 
           <div id="step4" class="step">
             <label class="att-label">Identity</label>
-            <button class="att-button" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
+            <button class="att-button tap-effect" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
             <div id="cameraMsg" class="att-msg"></div>
           </div>
         </div>
@@ -564,7 +668,7 @@ async function submitOrder(e) {
           <div class="success-name" id="successName"></div>
           <div class="success-msg"  id="successMsg"></div>
         </div>
-        <button class="success-back" onclick="resetToStart()">← Submit Another</button>
+        <button class="success-back tap-effect" onclick="resetToStart()">← Submit Another</button>
       </div>
 
       <!-- Camera overlay -->
@@ -573,7 +677,7 @@ async function submitOrder(e) {
         <div id="faceGuide"></div>
         <div id="faceStatus">Position your face in the oval</div>
         <canvas id="faceCanvas"></canvas>
-        <button id="closeCameraBtn" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
+        <button id="closeCameraBtn" class="tap-effect" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
         <div class="camera-ui">
           <div id="captureBtn" onclick="capturePhoto()"></div>
         </div>
@@ -587,7 +691,7 @@ async function submitOrder(e) {
       <div id="guideIcon" style="font-size:44px;margin-bottom:10px;">🛑</div>
       <h3 id="guideTitle">Action Blocked</h3>
       <div class="modal-instructions" id="guideText"></div>
-      <button onclick="document.getElementById('guideModal').style.display='none'" style="background:var(--dynamic-primary);color:#fff;border:none;padding:14px;border-radius:12px;width:100%;font-weight:700;cursor:pointer;">GOT IT</button>
+      <button class="tap-effect" onclick="document.getElementById('guideModal').style.display='none'" style="background:var(--dynamic-primary);color:#fff;border:none;padding:14px;border-radius:12px;width:100%;font-weight:700;cursor:pointer;">GOT IT</button>
     </div>
   </div>
 </div>
@@ -627,20 +731,25 @@ window.addEventListener('online', function(){ checkNetworkStatus(); processSyncQ
 function checkNetworkStatus() { var ind = document.getElementById('networkIndicator'); if(ind){if (navigator.onLine) ind.classList.remove('offline'); else ind.classList.add('offline');} }
 
 function triggerSignAnimation() { var sign = document.getElementById('storeSign'); sign.classList.remove('nudge'); void sign.offsetWidth; sign.classList.add('nudge'); }
-function updateTerminalUI() {
+function updateTerminalUIAtt() {
   document.body.className = 'theme-' + currentTerminal;
+  var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var hexColor = currentTerminal === 'chandarana' ? (isDark ? '#059669' : '#10b981') : (isDark ? '#2563eb' : '#3b82f6');
+  var meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', hexColor);
+
   var title = document.getElementById('storeSign'); if(title) title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1);
   triggerSignAnimation();
   document.getElementById('btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana');
   document.getElementById('btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour');
-  requestAnimationFrame(function() { requestAnimationFrame(function() { var ab = document.querySelector('.pill-btn.active'), sl = document.getElementById('pillSlider'); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }); });
+  requestAnimationFrame(function() { requestAnimationFrame(function() { var ab = document.querySelector('#view-attendance .pill-btn.active'), sl = document.getElementById('pillSlider'); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }); });
 }
 function attSwitchTerminal(term) {
-  if (currentTerminal === term) { triggerSignAnimation(); return; }
+  if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active')) { triggerSignAnimation(); return; }
   currentTerminal = term; Storage.set('selected_terminal', term);
   staff = []; branches = []; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
   document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('mainFormAtt').style.display='block'; document.getElementById('mainContainer').style.overflow = 'hidden';
-  updateTerminalUI(); resetStepsFrom(2); cleanOldHistory(); initApp();
+  updateTerminalUIAtt(); resetStepsFrom(2); cleanOldHistory(); initApp();
 }
 
 function fetchFromServer(action, data) {
@@ -687,29 +796,43 @@ function resetStepsFrom(n) {
 function resetToStart() {
   document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('mainFormAtt').style.display = 'block'; document.getElementById('mainContainer').style.overflow = 'hidden';
   document.getElementById('successPhoto').classList.remove('zoomed'); document.getElementById('photoBackdrop').classList.remove('show');
-  resetStepsFrom(3); var branchVal = document.getElementById('branch').value; var staffVal = document.getElementById('staffID').value; if (branchVal && staffVal) { handleStaffInputValue(staffVal); }
+  resetStepsFrom(3); var branchVal = document.getElementById('branch').value; var staffVal = document.getElementById('staffID').value;
+  if (branchVal && staffVal) handleStaffInputValue(staffVal);
 }
 
 function showSuccess(id,txt){ var e=document.getElementById(id); e.innerHTML='<span class="dot"></span> '+txt; e.className='att-msg success'; }
 function showError(id,txt)  { var e=document.getElementById(id); e.innerText=txt; e.className='att-msg error'; }
 function clearMsg(id)       { var e=document.getElementById(id); e.innerText=''; e.className='att-msg'; }
-function toggleZoom() { var img = document.getElementById('successPhoto'); var backdrop = document.getElementById('photoBackdrop'); if (img.classList.contains('zoomed')) { img.classList.remove('zoomed'); backdrop.classList.remove('show'); } else { img.classList.add('zoomed'); backdrop.classList.add('show'); } }
+
+function toggleZoom() {
+  var img = document.getElementById('successPhoto'); var backdrop = document.getElementById('photoBackdrop');
+  if (img.classList.contains('zoomed')) { img.classList.remove('zoomed'); backdrop.classList.remove('show'); } 
+  else { img.classList.add('zoomed'); backdrop.classList.add('show'); }
+}
 
 function handleBranchChange(silent) {
-  var val = document.getElementById('branch').value; if (!val) { resetStepsFrom(2); return; } Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected');
-  if (!silent) { if (document.getElementById('step2').classList.contains('activeStep') && document.getElementById('staffID').value !== '') { resetStepsFrom(2); } }
-  if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); }
+  var val = document.getElementById('branch').value;
+  if (!val) { resetStepsFrom(2); return; }
+  Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected');
+  if (!silent && document.getElementById('step2').classList.contains('activeStep') && document.getElementById('staffID').value !== '') resetStepsFrom(2);
+  if (!document.getElementById('step2').classList.contains('activeStep')) activateStep(2);
 }
 document.getElementById('branch').onchange = function() { handleBranchChange(false); };
 
 function handleStaffInputValue(val) {
-  if (!val) return; val = val.trim(); if (val.length < 2) { resetStepsFrom(3); clearMsg('staffMsg'); return; }
+  if (!val) return; val = val.trim();
+  if (val.length < 2) { resetStepsFrom(3); clearMsg('staffMsg'); return; }
   var match = null; for (var i = 0; i < staff.length; i++) { if (staff[i].id === val) { match = staff[i]; break; } }
   if (match) {
-    staffName = match.name; var todayKey = new Date().toDateString(); var historyRaw = Storage.get('local_history_' + currentTerminal); var history = historyRaw ? JSON.parse(historyRaw) : {};
-    var historyEntry = history[match.id + '_' + todayKey]; var lastAction = match.status;
-    if (historyEntry) { if (typeof historyEntry === 'string') { lastAction = historyEntry; } else { lastAction = historyEntry.action; } }
-    if (lastAction === 'Clock Out') { currentAction = 'Clock In'; } else if (lastAction === 'Clock In') { currentAction = 'Clock Out'; } else { currentAction = 'Clock In'; }
+    staffName = match.name; var todayKey = new Date().toDateString(); var historyRaw = Storage.get('local_history_' + currentTerminal);
+    var history = historyRaw ? JSON.parse(historyRaw) : {}; var historyEntry = history[match.id + '_' + todayKey];
+    var lastAction = match.status; if (historyEntry) { if (typeof historyEntry === 'string') lastAction = historyEntry; else lastAction = historyEntry.action; }
+    
+    // Auto toggle action
+    if (lastAction === 'Clock Out') currentAction = 'Clock In';
+    else if (lastAction === 'Clock In') currentAction = 'Clock Out';
+    else currentAction = 'Clock In';
+    
     showSuccess('staffMsg', 'Welcome ' + staffName);
     if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4);
     if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3);
@@ -722,15 +845,16 @@ document.getElementById('staffID').addEventListener('change', function() { clear
 
 function showGuideModal(type) {
   var modal=document.getElementById('guideModal'), title=document.getElementById('guideTitle'), text=document.getElementById('guideText'), icon=document.getElementById('guideIcon');
-  if (type==='gps') { icon.textContent='📍'; title.textContent='Location Blocked'; title.style.color='var(--error-color)'; text.innerHTML='<p>We need your location to verify you are at the branch.</p>'; } 
-  else if (type==='gps_signal') { icon.textContent='📡'; title.textContent='Weak GPS Signal'; title.style.color='var(--warning-text)'; text.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; } 
-  else if (type==='camera') { icon.textContent='📸'; title.textContent='Camera Access Denied'; title.style.color='var(--error-color)'; text.innerHTML='<p>Camera permission is required to capture your identity securely.</p>'; } 
+  if (type==='gps') { icon.textContent='📍'; title.textContent='Location Blocked'; title.style.color='var(--error-color)'; text.innerHTML='<p>We need your location to verify you are at the branch.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong> Settings → Privacy → Location Services → Allow Safari.</p><p style="margin-top:8px"><strong>🤖 Android:</strong> Site settings → Location → Allow.</p>'; }
+  else if (type==='gps_signal') { icon.textContent='📡'; title.textContent='Weak GPS Signal'; title.style.color='var(--warning-text)'; text.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; }
+  else if (type==='camera') { icon.textContent='📸'; title.textContent='Camera Access Denied'; title.style.color='var(--error-color)'; text.innerHTML='<p>Camera permission is required.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong> Settings → Safari → Camera → Allow.</p><p style="margin-top:8px"><strong>🤖 Android:</strong> Site settings → Camera → Allow.</p>'; }
+  else if (type==='no_face') { icon.textContent='🙈'; title.textContent='No Face Detected'; title.style.color='var(--error-color)'; text.innerHTML='<p>We couldn\'t detect a face in the captured photo.</p><ul style="margin-top:8px;padding-left:20px"><li>Make sure your face is well-lit.</li><li>Remove sunglasses or hats.</li><li>Hold the phone at face level.</li></ul>'; }
   modal.style.display = 'flex';
 }
 
 function verifyGPS() {
   document.getElementById('gpsMsg').innerText = 'Locating…'; document.getElementById('gpsMsg').className = 'att-msg';
-  if (!navigator.geolocation) { showError('gpsMsg','GPS not supported on this device.'); return; }
+  if (!navigator.geolocation) { showError('gpsMsg','GPS not supported.'); return; }
   navigator.geolocation.getCurrentPosition(
     function(pos) {
       coords = pos.coords; var b=null, bv=document.getElementById('branch').value;
@@ -747,53 +871,67 @@ function verifyGPS() {
 function startCamera() {
   var btn = document.getElementById('openCameraBtn');
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showGuideModal('camera'); return; }
-  clearMsg('cameraMsg');
-  var constraints = { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+  btn.innerText = 'Starting…'; clearMsg('cameraMsg');
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false })
+    .then(function(stream) {
       videoStream = stream; var video = document.getElementById('cameraVideo'); video.srcObject = stream;
       video.onloadedmetadata = function() {
-        video.play().catch(function(){}); document.getElementById('videoContainerWrapper').classList.add('expanded');
-        document.getElementById('cameraBackdrop').classList.add('show'); video.classList.add('live'); btn.innerText = 'Take Selfie'; setTimeout(startFaceDetection, 600);
+        video.play().catch(function(){}); document.getElementById('videoContainerWrapper').classList.add('expanded'); document.getElementById('cameraBackdrop').classList.add('show');
+        video.classList.add('live'); btn.innerText = 'Take Selfie'; setTimeout(startFaceDetection, 600);
       };
-    }).catch(function(err) { btn.innerText = 'Take Selfie'; showGuideModal('camera'); });
-}
-
-function capturePhoto() {
-  if (faceDetector && !faceOk) { document.getElementById('faceStatus').textContent = '⚠ No face detected — reposition'; return; }
-  var video = document.getElementById('cameraVideo'), wrapper = document.getElementById('mainContainer'), vw = video.videoWidth || 1280, vh = video.videoHeight || 720, cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
-  var containerAspect = cw / ch, videoAspect = vw / vh, sWidth, sHeight, startX, startY;
-  if (videoAspect > containerAspect) { sHeight = vh; sWidth = vh * containerAspect; startX = (vw - sWidth) / 2; startY = 0; } else { sWidth = vw; sHeight = vw / containerAspect; startX = 0; startY = (vh - sHeight) / 2; }
-  var maxOutput = 720, scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
-  var canvas = document.createElement('canvas'); canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
-  var ctx = canvas.getContext('2d'); ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-  photo = canvas.toDataURL('image/jpeg', 0.85); document.getElementById('successPhoto').src = photo; stopCamera(); submitAttendance();
+    }).catch(function() { btn.innerText = 'Take Selfie'; showGuideModal('camera'); });
 }
 
 function stopCamera() {
+  if (videoStream) { videoStream.getTracks().forEach(function(t) { t.stop(); }); videoStream = null; }
   stopFaceDetection();
-  var wrapper = document.getElementById('videoContainerWrapper'), backdrop = document.getElementById('cameraBackdrop'), video = document.getElementById('cameraVideo');
-  wrapper.classList.remove('expanded'); backdrop.classList.remove('show'); video.classList.remove('live');
-  setTimeout(function() { if (videoStream) { videoStream.getTracks().forEach(function(t){ t.stop(); }); videoStream = null; } video.srcObject = null; }, 300);
+  document.getElementById('videoContainerWrapper').classList.remove('expanded'); document.getElementById('cameraBackdrop').classList.remove('show');
+  document.getElementById('cameraVideo').classList.remove('live');
+}
+
+function capturePhoto() {
+  if (!faceOk && faceDetector) { showGuideModal('no_face'); return; }
+  var video = document.getElementById('cameraVideo');
+  var canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  var ctx = canvas.getContext('2d');
+  ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  photo = canvas.toDataURL('image/jpeg', 0.6);
+  stopCamera(); submitAttendance();
 }
 
 function submitAttendance() {
-  var branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
-  if (!branch||!staffID||!currentAction||!photo) return;
-  Storage.set('last_staff_id_' + currentTerminal, staffID);
-  var todayKey = new Date().toDateString(), histRaw = Storage.get('local_history_' + currentTerminal), history = histRaw ? JSON.parse(histRaw) : {};
-  history[staffID + '_' + todayKey] = { action: currentAction, time: Date.now() }; Storage.set('local_history_' + currentTerminal, JSON.stringify(history));
-  var payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() };
-  var queue = JSON.parse(Storage.get('sync_queue') || '[]'); queue.push(payload); Storage.set('sync_queue', JSON.stringify(queue)); processSyncQueue();
-  finishSubmission(currentAction);
-}
+  showSuccess('cameraMsg', 'Submitting...');
+  var payload = { id: document.getElementById('staffID').value, name: staffName, branch: document.getElementById('branch').value, action: currentAction, image: photo, lat: coords.latitude, lng: coords.longitude };
+  var payloadStr = JSON.stringify(payload);
+  
+  // Immediately update local UI + History
+  var todayKey = new Date().toDateString();
+  var historyRaw = Storage.get('local_history_' + currentTerminal);
+  var history = historyRaw ? JSON.parse(historyRaw) : {};
+  history[payload.id + '_' + todayKey] = { action: payload.action, time: new Date().getTime() };
+  Storage.set('local_history_' + currentTerminal, JSON.stringify(history));
+  Storage.set('last_staff_id_' + currentTerminal, payload.id);
+  
+  for (var i=0; i<staff.length; i++) { if (staff[i].id === payload.id) { staff[i].status = payload.action; break; } }
+  
+  document.getElementById('successBadge').innerText = payload.action;
+  document.getElementById('successBadge').style.background = payload.action === 'Clock In' ? var(--success-color) : var(--error-color);
+  document.getElementById('successName').innerText = payload.name;
+  var timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  document.getElementById('successMsg').innerText = "Logged at " + timeStr + " for " + payload.branch;
+  document.getElementById('successPhoto').src = photo;
+  document.getElementById('mainFormAtt').style.display = 'none';
+  document.getElementById('attSuccessScreen').style.display = 'flex';
+  document.getElementById('mainContainer').style.overflow = 'auto';
 
-function finishSubmission(action) {
-  var firstName = staffName.split(' ')[0] || staffName;
-  var hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0), msg = '';
-  if (action === 'Clock In') { if (timeVal < 6.5) { msg = "Fantastic start — you're early today! Keep it up."; } else if (timeVal <= 7.66){ msg = "Great, you are on time for the morning shift."; } else if (timeVal < 11.0) { msg = "Note: Late for morning shift."; } else if (timeVal < 14.0) { msg = "Early for the second shift. Great job!"; } else if (timeVal <= 14.66){ msg = "On time for the second shift. Have a productive afternoon!"; } else { msg = "Note: Late for afternoon shift."; } } else { if (hrs < 16) { msg = "Have a wonderful afternoon!"; } else { msg = "Have a restful night!"; } if (hrs >= 18) { msg += "<br><br><span style='display:block;'>Remember to place your order.</span>"; } }
-  document.getElementById('successBadge').textContent = action.toUpperCase(); document.getElementById('successName').textContent = firstName; document.getElementById('successMsg').innerHTML = msg;
-  document.getElementById('mainContainer').style.overflow = 'visible'; document.getElementById('mainFormAtt').style.display = 'none'; document.getElementById('attSuccessScreen').style.display = 'flex';
+  // Background Sync
+  if (navigator.onLine) {
+    fetchFromServer('recordAttendance', payload).catch(function() {
+      var q = JSON.parse(Storage.get('sync_queue') || '[]'); q.push(payload); Storage.set('sync_queue', JSON.stringify(q));
+    });
+  } else {
+    var q = JSON.parse(Storage.get('sync_queue') || '[]'); q.push(payload); Storage.set('sync_queue', JSON.stringify(q));
+  }
 }
 </script>
 </body>
