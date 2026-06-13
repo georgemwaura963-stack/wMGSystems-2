@@ -336,12 +336,6 @@ var Storage={
 <div id="cameraBackdrop" onclick="stopCamera()"></div>
 <div id="photoBackdrop" onclick="toggleZoom()"></div>
 
-<!-- Floating Testing Widget -->
-<div style="position:fixed; bottom:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); padding:10px 15px; border-radius:12px; color:#fff; z-index:99999; display:flex; align-items:center; font-size:13px; gap:10px;">
-  <label style="margin:0;color:#fff;">Mock Time:</label>
-  <input type="time" id="testTime" style="height:32px; width:110px; background:#fff; color:#000; padding:4px 8px; border:none; margin:0;" onchange="handleStaffInput.call(document.getElementById('staffID'))">
-</div>
-
 <div class="hanging-sign-wrapper" id="signWrapper">
   <div class="chain left-chain"></div>
   <div class="chain right-chain"></div>
@@ -432,20 +426,8 @@ var activeFetchId = 0, currentAction = "", videoStream = null;
 var staffRestrictionError = null; 
 var warningTimer = null; 
 
-// Mock Time Helper
-function getNow() {
-  var override = document.getElementById('testTime').value;
-  if(override) {
-    var d = new Date();
-    var parts = override.split(':');
-    d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0);
-    return d;
-  }
-  return new Date();
-}
-
 function cleanOldHistory() {
-  var today = getNow().toDateString();
+  var today = new Date().toDateString();
   var histRaw = Storage.get('local_history_' + currentTerminal);
   if (histRaw) {
     try {
@@ -604,11 +586,12 @@ function resetToStart() {
   document.getElementById('successPhoto').classList.remove('zoomed');
   document.getElementById('photoBackdrop').classList.remove('show');
   
-  // Wipe saved Staff ID so you can easily test multiple users
-  Storage.remove('last_staff_id_' + currentTerminal);
+  // Clean Code: Staff ID is NOT wiped. It persists permanently for the daily user.
   
-  resetStepsFrom(2); 
+  resetStepsFrom(3); 
   handleBranchChange();
+  var staffEl = document.getElementById('staffID');
+  if (staffEl.value) { handleStaffInput.call(staffEl); }
 }
 
 function showSuccess(id,txt){ var e=document.getElementById(id); e.innerHTML='<span class="dot"></span> '+txt; e.className='msg success'; }
@@ -638,7 +621,6 @@ function handleBranchChange() {
 document.getElementById('branch').onchange = handleBranchChange;
 
 function handleStaffInput() {
-  if (!this.value) return;
   var val = this.value.trim();
   staffRestrictionError = null; 
   if (val.length < 2) { resetStepsFrom(3); clearMsg('staffMsg'); return; }
@@ -648,7 +630,7 @@ function handleStaffInput() {
   
   if (match) {
     staffName = match.name;
-    var todayKey = getNow().toDateString();
+    var todayKey = new Date().toDateString();
     var historyRaw = Storage.get('local_history_' + currentTerminal);
     var history = historyRaw ? JSON.parse(historyRaw) : {};
     
@@ -673,7 +655,7 @@ function handleStaffInput() {
       if (lastTime) {
         var inDate = new Date(lastTime);
         var inHour = inDate.getHours() + (inDate.getMinutes() / 60);
-        var now = getNow();
+        var now = new Date();
         var currentHour = now.getHours() + (now.getMinutes() / 60);
         
         var isMorningShift = (inHour < 12.0); 
@@ -870,20 +852,20 @@ function submitAttendance() {
   
   Storage.set('last_staff_id_' + currentTerminal, staffID);
   
-  var todayKey = getNow().toDateString();
+  var todayKey = new Date().toDateString();
   var histRaw = Storage.get('local_history_' + currentTerminal);
   var history = histRaw ? JSON.parse(histRaw) : {};
   
   history[staffID + '_' + todayKey] = {
     action: currentAction,
-    time: getNow().getTime()
+    time: Date.now()
   };
   Storage.set('local_history_' + currentTerminal, JSON.stringify(history));
   
   var payload = {
     name: staffName, id: staffID, branch: branch, action: currentAction, image: photo,
     lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0,
-    clientTimestamp: getNow().toISOString()
+    clientTimestamp: new Date().toISOString()
   };
   
   queueSubmission(payload);
@@ -892,7 +874,7 @@ function submitAttendance() {
 
 function finishSubmission(action) {
   var firstName = staffName.split(' ')[0] || staffName;
-  var hrs = getNow().getHours(), mins = getNow().getMinutes(), timeVal = hrs + (mins / 60.0);
+  var hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0);
   var msg='';
 
   if (action === 'Clock In') {
@@ -903,9 +885,10 @@ function finishSubmission(action) {
     else if (timeVal <= 14.66){ msg="On time for the second shift. Have a productive afternoon!"; }
     else                    { msg="Note: Late for afternoon shift."; }
   } else {
-    if (hrs < 16) { msg="Have a wonderful day!"; }
+    if (hrs < 16) { msg="Have a wonderful afternoon!"; }
     else          { msg="Have a restful night!"; }
     
+    // Order reminder logic exactly >= 18:00
     if (hrs >= 18) {
       msg += " And remember to place your order.";
     }
