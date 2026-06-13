@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Stentor Operations</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap');
@@ -11,10 +12,14 @@
   --bg-primary:#ffffff; --bg-secondary:#f7f9fa;
   --text-primary:#111827; --text-secondary:#4b5563; --text-tertiary:#9ca3af;
   --border-color:#e5e7eb; --input-bg:#f9fafb; --input-border:#d1d5db;
+  --button-secondary-bg:#eff6ff;
   --success-color:#10b981; --error-color:#ef4444;
+  --warning-bg:#fef2f2; --warning-border:#fecaca; --warning-text:#b91c1c;
+  --success-card-bg:#f0fdf4; --success-card-border:#bbf7d0;
   --theme-chan:#10b981; --theme-carr:#3b82f6;
   --dynamic-primary: var(--theme-chan);
   --shadow-color:rgba(0,0,0,0.1);
+  --label-text:#6b7280;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -23,126 +28,175 @@ body {
   font-family: 'Nunito', -apple-system, sans-serif; color:var(--text-primary); 
   min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding: env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px);
-  overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background 0.6s ease;
+  overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.6s ease; background-color: var(--dynamic-primary);
 }
 
 body.theme-hub { background: linear-gradient(135deg, #059669 0%, #2563eb 100%); }
-body.theme-chandarana { background-color: var(--theme-chan); --dynamic-primary: var(--theme-chan); }
-body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
+body.theme-chandarana { --dynamic-primary: var(--theme-chan); }
+body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
 
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; }
 .view-section.active { display: flex; animation: fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.container {
-  width: 100%; background:var(--bg-primary); padding:20px;
-  border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); overflow:hidden;
-}
-.scrollable-container { max-height: 85vh; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px; }
-
-/* Diagonal Dancing Menu */
+/* ==========================================
+   MAIN MENU UI
+   ========================================== */
 .hub-logo { font-size: 34px; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 .menu-btn-container { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; margin-top: 30px; }
 .menu-btn {
-  width: 85%; background: var(--bg-primary); color: var(--text-primary);
-  border: none; border-radius: 20px; padding: 25px 20px;
+  width: 90%; background: var(--bg-primary); color: var(--text-primary);
+  border: none; border-radius: 50px; padding: 18px 20px; height: 75px;
   display: flex; align-items: center; justify-content: center; gap: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer;
-  animation: dance 4s infinite ease-in-out;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s;
+  -webkit-tap-highlight-color: transparent; outline: none;
 }
-.menu-btn.btn-order { transform: translateX(-20px); --tx: -20px; }
-.menu-btn.btn-att { transform: translateX(20px); --tx: 20px; animation-delay: 2s; }
-.menu-btn .icon { font-size: 36px; }
-.menu-btn .text { font-size: 22px; font-weight: 900; }
-@keyframes dance {
-  0%   { transform: translateX(var(--tx)) rotate(0deg); }
-  33%  { transform: translateX(var(--tx)) rotate(-3deg) scale(1.02); }
-  66%  { transform: translateX(var(--tx)) rotate(3deg) scale(0.98); }
-  100% { transform: translateX(var(--tx)) rotate(0deg); }
-}
+.menu-btn:active { transform: scale(0.96); }
+.menu-btn .icon { font-size: 32px; }
+.menu-btn .text { font-size: 20px; font-weight: 900; }
 
-.back-bar { width: 100%; display: flex; align-items: center; margin-bottom: 16px; color: #fff; font-weight: 700; cursor: pointer; font-size: 16px; }
-
-label { font-weight:800; font-size:11px; display:block; margin-bottom:4px; margin-top:10px; color:var(--label-text); text-transform:uppercase; }
-input:not([type="checkbox"]):not([type="radio"]):not([type="number"]), select, textarea {
-  width:100%; padding:12px; border-radius:10px; border:1px solid var(--input-border); font-size:14px; background:var(--input-bg);
-  color:var(--text-primary); outline:none; font-family: inherit; font-weight: 700; transition: border-color 0.2s;
+@keyframes swipeDance {
+  0% { transform: translateY(0) translateX(0) scale(1); }
+  20% { transform: translateY(-12px) translateX(-8px) rotate(-3deg); }
+  40% { transform: translateY(-15px) translateX(8px) rotate(3deg); }
+  60% { transform: translateY(-8px) translateX(-4px) rotate(-1deg); }
+  80% { transform: translateY(-4px) translateX(4px) rotate(1deg); }
+  100% { transform: translateY(0) translateX(0) scale(1); }
 }
-input:read-only { background: #e5e7eb; color: var(--text-secondary); }
-input:focus,select:focus,textarea:focus { border-color:var(--dynamic-primary); }
+.btn-dance { animation: swipeDance 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
-.btn-primary {
-  width:100%; height:50px; border-radius:12px; border:none; font-size:16px; font-weight:800; margin-top: 24px;
-  background:#111827; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
-}
+/* ==========================================
+   ORDER SCREEN UI
+   ========================================== */
+.order-container { width: 100%; background:var(--bg-primary); padding:20px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); overflow:hidden; }
+.scrollable-container { max-height: 85vh; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px; }
+.back-bar { width: 100%; display: flex; align-items: center; margin-bottom: 16px; color: #fff; font-weight: 900; cursor: pointer; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; z-index: 100;}
+
+.order-label { font-weight:800; font-size:11px; display:block; margin-bottom:4px; margin-top:10px; color:var(--label-text); text-transform:uppercase; }
+.order-input, .order-textarea { width:100%; padding:12px; border-radius:10px; border:1px solid var(--input-border); font-size:14px; background:var(--input-bg); color:var(--text-primary); outline:none; font-family: inherit; font-weight: 700; transition: border-color 0.2s; }
+.order-input:read-only { background: #e5e7eb; color: var(--text-secondary); }
+.order-input:focus, .order-textarea:focus { border-color:var(--dynamic-primary); box-shadow:0 0 0 3px rgba(0,0,0,0.05); }
+
+.btn-primary { width:100%; height:50px; border-radius:12px; border:none; font-size:16px; font-weight:800; margin-top: 24px; background:#111827; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .btn-primary:active { transform:scale(0.97); }
 
-/* Dynamic Borders */
-.section-title { 
-  font-size: 14px; font-weight: 900; color: var(--text-primary); margin: 24px 0 10px 0; 
-  border-bottom: 2px solid var(--border-color); 
-  border-left: 5px solid var(--dynamic-primary); 
-  padding-left: 8px; border-radius: 2px;
-  transition: border-left-color 0.4s ease;
-}
+/* Collapsible Bordered Sections */
+.order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--bg-primary); transition: border-color 0.3s; }
+.order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); outline: none; list-style: none; -webkit-tap-highlight-color: transparent;}
+.order-group-title::-webkit-details-marker { display: none; }
+.order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); transition: transform 0.3s; font-weight: 400;}
+.order-group[open] { border-color: var(--dynamic-primary); }
+.order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
+.order-group-content { padding: 14px; border-top: 1px solid var(--border-color); }
 
-/* Juice Grid - Wider columns, tighter rows */
-.table-container { width: 100%; max-height: 480px; overflow: auto; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); }
+/* Juice Grid (Optimized spacing) */
+.table-container { width: 100%; max-height: 480px; overflow: auto; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); margin-bottom: 15px;}
 table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
-th, td { padding: 4px 2px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
+th, td { padding: 3px 2px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
 th { background: var(--bg-secondary); font-weight: 800; color: var(--text-secondary); font-size: 11px; position: sticky; top: 0; z-index: 10; width: 35%; }
 th:first-child { width: 30%; position: sticky; left: 0; z-index: 12; border-right: 2px solid var(--border-color); }
-td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-left: 6px; white-space: nowrap; position: sticky; left: 0; background: var(--bg-primary); z-index: 11; border-right: 2px solid var(--border-color); }
+td.flavor-name { text-align: left; font-weight: 800; font-size: 10px; padding-left: 6px; white-space: nowrap; position: sticky; left: 0; background: var(--bg-primary); z-index: 11; border-right: 2px solid var(--border-color); line-height: 1.1;}
 
-/* Tappable Input Squircles (Allows explicit typing and deleting) */
+/* Squircles */
 .square-input {
-  appearance: none; -webkit-appearance: none;
-  width: 44px; height: 38px; border-radius: 10px;
+  width: 52px; height: 32px; border-radius: 8px; margin: 0 auto;
   background: var(--input-bg); border: 2px solid var(--input-border);
-  color: var(--text-tertiary); font-weight: 900; font-size: 16px;
-  text-align: center; display: block; margin: 0 auto; outline: none;
-  transition: 0.2s all;
+  color: var(--text-tertiary); font-weight: 900; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none; transition: 0.1s transform, 0.2s background; -webkit-tap-highlight-color: transparent;
 }
-/* Hide native arrows */
-.square-input::-webkit-inner-spin-button, .square-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-.square-input:focus { border-color: var(--dynamic-primary); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+.square-input:active { transform: scale(0.9); }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
-.chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.chip-label { cursor: pointer; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-label { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .chip-label input { display: none; }
 .chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 8px 14px; border-radius: 50px; font-size: 12px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
-.chip-label input:checked + .chip-span { background: #111827; color: #fff; border-color: #111827; }
+.chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
 .msg { font-size:12px; font-weight:800; margin-top:4px; min-height:20px; color:var(--text-tertiary); display:flex; align-items:center;}
-.msg.success { color:var(--success-color); } 
-.msg.error { color:var(--error-color); }
+.msg.success { color:var(--success-color); } .msg.error { color:var(--error-color); }
 
-/* Tab Switcher */
-.top-bar { display:flex; justify-content:center; margin-bottom:10px; }
+/* Top Switcher */
+.top-bar { display:flex; justify-content:center; margin-bottom:15px; }
 .terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:44px; align-items:center; }
 .pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); transition:all 0.4s cubic-bezier(0.25,1,0.5,1); z-index:1; }
-.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 18px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none; }
+.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 18px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none; -webkit-tap-highlight-color:transparent;}
 .pill-btn.active { color:#fff; }
-
-/* Nudge Animation for Switcher */
 @keyframes tabNudge { 0%{transform:scale(1);} 50%{transform:scale(1.1) rotate(-3deg);} 100%{transform:scale(1);} }
 .nudge-anim { animation: tabNudge 0.4s ease; }
 
 .success-screen { text-align: center; padding: 20px 0; display: none; flex-direction: column; align-items: center; }
 .success-screen.active { display: flex; animation: fadeIn 0.4s ease; }
 .circle-check { width: 80px; height: 80px; background: var(--success-color); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 16px; }
-.success-photo { width: 96px; height: 96px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 15px; }
+
+/* ==========================================
+   ATTENDANCE SYSTEM UI (100% Identical Paste)
+   ========================================== */
+.page-wrapper { display: flex; flex-direction: column; align-items: center; margin-top: -24px; width: 100%; max-width: 400px; }
+.hanging-sign-wrapper { position: relative; margin-bottom: 44px; perspective: 800px; z-index: 10; width: 240px; }
+.chain { position: absolute; top: -30px; width: 5px; height: 34px; background: linear-gradient(to right, #9ca3af, #f3f4f6, #9ca3af); border-radius: 3px; box-shadow: inset 0 0 3px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2); z-index: 1; }
+.chain::before { content: ''; position: absolute; top: -6px; left: -2.5px; width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e5e7eb, #9ca3af); border: 1px solid #6b7280; box-shadow: 0 8px 12px rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.4); }
+.left-chain { left: 40px; } .right-chain { right: 40px; }
+.hanging-sign { background: var(--bg-primary); color: var(--dynamic-primary); padding: 12px 10px; border-radius: 12px; font-weight: 900; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; display: block; box-sizing: border-box; box-shadow: 0 10px 25px var(--shadow-color), inset 0 -3px 0 rgba(0,0,0,0.05); transform-origin: top center; transition: color 0.4s ease; position: relative; z-index: 2; }
+@keyframes swing { 0% { transform: rotateX(0deg) rotateZ(0deg); } 20% { transform: rotateX(25deg) rotateZ(-3deg); } 40% { transform: rotateX(-15deg) rotateZ(2deg); } 60% { transform: rotateX(8deg) rotateZ(-1deg); } 80% { transform: rotateX(-3deg) rotateZ(0deg); } 100% { transform: rotateX(0deg) rotateZ(0deg); } }
+.hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
+
+.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; }
+#mainFormAtt { width: 100%; }
+.network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8;transition:background 0.4s ease; box-shadow: 0 0 6px var(--success-color); }
+.network-indicator.offline{background:var(--text-tertiary);opacity:0.4; box-shadow:none;}
+.step-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 12px}
+.step{opacity:0.3;pointer-events:none;transition:opacity 0.4s ease}
+.step.activeStep{opacity:1;pointer-events:auto;animation:fadeIn 0.45s ease}
+
+.att-label{font-weight:600;font-size:12px;display:block;margin-bottom:6px;color:var(--label-text);text-transform:uppercase;letter-spacing:0.5px}
+.att-input, .att-select{ width:100%;height:46px;padding:0 14px;border-radius:12px; border:1px solid var(--input-border);font-size:15px;background:var(--input-bg); color:var(--text-primary);transition:all 0.2s; -webkit-appearance:none; outline:none; }
+.att-input:focus, .att-select:focus{border-color:var(--dynamic-primary);background:var(--bg-primary);box-shadow:0 0 0 3px rgba(16, 185, 129, 0.1)}
+body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {box-shadow:0 0 0 3px rgba(59, 130, 246, 0.1)}
+.att-button{ width:100%;height:46px;border-radius:12px;border:none; font-size:14px;font-weight:700; background:var(--button-secondary-bg);color:var(--dynamic-primary); cursor:pointer;transition:transform 0.1s, opacity 0.2s, background 0.2s; }
+.att-button:active{transform:scale(0.97)}
+.att-button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+.att-msg{ font-size:12px;font-weight:600;margin-top:6px; min-height:38px; align-items:flex-start; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.3s ease, color 0.3s ease; opacity: 1; }
+.att-msg.success{color:var(--success-color);font-size:13px} .att-msg.error{color:var(--error-color)}
+.att-msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:6px;flex-shrink:0;position:relative; margin-top: 1px; }
+.att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
 /* Camera UI */
-#videoContainerWrapper{ position:absolute; inset:0; border-radius:24px; overflow:hidden; z-index:60; background:#000; transform:scale(0.95); opacity:0; pointer-events:none; transition:0.3s; }
-#videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform:scale(1); }
-#cameraVideo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); opacity:0; transition:0.4s; }
+#videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
+#videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
+#cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
 #cameraVideo.live { opacity: 1; }
-.camera-ui{ position:absolute; bottom:0; left:0; right:0; padding:20px; display:flex; justify-content:center; z-index:4; }
-#captureBtn{ width:64px; height:64px; border-radius:50%; border:4px solid rgba(255,255,255,0.9); cursor:pointer; display:flex; align-items:center; justify-content:center; }
-#captureBtn::after{ content:''; width:48px; height:48px; background:#fff; border-radius:50%; }
-#closeCameraBtn{ position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.5); color:#fff; border:none; font-size:16px; z-index:6; }
+#faceCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; transform: scaleX(-1); }
+#faceGuide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); width: 140px; height: 168px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.5); z-index: 3; pointer-events: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+#faceGuide.face-ok { border-color: rgba(52, 211, 153, 0.9); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25); }
+#faceStatus { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.55); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 50px; letter-spacing: 0.5px; z-index: 5; white-space: nowrap; transition: opacity 0.3s ease; }
+#cameraBackdrop{ display:none;position:fixed;inset:0;z-index:59; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+#cameraBackdrop.show{ display:block; }
+.camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:4; }
+#captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s, opacity 0.3s ease;-webkit-tap-highlight-color:transparent; opacity: 0.4; }
+#captureBtn.ready { opacity: 1; }
+#captureBtn::after{content:'';width:48px;height:48px;background:#fff;border-radius:50%;transition:transform 0.1s}
+#captureBtn:active{transform:scale(0.88)}
+#closeCameraBtn{ position:absolute;top:16px;right:16px; width:36px;height:36px;border-radius:50%; background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3); color:#fff;font-size:16px; cursor:pointer; display:flex;align-items:center;justify-content:center; z-index:6; -webkit-tap-highlight-color:transparent; }
+
+/* Att Success Screen */
+#attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:flex-start; padding: 12px 4px 8px; text-align:center; width:100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.success-photo{ width: 96px; height: 96px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 10px; animation: fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; flex-shrink: 0; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
+.success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
+#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 19999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+#photoBackdrop.show { opacity: 1; pointer-events: auto; }
+.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:12px;font-weight:800; text-transform:uppercase;padding:5px 18px;border-radius:999px; margin-bottom: 10px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; animation:fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
+.success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:16px;padding:16px 14px;width:100%;margin-bottom:12px; animation:fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; flex-shrink: 0; }
+.success-name{font-size:22px;font-weight:800;color:var(--dynamic-primary);margin-bottom:6px}
+.success-msg {font-size:13px;font-weight:600;color:var(--text-secondary);line-height:1.5; word-break: break-word;}
+.success-back{ width:100%;height:44px;background:var(--button-secondary-bg); color:var(--dynamic-primary);border:none;border-radius:12px; font-size:14px;font-weight:700;cursor:pointer; flex-shrink: 0; }
+
+#guideModal{ display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65); z-index:19999;flex-direction:column;align-items:center;justify-content:center; padding:20px;backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
+#guideModal .modal-box{ background:var(--bg-primary);padding:28px;border-radius:20px; text-align:center;max-width:340px;width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+#guideModal .modal-box h3{color:var(--error-color);margin:10px 0 16px;font-size:20px}
+.modal-instructions{ background:var(--input-bg);color:var(--text-secondary); padding:16px;border-radius:12px;margin-bottom:18px; font-size:13px;line-height:1.6;text-align:left; border: 1px solid var(--border-color); }
 </style>
 </head>
 <body class="theme-hub">
@@ -151,69 +205,34 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 // 🛑 PASTE YOUR WEB APP URL HERE - THIS SINGLE LINK POWERS BOTH ATTENDANCE AND ORDERS
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 
-let activeStore = 'chandarana'; 
-
 // ==========================================
-// UNIFIED DATA FETCHING
+// SWIPE ANIMATION LOGIC (MAIN MENU)
 // ==========================================
-let typingTimer;
-function fetchOrderStaffDetails(idVal) {
-  clearTimeout(typingTimer);
-  const msgDiv = document.getElementById('o-staffMsg');
-  const nameInp = document.getElementById('o-name');
-  const branchInp = document.getElementById('o-branch');
-  const phoneInp = document.getElementById('o-phone');
-
-  if(idVal.length < 2) {
-     msgDiv.innerHTML = ''; nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; return;
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
+}, {passive: true});
+document.addEventListener('touchend', e => {
+  if (document.getElementById('view-menu').classList.contains('active')) {
+    let touchEndX = e.changedTouches[0].screenX; let touchEndY = e.changedTouches[0].screenY;
+    if(e.target.closest('.menu-btn')) return; // Ignore if tapping a button
+    if(Math.abs(touchEndX - touchStartX) > 40 || Math.abs(touchEndY - touchStartY) > 40) {
+      document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.classList.remove('btn-dance'); void btn.offsetWidth; btn.classList.add('btn-dance');
+      });
+    }
   }
-
-  msgDiv.innerHTML = 'Searching Database...'; msgDiv.className = 'msg';
-
-  typingTimer = setTimeout(() => {
-    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchUser', id: idVal }) })
-    .then(r => r.json()).then(res => {
-       if(res.found) {
-         nameInp.value = res.name || ''; branchInp.value = res.branch || ''; phoneInp.value = res.phone || '';
-         msgDiv.innerHTML = `✓ ID Matched: ${res.name}`; msgDiv.className = 'msg success';
-       } else {
-         nameInp.value = ''; branchInp.value = ''; phoneInp.value = '';
-         msgDiv.innerHTML = 'ID not found in database'; msgDiv.className = 'msg error';
-       }
-    }).catch(e => { msgDiv.innerHTML = 'Error checking database. Try again.'; msgDiv.className = 'msg error'; });
-  }, 1000); // 1-second debounce prevents lag
-}
-
-let PORTAL_DATA = { chandarana: { staff: [], branches: [], loaded: false }, carrefour:  { staff: [], branches: [], loaded: false } };
-function fetchAttendanceData(store) {
-  if (PORTAL_DATA[store].loaded) { populateDropdowns(store); return; }
-  document.getElementById('a-branch').innerHTML = '<option value="">Loading Data...</option>';
-  
-  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getPortalData', terminal: store }) })
-  .then(r => r.json()).then(res => {
-    if (res.ok) { PORTAL_DATA[store].staff = res.data.staff || []; PORTAL_DATA[store].branches = res.data.branches || []; PORTAL_DATA[store].loaded = true; if (activeStore === store) populateDropdowns(store); }
-  }).catch(err => { document.getElementById('a-branch').innerHTML = '<option value="">Offline</option>'; });
-}
-
-function populateDropdowns(store) {
-  let options = '<option value="">Select Branch...</option>';
-  PORTAL_DATA[store].branches.forEach(b => { if (b[0]) options += `<option value="${b[0]}">${b[0]}</option>`; });
-  document.getElementById('a-branch').innerHTML = options;
-}
-
-function lookupAttStaffId(val, msgId, store) {
-  const msgDiv = document.getElementById(msgId);
-  if (val.length < 2) { msgDiv.innerHTML = ''; return null; }
-  const match = PORTAL_DATA[store].staff.find(s => String(s.id).trim() === val.trim());
-  if (match) { msgDiv.innerHTML = `✓ Welcome ${match.name}`; msgDiv.className = 'msg success'; return match;
-  } else { msgDiv.innerHTML = 'ID not found in database'; msgDiv.className = 'msg error'; return null; }
-}
+}, {passive: true});
 
 // ==========================================
 // NAVIGATION & MODULE SWITCHING
 // ==========================================
+let activeStore = 'chandarana'; 
 function hideAllViews() { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); }
-function goHome() { hideAllViews(); document.body.className = 'theme-hub'; document.getElementById('view-menu').classList.add('active'); stopCamera(); }
+function goHome() { 
+  hideAllViews(); document.body.className = 'theme-hub'; document.getElementById('view-menu').classList.add('active'); 
+  if(typeof stopCamera === 'function') stopCamera(); 
+}
 
 function openOrder() {
   hideAllViews(); document.getElementById('view-orders').classList.add('active');
@@ -224,58 +243,113 @@ function openOrder() {
 
 function openAttendance() {
   hideAllViews(); document.getElementById('view-attendance').classList.add('active');
-  document.getElementById('mainForm').style.display = 'block'; document.getElementById('attSuccessScreen').classList.remove('active');
-  document.getElementById('a-staffID').value = ''; document.getElementById('a-staffMsg').innerHTML = ''; document.getElementById('gpsMsg').innerHTML = '';
-  window.currentAttStaff = null; window.coords = null; window.photo = null;
   switchTerminal('chandarana', 'attendance');
+  resetToStart(); // reset attendance form to fresh state
 }
 
 function switchTerminal(store, module) {
   activeStore = store;
   document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
   
-  const prefix = module === 'order' ? 'o-' : '';
-  const btnChan = document.getElementById(prefix + 'btn-chandarana');
-  const btnCarr = document.getElementById(prefix + 'btn-carrefour');
-  
-  btnChan.classList.toggle('active', store === 'chandarana');
-  btnCarr.classList.toggle('active', store === 'carrefour');
-  
-  // Trigger Nudge animation
-  const activeBtn = store === 'chandarana' ? btnChan : btnCarr;
-  activeBtn.classList.remove('nudge-anim'); void activeBtn.offsetWidth; activeBtn.classList.add('nudge-anim');
-  
-  setTimeout(() => {
-    const sl = document.getElementById(prefix + 'pillSlider');
-    if (activeBtn && sl) { sl.style.width = activeBtn.offsetWidth + 'px'; sl.style.left = activeBtn.offsetLeft + 'px'; }
-  }, 50);
-
   if (module === 'order') {
+    const btnChan = document.getElementById('o-btn-chandarana'); const btnCarr = document.getElementById('o-btn-carrefour');
+    btnChan.classList.toggle('active', store === 'chandarana'); btnCarr.classList.toggle('active', store === 'carrefour');
+    
+    const activeBtn = store === 'chandarana' ? btnChan : btnCarr;
+    activeBtn.classList.remove('nudge-anim'); void activeBtn.offsetWidth; activeBtn.classList.add('nudge-anim');
+    setTimeout(() => { const sl = document.getElementById('o-pillSlider'); if (activeBtn && sl) { sl.style.width = activeBtn.offsetWidth + 'px'; sl.style.left = activeBtn.offsetLeft + 'px'; } }, 50);
+
     document.getElementById('o-id').value = ''; document.getElementById('o-name').value = ''; document.getElementById('o-branch').value = ''; document.getElementById('o-phone').value = ''; document.getElementById('o-staffMsg').innerHTML = '';
     renderDynamicOrderContent();
   } else {
-    document.getElementById('a-staffID').value = ''; document.getElementById('a-staffMsg').innerHTML = ''; window.currentAttStaff = null;
-    fetchAttendanceData(store);
+    attSwitchTerminal(store); // Route to attendance system's native switcher
   }
 }
 
 // ==========================================
-// DYNAMIC ORDER RENDERING
+// ORDER SYSTEM LOGIC
 // ==========================================
-const JUICES = {
-  chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"],
-  carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"]
-};
+let oTypingTimer;
+function fetchOrderStaffDetails(idVal) {
+  clearTimeout(oTypingTimer);
+  const msgDiv = document.getElementById('o-staffMsg'); const nameInp = document.getElementById('o-name'); const branchInp = document.getElementById('o-branch'); const phoneInp = document.getElementById('o-phone');
+  if(idVal.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; return; }
+  msgDiv.innerHTML = 'Searching Database...'; msgDiv.className = 'msg';
+  oTypingTimer = setTimeout(() => {
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchUser', id: idVal }) })
+    .then(r => r.json()).then(res => {
+       if(res.found) { nameInp.value = res.name || ''; branchInp.value = res.branch || ''; phoneInp.value = res.phone || ''; msgDiv.innerHTML = `✓ ID Matched: ${res.name}`; msgDiv.className = 'msg success';
+       } else { nameInp.value = ''; branchInp.value = ''; phoneInp.value = ''; msgDiv.innerHTML = 'ID not found in database'; msgDiv.className = 'msg error'; }
+    }).catch(e => { msgDiv.innerHTML = 'Error checking database. Try again.'; msgDiv.className = 'msg error'; });
+  }, 800); 
+}
+
+const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
 const VOLUMES = ["5L", "3L"];
 
-function handleJuiceInput(input) {
-  if(input.value && parseInt(input.value) > 0) input.classList.add('has-value');
-  else input.classList.remove('has-value');
+function handleJuiceTouch(e, step) {
+  e.preventDefault(); 
+  const el = e.currentTarget;
+  let touchMoved = false;
+  const moveHandler = () => touchMoved = true;
+  el.addEventListener('touchmove', moveHandler, {once: true});
+
+  el.pressTimer = setTimeout(() => {
+      if(touchMoved) return;
+      el.isLong = true;
+      let val = prompt("Edit exact quantity (or 0 to clear):", el.getAttribute('data-val') || "0");
+      if(val !== null && val !== "") {
+          let num = parseInt(val);
+          if(!isNaN(num) && num >= 0) {
+              el.setAttribute('data-val', num);
+              el.innerText = num === 0 ? '-' : num;
+              el.classList.toggle('has-value', num > 0);
+          }
+      }
+  }, 500);
+
+  const endHandler = () => {
+      el.removeEventListener('touchmove', moveHandler);
+      clearTimeout(el.pressTimer);
+      if(!el.isLong && !touchMoved) {
+          let currentVal = parseInt(el.getAttribute('data-val')) || 0;
+          currentVal += step;
+          if(currentVal > 60) currentVal = 0;
+          el.setAttribute('data-val', currentVal);
+          el.innerText = currentVal === 0 ? '-' : currentVal;
+          el.classList.toggle('has-value', currentVal > 0);
+      }
+      el.isLong = false;
+  };
+  el.addEventListener('touchend', endHandler, {once: true});
+  el.addEventListener('touchcancel', endHandler, {once: true});
+}
+
+function handleJuiceMouse(e, step) {
+  const el = e.currentTarget;
+  el.pressTimer = setTimeout(() => {
+      el.isLong = true;
+      let val = prompt("Edit exact quantity (or 0 to clear):", el.getAttribute('data-val') || "0");
+      if(val !== null && val !== "") {
+          let num = parseInt(val);
+          if(!isNaN(num) && num >= 0) { el.setAttribute('data-val', num); el.innerText = num === 0 ? '-' : num; el.classList.toggle('has-value', num > 0); }
+      }
+  }, 500);
+  
+  const endHandler = () => {
+      clearTimeout(el.pressTimer);
+      if(!el.isLong) {
+          let currentVal = parseInt(el.getAttribute('data-val')) || 0; currentVal += step; if(currentVal > 60) currentVal = 0;
+          el.setAttribute('data-val', currentVal); el.innerText = currentVal === 0 ? '-' : currentVal; el.classList.toggle('has-value', currentVal > 0);
+      }
+      el.isLong = false;
+  };
+  el.addEventListener('mouseup', endHandler, {once: true});
+  el.addEventListener('mouseleave', endHandler, {once: true});
 }
 
 function renderDynamicOrderContent() {
-  let html = `<div class="section-title">Juice Quantities</div>`;
-  html += `<div class="table-container"><table><thead><tr><th>Flavor</th>`;
+  let html = `<div class="table-container"><table><thead><tr><th>Flavor</th>`;
   VOLUMES.forEach(v => html += `<th>${v}</th>`);
   html += `</tr></thead><tbody>`;
   
@@ -283,13 +357,13 @@ function renderDynamicOrderContent() {
     html += `<tr><td class="flavor-name">${flavor}</td>`;
     VOLUMES.forEach(v => {
       let step = parseInt(v); 
-      html += `<td><input type="number" step="${step}" min="0" placeholder="-" class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" oninput="handleJuiceInput(this)"></td>`;
+      html += `<td><div class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" data-val="0" ontouchstart="handleJuiceTouch(event, ${step})" onmousedown="handleJuiceMouse(event, ${step})">-</div></td>`;
     });
     html += `</tr>`;
   });
   html += `</tbody></table></div>`;
 
-  html += `<div class="section-title">Fresh Inputs</div><div class="chip-group">`;
+  html += `<details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
   if(activeStore === 'chandarana') {
     html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
     html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
@@ -300,35 +374,31 @@ function renderDynamicOrderContent() {
     html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
     html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
   }
-  html += `</div>`;
+  html += `</div></div></details>`;
 
-  html += `<div class="section-title">Bottles</div><div class="chip-group">`;
+  html += `<details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
   html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
   html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
   if(activeStore === 'carrefour') html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
-  html += `</div>`;
+  html += `</div></div></details>`;
 
-  html += `<div class="section-title">HACCP Supplies</div><div class="chip-group">`;
+  html += `<details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
   html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
   if(activeStore === 'chandarana') {
     html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
     html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
     html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
   }
-  html += `</div>`;
+  html += `</div></div></details>`;
 
   document.getElementById('dynamicOrderContent').innerHTML = html;
 }
 
-// ==========================================
-// SUBMIT ORDERS
-// ==========================================
 async function submitOrder(e) {
   e.preventDefault();
   if(!document.getElementById('o-name').value) { alert("Please enter a valid Staff ID."); return; }
   
-  const btn = document.getElementById('orderSubmitBtn');
-  btn.disabled = true; btn.innerText = 'Submitting...';
+  const btn = document.getElementById('orderSubmitBtn'); btn.disabled = true; btn.innerText = 'Submitting...';
 
   const payload = {
     "SHOP": document.getElementById('o-branch').value,
@@ -344,93 +414,22 @@ async function submitOrder(e) {
   const juicePrefix = activeStore === 'chandarana' ? "JUICE (5 LITRES/3 LITRES)" : "JUICE (5 ITRES / 3 LITRES)";
   JUICES[activeStore].forEach(flavor => {
     let flavorKey = flavor;
-    if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) {
-       flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; 
-    }
+    if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; }
     let quantities = [];
     VOLUMES.forEach(v => {
       const input = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${v}"]`);
-      if(input && input.value && parseInt(input.value) > 0) quantities.push(`${v}: ${input.value}`);
+      let val = input ? input.getAttribute('data-val') : "0";
+      if(val && val !== "0") quantities.push(`${v}: ${val}`);
     });
     if(quantities.length > 0) payload[`${juicePrefix} [${flavorKey}]`] = quantities.join(', ');
   });
 
   try {
-    // Note: To match how the script separates logic, we pass action: 'saveOrder' and store formatted as Capitalized
     const storeCap = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
     await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveOrder', store: storeCap, data: payload }) });
-    document.getElementById('orderForm').style.display = 'none';
-    document.getElementById('orderSuccessScreen').classList.add('active');
-  } catch (error) {
-    alert("Error sending order. Check connection.");
-  }
+    document.getElementById('orderForm').style.display = 'none'; document.getElementById('orderSuccessScreen').classList.add('active');
+  } catch (error) { alert("Error sending order. Check connection."); }
   btn.disabled = false; btn.innerText = 'Submit Order';
-}
-
-// ==========================================
-// ATTENDANCE SUBMISSION (Camera & GPS)
-// ==========================================
-window.coords = null; window.photo = null; window.currentAttStaff = null; window.videoStream = null;
-
-function verifyGPS() {
-  document.getElementById('gpsMsg').innerHTML = 'Locating...'; document.getElementById('gpsMsg').className = 'msg';
-  navigator.geolocation.getCurrentPosition(
-    pos => { window.coords = pos.coords; document.getElementById('gpsMsg').innerHTML = '✓ Location Verified'; document.getElementById('gpsMsg').className = 'msg success'; },
-    err => { document.getElementById('gpsMsg').innerHTML = 'GPS Failed - Enable Location'; document.getElementById('gpsMsg').className = 'msg error'; },
-    {enableHighAccuracy:true, timeout:10000}
-  );
-}
-
-function startCamera() {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false }).then(stream => {
-    window.videoStream = stream; const video = document.getElementById('cameraVideo'); video.srcObject = stream;
-    video.onloadedmetadata = () => { video.play(); document.getElementById('videoContainerWrapper').classList.add('expanded'); video.classList.add('live'); };
-  }).catch(err => { document.getElementById('cameraMsg').innerHTML = 'Camera blocked'; document.getElementById('cameraMsg').className = 'msg error'; });
-}
-
-function capturePhoto() {
-  const video = document.getElementById('cameraVideo');
-  const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d'); ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  window.photo = canvas.toDataURL('image/jpeg', 0.7);
-  document.getElementById('successPhoto').src = window.photo;
-  document.getElementById('cameraMsg').innerHTML = '✓ Selfie Captured'; document.getElementById('cameraMsg').className = 'msg success';
-  stopCamera();
-}
-
-function stopCamera() {
-  document.getElementById('videoContainerWrapper').classList.remove('expanded');
-  if (window.videoStream) { window.videoStream.getTracks().forEach(t => t.stop()); window.videoStream = null; }
-}
-
-function submitAttendance() {
-  const branch = document.getElementById('a-branch').value;
-  const staffObj = window.currentAttStaff;
-
-  if(!branch) { alert("Please select a branch."); return; }
-  if(!staffObj) { alert("Please enter a valid Staff ID."); return; }
-  if(!window.coords) { alert("Please verify your location first."); return; }
-  if(!window.photo) { alert("Please take a selfie first."); return; }
-
-  const action = staffObj.status === 'Clock In' ? 'Clock Out' : 'Clock In';
-  const payload = { name: staffObj.name, id: staffObj.id, branch: branch, action: action, image: window.photo, lat: window.coords.latitude, lng: window.coords.longitude };
-  
-  const btn = document.getElementById('attSubmitBtn');
-  btn.disabled = true; btn.innerText = 'Sending...';
-
-  fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'recordAttendance', data:payload, terminal:activeStore}) })
-  .then(r => r.json()).then(res => {
-    if(!res.ok) throw new Error(res.error);
-    document.getElementById('mainForm').style.display = 'none';
-    document.getElementById('attSuccessBadge').innerText = action.toUpperCase();
-    document.getElementById('attSuccessName').innerText = staffObj.name + " log recorded.";
-    document.getElementById('attSuccessScreen').classList.add('active');
-  }).catch(err => {
-    alert("Error saving attendance: " + err.message);
-  }).finally(() => {
-    btn.disabled = false; btn.innerText = 'Submit Attendance';
-  });
 }
 </script>
 
@@ -438,11 +437,11 @@ function submitAttendance() {
 <div id="view-menu" class="view-section active">
   <div class="hub-logo">Stentor Ent Ltd.</div>
   <div class="menu-btn-container">
-    <button class="menu-btn btn-order" onclick="openOrder()">
+    <button class="menu-btn" onclick="openOrder()">
       <div class="icon">🛒</div>
       <div class="text">Place Order</div>
     </button>
-    <button class="menu-btn btn-att" onclick="openAttendance()">
+    <button class="menu-btn" onclick="openAttendance()">
       <div class="icon">⏰</div>
       <div class="text">Clock In / Out</div>
     </button>
@@ -452,7 +451,7 @@ function submitAttendance() {
 <!-- ORDERS VIEW -->
 <div id="view-orders" class="view-section">
   <div class="back-bar" onclick="goHome()">← Back to Menu</div>
-  <div class="container scrollable-container">
+  <div class="order-container scrollable-container">
     <div class="top-bar">
       <div class="terminal-pill-wrapper">
         <div class="pill-slider" id="o-pillSlider"></div>
@@ -462,34 +461,33 @@ function submitAttendance() {
     </div>
 
     <form id="orderForm" onsubmit="submitOrder(event)">
-      <div class="section-title">Staff Details</div>
       <div style="display:flex; gap:10px;">
         <div style="width: 50%;">
-          <label>Staff ID</label>
-          <input type="tel" id="o-id" placeholder="Enter ID" required autocomplete="off" oninput="fetchOrderStaffDetails(this.value)">
+          <label class="order-label">Staff ID</label>
+          <input type="tel" id="o-id" class="order-input" placeholder="Enter ID" required autocomplete="off" oninput="fetchOrderStaffDetails(this.value)">
         </div>
         <div style="width: 50%;">
-          <label>Full Name</label>
-          <input type="text" id="o-name" placeholder="Auto-fills" required readonly>
+          <label class="order-label">Full Name</label>
+          <input type="text" id="o-name" class="order-input" placeholder="Auto-fills" required readonly>
         </div>
       </div>
       <div id="o-staffMsg" class="msg"></div>
 
-      <div style="display:flex; gap:10px; margin-top:4px;">
+      <div style="display:flex; gap:10px; margin-top:4px; margin-bottom: 24px;">
         <div style="width: 50%;">
-          <label>Branch / Shop</label>
-          <input type="text" id="o-branch" placeholder="Auto-fills" required readonly>
+          <label class="order-label">Branch / Shop</label>
+          <input type="text" id="o-branch" class="order-input" placeholder="Auto-fills" required readonly>
         </div>
         <div style="width: 50%;">
-          <label>Phone No.</label>
-          <input type="tel" id="o-phone" placeholder="Auto-fills" required readonly>
+          <label class="order-label">Phone No.</label>
+          <input type="tel" id="o-phone" class="order-input" placeholder="Auto-fills" required readonly>
         </div>
       </div>
 
       <div id="dynamicOrderContent"></div>
 
-      <div class="section-title">Additional Notes</div>
-      <textarea id="o-notes" rows="2" placeholder="Any special instructions..."></textarea>
+      <label class="order-label">Additional Notes</label>
+      <textarea id="o-notes" class="order-textarea" rows="2" placeholder="Any special instructions..."></textarea>
       <button type="submit" class="btn-primary" id="orderSubmitBtn">Submit Order</button>
     </form>
 
@@ -505,52 +503,298 @@ function submitAttendance() {
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
   <div class="back-bar" onclick="goHome()">← Back to Menu</div>
-  <div class="container scrollable-container">
-    <div id="mainForm">
-      <div class="top-bar">
-        <div class="terminal-pill-wrapper">
-          <div class="pill-slider" id="a-pillSlider"></div>
-          <button class="pill-btn active" id="a-btn-chandarana" type="button" onclick="switchTerminal('chandarana', 'attendance')">Chandarana</button>
-          <button class="pill-btn" id="a-btn-carrefour" type="button" onclick="switchTerminal('carrefour', 'attendance')">Carrefour</button>
-        </div>
-      </div>
+  
+  <div id="cameraBackdrop" onclick="stopCamera()"></div>
+  <div id="photoBackdrop" onclick="toggleZoom()"></div>
 
-      <div class="section-title">Log Details</div>
-      <label>Branch</label>
-      <select id="a-branch"><option value="">Select Branch...</option></select>
-      
-      <label>Staff ID</label>
-      <input id="a-staffID" type="tel" placeholder="Enter ID" autocomplete="off" oninput="window.currentAttStaff = lookupAttStaffId(this.value, 'a-staffMsg', activeStore)">
-      <div id="a-staffMsg" class="msg"></div>
-
-      <div class="section-title">Verification</div>
-      <div style="display:flex; gap:10px;">
-        <div style="width: 50%; display:flex; flex-direction:column;">
-          <button type="button" class="btn-primary" style="margin-top:0; height: 44px; font-size:13px;" onclick="verifyGPS()">📍 Verify GPS</button>
-          <div id="gpsMsg" class="msg"></div>
-        </div>
-        <div style="width: 50%; display:flex; flex-direction:column;">
-          <button type="button" class="btn-primary" style="margin-top:0; height: 44px; font-size:13px; background:var(--text-secondary);" onclick="startCamera()">📸 Take Selfie</button>
-          <div id="cameraMsg" class="msg"></div>
-        </div>
-      </div>
-
-      <button type="button" class="btn-primary" style="margin-top:16px;" id="attSubmitBtn" onclick="submitAttendance()">Submit Attendance</button>
+  <div class="page-wrapper">
+    <div class="hanging-sign-wrapper" id="signWrapper">
+      <div class="chain left-chain"></div>
+      <div class="chain right-chain"></div>
+      <div class="hanging-sign nudge" id="storeSign">Chandarana</div>
     </div>
 
-    <div class="success-screen" id="attSuccessScreen">
-      <img id="successPhoto" class="success-photo" src="">
-      <h2 style="margin-bottom:8px; font-weight:800; color:var(--success-color);" id="attSuccessBadge">CLOCKED IN</h2>
-      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px; font-weight:800;" id="attSuccessName"></p>
-      <button class="btn-primary" onclick="goHome()">Back to Menu</button>
+    <div class="att-container" id="mainContainer">
+      <div id="networkIndicator" class="network-indicator"></div>
+
+      <div id="mainFormAtt">
+        <div class="top-bar" style="justify-content: flex-end; margin-bottom: 20px;">
+          <div class="terminal-pill-wrapper">
+            <div class="pill-slider" id="pillSlider"></div>
+            <button class="pill-btn active" id="btn-chandarana" onclick="attSwitchTerminal('chandarana')">
+              <span class="full-text">Chandarana</span>
+            </button>
+            <button class="pill-btn" id="btn-carrefour" onclick="attSwitchTerminal('carrefour')">
+              <span class="full-text">Carrefour</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="step-grid">
+          <div id="step1" class="step activeStep">
+            <label class="att-label">Branch</label>
+            <select id="branch" class="att-select"><option value="">Loading...</option></select>
+            <div id="branchMsg" class="att-msg"></div>
+          </div>
+
+          <div id="step2" class="step">
+            <label class="att-label">Staff ID</label>
+            <input id="staffID" class="att-input" type="tel" placeholder="Enter ID" autocomplete="off" inputmode="numeric">
+            <div id="staffMsg" class="att-msg"></div>
+          </div>
+
+          <div id="step3" class="step">
+            <label class="att-label">GPS Location</label>
+            <button class="att-button" onclick="verifyGPS()">Verify</button>
+            <div id="gpsMsg" class="att-msg"></div>
+          </div>
+
+          <div id="step4" class="step">
+            <label class="att-label">Identity</label>
+            <button class="att-button" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
+            <div id="cameraMsg" class="att-msg"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="attSuccessScreen">
+        <img id="successPhoto" class="success-photo" src="" alt="Captured Selfie" onclick="toggleZoom()">
+        <div class="success-badge" id="successBadge">CLOCK IN</div>
+        <div class="success-card">
+          <div class="success-name" id="successName"></div>
+          <div class="success-msg"  id="successMsg"></div>
+        </div>
+        <button class="success-back" onclick="resetToStart()">← Submit Another</button>
+      </div>
+
+      <!-- Camera overlay -->
+      <div id="videoContainerWrapper">
+        <video id="cameraVideo" autoplay playsinline muted></video>
+        <div id="faceGuide"></div>
+        <div id="faceStatus">Position your face in the oval</div>
+        <canvas id="faceCanvas"></canvas>
+        <button id="closeCameraBtn" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
+        <div class="camera-ui">
+          <div id="captureBtn" onclick="capturePhoto()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="guideModal">
+    <div class="modal-box">
+      <div id="guideIcon" style="font-size:44px;margin-bottom:10px;">🛑</div>
+      <h3 id="guideTitle">Action Blocked</h3>
+      <div class="modal-instructions" id="guideText"></div>
+      <button onclick="document.getElementById('guideModal').style.display='none'" style="background:var(--dynamic-primary);color:#fff;border:none;padding:14px;border-radius:12px;width:100%;font-weight:700;cursor:pointer;">GOT IT</button>
     </div>
   </div>
 </div>
 
-<div id="videoContainerWrapper">
-  <video id="cameraVideo" autoplay playsinline muted></video>
-  <button id="closeCameraBtn" onclick="stopCamera()">&#x2715;</button>
-  <div class="camera-ui"><div id="captureBtn" onclick="capturePhoto()"></div></div>
-</div>
+<script>
+// ==========================================
+// IDENTICAL ATTENDANCE SYSTEM JS
+// ==========================================
+var Storage={ set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}, get:function(k){try{return localStorage.getItem(k)}catch(e){return null}}, remove:function(k){try{localStorage.removeItem(k)}catch(e){}} };
+var currentTerminal = Storage.get('selected_terminal') || 'chandarana';
+var staff = [], branches = [], coords = null, staffName = "", photo = null;
+var activeFetchId = 0, currentAction = "", videoStream = null;
+
+var faceDetector = null, faceDetectInterval = null, faceOk = false;
+function initFaceDetector() { if (typeof window.FaceDetector !== 'undefined') { try { faceDetector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 }); } catch(e) { faceDetector = null; } } }
+function startFaceDetection() {
+  faceOk = false; updateCaptureBtn(false);
+  if (!faceDetector) { setTimeout(function() { document.getElementById('faceStatus').style.opacity = '0'; faceOk = true; updateCaptureBtn(true); }, 1000); return; }
+  var video = document.getElementById('cameraVideo'), guide = document.getElementById('faceGuide'), statusEl = document.getElementById('faceStatus'), consecutiveHits = 0;
+  faceDetectInterval = setInterval(function() {
+    if (!video || !video.readyState || video.readyState < 2) return;
+    faceDetector.detect(video).then(function(faces) {
+      if (faces && faces.length > 0) {
+        consecutiveHits++; guide.classList.add('face-ok'); statusEl.textContent = consecutiveHits >= 3 ? '✓ Face detected — tap to capture' : 'Hold still…';
+        if (consecutiveHits >= 3) { faceOk = true; updateCaptureBtn(true); }
+      } else { consecutiveHits = 0; guide.classList.remove('face-ok'); faceOk = false; updateCaptureBtn(false); statusEl.textContent = 'Position your face in the oval'; }
+    }).catch(function() { faceOk = true; updateCaptureBtn(true); statusEl.style.opacity = '0'; });
+  }, 400);
+}
+function stopFaceDetection() { if (faceDetectInterval) { clearInterval(faceDetectInterval); faceDetectInterval = null; } faceOk = false; updateCaptureBtn(false); var guide = document.getElementById('faceGuide'); if (guide) guide.classList.remove('face-ok'); }
+function updateCaptureBtn(ready) { var btn = document.getElementById('captureBtn'); if (!btn) return; if (ready) btn.classList.add('ready'); else btn.classList.remove('ready'); }
+
+function cleanOldHistory() { var today = new Date().toDateString(); var histRaw = Storage.get('local_history_' + currentTerminal); if (histRaw) { try { var history = JSON.parse(histRaw); var updated = false; for (var key in history) { if (!key.endsWith(today)) { delete history[key]; updated = true; } } if (updated) Storage.set('local_history_' + currentTerminal, JSON.stringify(history)); } catch(e){} } }
+function processSyncQueue() { if (!navigator.onLine) return; var qRaw = Storage.get('sync_queue'); if (!qRaw) return; try { var queue = JSON.parse(qRaw); if (queue.length === 0) return; var item = queue[0]; fetchFromServer('recordAttendance', item).then(function() { var currentQ = JSON.parse(Storage.get('sync_queue') || '[]'); currentQ.shift(); Storage.set('sync_queue', JSON.stringify(currentQ)); processSyncQueue(); }).catch(function(e) {}); } catch(e) {} }
+
+window.addEventListener('online', function(){ checkNetworkStatus(); processSyncQueue(); }); window.addEventListener('offline', checkNetworkStatus);
+function checkNetworkStatus() { var ind = document.getElementById('networkIndicator'); if(ind){if (navigator.onLine) ind.classList.remove('offline'); else ind.classList.add('offline');} }
+
+function triggerSignAnimation() { var sign = document.getElementById('storeSign'); sign.classList.remove('nudge'); void sign.offsetWidth; sign.classList.add('nudge'); }
+function updateTerminalUI() {
+  document.body.className = 'theme-' + currentTerminal;
+  var title = document.getElementById('storeSign'); if(title) title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1);
+  triggerSignAnimation();
+  document.getElementById('btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana');
+  document.getElementById('btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour');
+  requestAnimationFrame(function() { requestAnimationFrame(function() { var ab = document.querySelector('.pill-btn.active'), sl = document.getElementById('pillSlider'); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }); });
+}
+function attSwitchTerminal(term) {
+  if (currentTerminal === term) { triggerSignAnimation(); return; }
+  currentTerminal = term; Storage.set('selected_terminal', term);
+  staff = []; branches = []; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
+  document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('mainFormAtt').style.display='block'; document.getElementById('mainContainer').style.overflow = 'hidden';
+  updateTerminalUI(); resetStepsFrom(2); cleanOldHistory(); initApp();
+}
+
+function fetchFromServer(action, data) {
+  return fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:action, data:data, terminal:currentTerminal}) })
+  .then(function(r){ return r.json(); }).then(function(j){ if(!j.ok) throw new Error(j.error||'Server error'); return j.data; });
+}
+
+function populateBranchesAtt(list, savedBranch) {
+  if (!Array.isArray(list)) return;
+  var options = '<option value="">Choose Branch</option>' + list.map(function(b){ return '<option value="'+b[0]+'"'+(b[0]===savedBranch?' selected':'')+'>'+b[0]+'</option>'; }).join('');
+  document.getElementById('branch').innerHTML = options;
+}
+
+function restoreUserState() {
+  var savedBranch = Storage.get('last_branch_' + currentTerminal); var branchEl = document.getElementById('branch');
+  if (savedBranch && branchEl) { var found = false; for (var i = 0; i < branchEl.options.length; i++) { if (branchEl.options[i].value === savedBranch) { found = true; break; } }
+    if (found) { branchEl.value = savedBranch; handleBranchChange(true); }
+  }
+  var savedStaffID = Storage.get('last_staff_id_' + currentTerminal);
+  if (savedStaffID && staff.length > 0) { var staffEl = document.getElementById('staffID'); if (document.getElementById('step2').classList.contains('activeStep')) { staffEl.value = savedStaffID; handleStaffInputValue(savedStaffID); } }
+}
+
+function initApp() {
+  initFaceDetector(); checkNetworkStatus(); cleanOldHistory(); processSyncQueue();
+  var myId = ++activeFetchId; var cacheKey = currentTerminal + '_portal_data'; var savedBranch = Storage.get('last_branch_' + currentTerminal); var dataLoaded = false;
+  try { var raw = Storage.get(cacheKey); if (raw) { var p = JSON.parse(raw); if (p && Array.isArray(p.branches) && p.branches.length > 0) { staff = p.staff || []; branches = p.branches || []; populateBranchesAtt(branches, savedBranch); restoreUserState(); dataLoaded = true; } } } catch(e) {}
+  if (!dataLoaded) { document.getElementById('branch').innerHTML = '<option value="">Loading…</option>'; }
+  fetchFromServer('getPortalData', {}).then(function(data) {
+    if (myId !== activeFetchId) return; var newStaff = data.staff || [], newBranches = data.branches || [];
+    var changed = JSON.stringify(branches) !== JSON.stringify(newBranches) || JSON.stringify(staff) !== JSON.stringify(newStaff);
+    staff = newStaff; branches = newBranches; try { Storage.set(cacheKey, JSON.stringify({staff:staff, branches:branches})); } catch(e) {}
+    if (!dataLoaded || changed) { var currentBranch = document.getElementById('branch').value || savedBranch; populateBranchesAtt(branches, currentBranch); if (currentBranch) { document.getElementById('branch').value = currentBranch; } restoreUserState(); }
+  }).catch(function() { if (myId === activeFetchId && !dataLoaded) { document.getElementById('branch').innerHTML = '<option value="">Offline — check connection</option>'; } });
+}
+
+function activateStep(n) { document.getElementById('step'+n).classList.add('activeStep'); }
+function resetStepsFrom(n) {
+  for (var i = n; i <= 4; i++) { var el = document.getElementById('step'+i); if (el) el.classList.remove('activeStep'); }
+  if (n <= 2) { staffName = ''; document.getElementById('staffID').value = ''; clearMsg('staffMsg'); }
+  if (n <= 3) { coords = null; clearMsg('gpsMsg'); }
+  if (n <= 4) { photo = null; stopCamera(); clearMsg('cameraMsg'); document.getElementById('successPhoto').src = ''; }
+}
+
+function resetToStart() {
+  document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('mainFormAtt').style.display = 'block'; document.getElementById('mainContainer').style.overflow = 'hidden';
+  document.getElementById('successPhoto').classList.remove('zoomed'); document.getElementById('photoBackdrop').classList.remove('show');
+  resetStepsFrom(3); var branchVal = document.getElementById('branch').value; var staffVal = document.getElementById('staffID').value; if (branchVal && staffVal) { handleStaffInputValue(staffVal); }
+}
+
+function showSuccess(id,txt){ var e=document.getElementById(id); e.innerHTML='<span class="dot"></span> '+txt; e.className='att-msg success'; }
+function showError(id,txt)  { var e=document.getElementById(id); e.innerText=txt; e.className='att-msg error'; }
+function clearMsg(id)       { var e=document.getElementById(id); e.innerText=''; e.className='att-msg'; }
+function toggleZoom() { var img = document.getElementById('successPhoto'); var backdrop = document.getElementById('photoBackdrop'); if (img.classList.contains('zoomed')) { img.classList.remove('zoomed'); backdrop.classList.remove('show'); } else { img.classList.add('zoomed'); backdrop.classList.add('show'); } }
+
+function handleBranchChange(silent) {
+  var val = document.getElementById('branch').value; if (!val) { resetStepsFrom(2); return; } Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected');
+  if (!silent) { if (document.getElementById('step2').classList.contains('activeStep') && document.getElementById('staffID').value !== '') { resetStepsFrom(2); } }
+  if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); }
+}
+document.getElementById('branch').onchange = function() { handleBranchChange(false); };
+
+function handleStaffInputValue(val) {
+  if (!val) return; val = val.trim(); if (val.length < 2) { resetStepsFrom(3); clearMsg('staffMsg'); return; }
+  var match = null; for (var i = 0; i < staff.length; i++) { if (staff[i].id === val) { match = staff[i]; break; } }
+  if (match) {
+    staffName = match.name; var todayKey = new Date().toDateString(); var historyRaw = Storage.get('local_history_' + currentTerminal); var history = historyRaw ? JSON.parse(historyRaw) : {};
+    var historyEntry = history[match.id + '_' + todayKey]; var lastAction = match.status;
+    if (historyEntry) { if (typeof historyEntry === 'string') { lastAction = historyEntry; } else { lastAction = historyEntry.action; } }
+    if (lastAction === 'Clock Out') { currentAction = 'Clock In'; } else if (lastAction === 'Clock In') { currentAction = 'Clock Out'; } else { currentAction = 'Clock In'; }
+    showSuccess('staffMsg', 'Welcome ' + staffName);
+    if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4);
+    if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3);
+  } else { resetStepsFrom(3); showError('staffMsg', 'Invalid Staff ID. Please check.'); }
+}
+
+var staffDebounce = null;
+document.getElementById('staffID').addEventListener('input', function() { var val = this.value; clearTimeout(staffDebounce); staffDebounce = setTimeout(function() { handleStaffInputValue(val); }, 350); });
+document.getElementById('staffID').addEventListener('change', function() { clearTimeout(staffDebounce); handleStaffInputValue(this.value); });
+
+function showGuideModal(type) {
+  var modal=document.getElementById('guideModal'), title=document.getElementById('guideTitle'), text=document.getElementById('guideText'), icon=document.getElementById('guideIcon');
+  if (type==='gps') { icon.textContent='📍'; title.textContent='Location Blocked'; title.style.color='var(--error-color)'; text.innerHTML='<p>We need your location to verify you are at the branch.</p>'; } 
+  else if (type==='gps_signal') { icon.textContent='📡'; title.textContent='Weak GPS Signal'; title.style.color='var(--warning-text)'; text.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; } 
+  else if (type==='camera') { icon.textContent='📸'; title.textContent='Camera Access Denied'; title.style.color='var(--error-color)'; text.innerHTML='<p>Camera permission is required to capture your identity securely.</p>'; } 
+  modal.style.display = 'flex';
+}
+
+function verifyGPS() {
+  document.getElementById('gpsMsg').innerText = 'Locating…'; document.getElementById('gpsMsg').className = 'att-msg';
+  if (!navigator.geolocation) { showError('gpsMsg','GPS not supported on this device.'); return; }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      coords = pos.coords; var b=null, bv=document.getElementById('branch').value;
+      for (var i=0;i<branches.length;i++) { if (branches[i][0]===bv){ b=branches[i]; break; } }
+      if (!b) { showError('gpsMsg','Select branch first.'); return; }
+      var R=6371e3, dLat=(b[1]-coords.latitude)*Math.PI/180, dLon=(b[2]-coords.longitude)*Math.PI/180, a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(coords.latitude*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2), dist=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+      if (dist > 250) showError('gpsMsg', dist>1000 ? 'Too far ('+(dist/1000).toFixed(1)+'km)' : 'Too far ('+Math.round(dist)+'m) — move closer');
+      else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
+    },
+    function(err){ if(err.code===1) showGuideModal('gps'); else showGuideModal('gps_signal'); }, {enableHighAccuracy:true, timeout:15000, maximumAge:60000}
+  );
+}
+
+function startCamera() {
+  var btn = document.getElementById('openCameraBtn');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showGuideModal('camera'); return; }
+  clearMsg('cameraMsg');
+  var constraints = { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+      videoStream = stream; var video = document.getElementById('cameraVideo'); video.srcObject = stream;
+      video.onloadedmetadata = function() {
+        video.play().catch(function(){}); document.getElementById('videoContainerWrapper').classList.add('expanded');
+        document.getElementById('cameraBackdrop').classList.add('show'); video.classList.add('live'); btn.innerText = 'Take Selfie'; setTimeout(startFaceDetection, 600);
+      };
+    }).catch(function(err) { btn.innerText = 'Take Selfie'; showGuideModal('camera'); });
+}
+
+function capturePhoto() {
+  if (faceDetector && !faceOk) { document.getElementById('faceStatus').textContent = '⚠ No face detected — reposition'; return; }
+  var video = document.getElementById('cameraVideo'), wrapper = document.getElementById('mainContainer'), vw = video.videoWidth || 1280, vh = video.videoHeight || 720, cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
+  var containerAspect = cw / ch, videoAspect = vw / vh, sWidth, sHeight, startX, startY;
+  if (videoAspect > containerAspect) { sHeight = vh; sWidth = vh * containerAspect; startX = (vw - sWidth) / 2; startY = 0; } else { sWidth = vw; sHeight = vw / containerAspect; startX = 0; startY = (vh - sHeight) / 2; }
+  var maxOutput = 720, scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
+  var canvas = document.createElement('canvas'); canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
+  var ctx = canvas.getContext('2d'); ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+  photo = canvas.toDataURL('image/jpeg', 0.85); document.getElementById('successPhoto').src = photo; stopCamera(); submitAttendance();
+}
+
+function stopCamera() {
+  stopFaceDetection();
+  var wrapper = document.getElementById('videoContainerWrapper'), backdrop = document.getElementById('cameraBackdrop'), video = document.getElementById('cameraVideo');
+  wrapper.classList.remove('expanded'); backdrop.classList.remove('show'); video.classList.remove('live');
+  setTimeout(function() { if (videoStream) { videoStream.getTracks().forEach(function(t){ t.stop(); }); videoStream = null; } video.srcObject = null; }, 300);
+}
+
+function submitAttendance() {
+  var branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
+  if (!branch||!staffID||!currentAction||!photo) return;
+  Storage.set('last_staff_id_' + currentTerminal, staffID);
+  var todayKey = new Date().toDateString(), histRaw = Storage.get('local_history_' + currentTerminal), history = histRaw ? JSON.parse(histRaw) : {};
+  history[staffID + '_' + todayKey] = { action: currentAction, time: Date.now() }; Storage.set('local_history_' + currentTerminal, JSON.stringify(history));
+  var payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() };
+  var queue = JSON.parse(Storage.get('sync_queue') || '[]'); queue.push(payload); Storage.set('sync_queue', JSON.stringify(queue)); processSyncQueue();
+  finishSubmission(currentAction);
+}
+
+function finishSubmission(action) {
+  var firstName = staffName.split(' ')[0] || staffName;
+  var hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0), msg = '';
+  if (action === 'Clock In') { if (timeVal < 6.5) { msg = "Fantastic start — you're early today! Keep it up."; } else if (timeVal <= 7.66){ msg = "Great, you are on time for the morning shift."; } else if (timeVal < 11.0) { msg = "Note: Late for morning shift."; } else if (timeVal < 14.0) { msg = "Early for the second shift. Great job!"; } else if (timeVal <= 14.66){ msg = "On time for the second shift. Have a productive afternoon!"; } else { msg = "Note: Late for afternoon shift."; } } else { if (hrs < 16) { msg = "Have a wonderful afternoon!"; } else { msg = "Have a restful night!"; } if (hrs >= 18) { msg += "<br><br><span style='display:block;'>Remember to place your order.</span>"; } }
+  document.getElementById('successBadge').textContent = action.toUpperCase(); document.getElementById('successName').textContent = firstName; document.getElementById('successMsg').innerHTML = msg;
+  document.getElementById('mainContainer').style.overflow = 'visible'; document.getElementById('mainFormAtt').style.display = 'none'; document.getElementById('attSuccessScreen').style.display = 'flex';
+}
+</script>
 </body>
 </html>
