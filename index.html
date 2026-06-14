@@ -562,6 +562,21 @@ async function submitOrder(e) {
 }
 </script>
 
+<!-- MENU VIEW -->
+<div id="view-menu" class="view-section active">
+  <div class="hub-logo">Stentor Ent Ltd.</div>
+  <div class="menu-btn-container">
+    <button class="menu-btn playful" onclick="openOrder()">
+      <div class="icon">🛒</div>
+      <div class="text">Place Order</div>
+    </button>
+    <button class="menu-btn playful" onclick="openAttendance()">
+      <div class="icon">⏰</div>
+      <div class="text">Clock<br>In / Out</div>
+    </button>
+  </div>
+</div>
+
 <!-- ORDERS VIEW -->
 <div id="view-orders" class="view-section">
   <div class="back-pill" onclick="goHome()">← Menu</div>
