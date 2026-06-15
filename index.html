@@ -8,6 +8,7 @@
 <meta name="theme-color" id="theme-color-meta" content="#059669">
 <title>Stentor Operations</title>
 
+<!-- PDF Generation Library for Beautiful Custom Export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
@@ -49,6 +50,7 @@
   -webkit-tap-highlight-color: transparent; 
 }
 
+/* Global text selection prevention */
 body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
   color:var(--text-primary); 
@@ -64,6 +66,7 @@ input, textarea, select {
   -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; user-select: auto;
 }
 
+/* Background overlay completely hidden unless theme-hub */
 body::before {
   content: ""; position: fixed; inset: 0;
   background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
@@ -76,10 +79,12 @@ body.theme-hub::before { opacity: 1; visibility: visible; }
 body.theme-chandarana { background-color: var(--theme-chan); --dynamic-primary: var(--theme-chan); }
 body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
 
+/* INSTANT SMOOTH TRANSITIONS */
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
 .view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none !important; } }
 
+/* Floating Back Pill */
 .back-pill {
     position: fixed; bottom: 24px; left: 24px; z-index: 9999;
     background: var(--dynamic-primary); color: #fff;
@@ -92,6 +97,9 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
 .back-pill.show { opacity: 1; pointer-events: auto; }
 .back-pill:active { transform: scale(0.92); }
 
+/* ==========================================
+   MAIN MENU UI
+   ========================================== */
 .menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; max-width: 340px; z-index: 2; }
 .hub-logo { font-size: 36px; font-weight: 900; color: #fff; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 6px; }
 .menu-subtitle { text-align: center; color: rgba(255,255,255,0.9); font-weight: 700; font-size: 16px; margin-bottom: 10px; }
@@ -115,6 +123,9 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
 #view-menu.active .menu-card:nth-child(1) { animation: menuSlideLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 #view-menu.active .menu-card:nth-child(2) { animation: menuSlideRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
+/* ==========================================
+   ORDER SCREEN UI
+   ========================================== */
 .order-container { width: 100%; background:var(--bg-primary); padding:20px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); overflow:hidden; transition: background 0.4s ease;}
 .scrollable-container { max-height: 85vh; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px; }
 
@@ -155,6 +166,7 @@ body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:fo
 .order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
 .order-group-content { padding: 14px; border-top: 1px solid var(--border-color); }
 
+/* Juice Grid */
 .table-container { width: 100%; overflow-x: auto; overflow-y: hidden; background: var(--bg-primary); transition: border-color 0.4s ease;}
 table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
 th, td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
@@ -162,6 +174,7 @@ th { background: var(--bg-secondary); font-weight: 900; color: var(--text-second
 th:first-child { width: 30%; position: sticky; left: 0; z-index: 12; border-right: 2px solid var(--border-color); }
 td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-left: 8px; white-space: nowrap; position: sticky; left: 0; background: var(--bg-primary); z-index: 11; border-right: 2px solid var(--border-color); line-height: 1.1;}
 
+/* Squircles */
 .square-input {
   width: 54px; height: 34px; border-radius: 10px; margin: 0 auto;
   background: var(--input-bg); border: 2px solid var(--input-border);
@@ -183,6 +196,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .msg { font-size:12px; font-weight:800; margin-top:6px; min-height:20px; color:var(--text-tertiary); display:flex; align-items:center;}
 .msg.success { color:var(--success-color); } .msg.error { color:var(--error-color); }
 
+/* Unified Switcher Core CSS Fix */
 .top-bar { display:flex; justify-content:center; margin-bottom:15px; transition: opacity 0.3s ease;}
 .terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; overflow:hidden;}
 .pill-slider { position:absolute; top:4px; bottom:4px; border-radius:50px; background:var(--dynamic-primary); transition:transform 0.4s cubic-bezier(0.25,1,0.5,1); z-index:1; width: 110px;}
@@ -195,6 +209,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .success-screen.active { display: flex; animation: sectionFadeIn 0.4s ease forwards; }
 .circle-check { width: 80px; height: 80px; background: var(--success-color); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 16px; }
 
+/* Modal & Confirm Styles */
 #orderConfirmModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:19999; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #orderConfirmModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:360px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; }
 .receipt-header { display:none; }
@@ -203,93 +218,49 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .btn-secondary { width:100%; height:46px; border-radius:12px; border:none; font-size:15px; font-weight:800; background:var(--button-secondary-bg); color:var(--dynamic-primary); cursor:pointer; transition: transform 0.1s; }
 .btn-secondary:active { transform: scale(0.97); }
 
+/* Branch Select Modal */
 #branchSelectModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:20000; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #branchSelectModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:320px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; }
 
+
 /* ==========================================
-   FIXED OVERLAY & CAMERA SYSTEM
+   PERFECT CAMERA AND ZOOM BLUR (STACKING CONTEXT FIX)
    ========================================== */
 #attendanceOverlay {
   position: fixed; inset: 0; width: 100vw; height: 100vh;
   background: rgba(0,0,0,0.65);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  z-index: 2147483640; /* Max safe z-index, above everything */
-  opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+  z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+  transform: translate3d(0, 0, 0); 
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: opacity;
 }
 #attendanceOverlay.show {
   opacity: 1; pointer-events: auto;
 }
-
-/* Elevated container removed - no longer needed */
-#mainContainer {
+.elevated-container {
+  z-index: 1000 !important; 
   position: relative;
-  /* z-index removed to avoid stacking context wars */
 }
 
-/* Camera wrapper now uses fixed positioning relative to viewport */
-#videoContainerWrapper {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.95);
-  width: 90vw; max-width: 400px;
-  aspect-ratio: 1 / 1;
-  border-radius: 24px;
-  overflow: hidden;
-  z-index: 2147483644; /* Above overlay */
-  background-color: #000;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1);
-}
-#videoContainerWrapper.expanded {
-  pointer-events: auto; opacity: 1; transform: translate(-50%, -50%) scale(1);
-}
-#cameraVideo {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: cover; display: block;
-  transform: scaleX(-1);
-  opacity: 0; transition: opacity 0.4s ease;
-}
-#cameraVideo.live { opacity: 1; }
-
-.camera-ui {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  padding: 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 4;
-}
-#captureBtn {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: rgba(255,255,255,0.3); border: 4px solid rgba(255,255,255,0.95);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: transform 0.1s, opacity 0.3s ease;
-}
-#captureBtn::after { content: ''; width: 48px; height: 48px; background: #fff; border-radius: 50%; transition: transform 0.1s }
-#captureBtn:active { transform: scale(0.88) }
-#closeCameraBtn {
-  position: absolute; top: 16px; right: 16px;
-  width: 36px; height: 36px; border-radius: 50%;
-  background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3);
-  color: #fff; font-size: 16px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 6;
-}
-
-/* Fixed zoomed photo - now properly above overlay */
+/* Styles for the Zoomed Photo Clone Appended directly to Body */
 .success-photo-clone {
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(1);
-  z-index: 2147483646; /* Above camera wrapper */
+  z-index: 99999;
   margin: 0;
   border-radius: 50%;
   box-shadow: 0 0 0 4px var(--success-color);
   object-fit: cover;
-  max-width: 80vw; max-height: 80vh;
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s ease, opacity 0.3s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 .success-photo-clone.zoomed {
-  transform: translate(-50%, -50%) scale(2.2);
+  transform: translate(-50%, -50%) scale(2.6);
   border-radius: 8%;
 }
 
@@ -305,7 +276,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 @keyframes swing { 0% { transform: rotateX(0deg) rotateZ(0deg); } 20% { transform: rotateX(25deg) rotateZ(-3deg); } 40% { transform: rotateX(-15deg) rotateZ(2deg); } 60% { transform: rotateX(8deg) rotateZ(-1deg); } 80% { transform: rotateX(-3deg) rotateZ(0deg); } 100% { transform: rotateX(0deg) rotateZ(0deg); } }
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
-.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; transition: background 0.4s ease;}
+.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; transition: background 0.4s ease; z-index: 1;}
 
 #mainFormAtt { width: 100%; }
 .network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8;transition:background 0.4s ease; box-shadow: 0 0 6px var(--success-color); }
@@ -331,6 +302,18 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:6px;flex-shrink:0;position:relative; margin-top: 1px; }
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
+/* Camera UI securely bounded by mainContainer bounds */
+#videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
+#videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
+#cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
+#cameraVideo.live { opacity: 1; }
+
+.camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:4; }
+#captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s, opacity 0.3s ease; opacity: 1; }
+#captureBtn::after{content:'';width:48px;height:48px;background:#fff;border-radius:50%;transition:transform 0.1s}
+#captureBtn:active{transform:scale(0.88)}
+#closeCameraBtn{ position:absolute;top:16px;right:16px; width:36px;height:36px;border-radius:50%; background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3); color:#fff;font-size:16px; cursor:pointer; display:flex;align-items:center;justify-content:center; z-index:6; }
+
 /* Att Success Screen */
 #attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:center; padding: 10px 4px; text-align:center; width:100%; position: relative; }
 .success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; position: relative; z-index: 10; transition: opacity 0.3s;}
@@ -349,6 +332,7 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </head>
 <body class="theme-hub">
 
+<!-- GLOBAL STORAGE OBJECT -->
 <script>
 var Storage = { 
   set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}, 
@@ -357,14 +341,20 @@ var Storage = {
 };
 </script>
 
+<!-- Floating Back Pill (Global) -->
 <div class="back-pill tap-effect no-print" id="globalBackBtn" onclick="goHome()">
   <span style="font-size: 18px; margin-right: 4px;">←</span> Menu
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOHinnhI5ORDdxxm4pJuMvETZWfZm2PqN6w5bp-Kxn6YMwsr_mHzbu3js8v6kTVAHkCA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 
+// ==========================================
+// NAVIGATION & MODULE SWITCHING
+// ==========================================
 let activeStore = 'chandarana'; 
+
+// Tracks order inputs so users don't lose progress when switching tabs inside orders
 let orderState = {
   chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] },
   carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] }
@@ -492,6 +482,9 @@ function switchTerminal(store, module, force) {
   }
 }
 
+// ==========================================
+// ORDER SYSTEM LOGIC (FAST CACHE)
+// ==========================================
 let orderStaffCache = [];
 
 function loadOrderStaffBackground() {
@@ -565,6 +558,7 @@ function instantOrderStaffCheck(val) {
   }
 }
 
+// Shop Edit (Long Press logic)
 let branchEditTimer;
 function startBranchEdit(e) {
    branchEditTimer = setTimeout(() => {
@@ -589,10 +583,7 @@ function selectCustomBranch(b) {
    document.getElementById('branchSelectModal').style.display = 'none';
 }
 
-const JUICES = { 
-  chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], 
-  carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] 
-};
+const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
 const VOLUMES = ["5L", "3L"];
 
 function handleJuiceExclusivity(el) {
@@ -705,7 +696,7 @@ function processOrder(e) {
 
   const payload = {
     "SHOP": document.getElementById('o-branch').value,
-    "FULL NAME": currentOrderStaffFullname,
+    [activeStore === 'chandarana' ? "FULL NAME" : "FULL NAME (2 Names)"]: currentOrderStaffFullname,
     "ID NO.": document.getElementById('o-id').value,
     "PHONE NO.": document.getElementById('o-phone').value,
     "FRESH INPUTS": Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el => el.value).join(', '),
@@ -714,20 +705,25 @@ function processOrder(e) {
     "NOTES": document.getElementById('o-notes').value
   };
 
-  const juicePrefix = "JUICE (5 LITRES/3 LITRES)";
+  const juicePrefix = activeStore === 'chandarana' ? "JUICE (5 LITRES/3 LITRES)" : "JUICE (5 ITRES / 3 LITRES)";
   JUICES[activeStore].forEach(flavor => {
+    let flavorKey = flavor;
+    if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; }
+    
     let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0";
     let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0";
     
-    if(val5 !== "0") payload[`${juicePrefix} [${flavor}]`] = val5;
-    if(val3 !== "0") payload[`${juicePrefix} [${flavor} 3L]`] = val3;
+    let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0");
+    if(qty !== "0") {
+        payload[`${juicePrefix} [${flavorKey}]`] = qty;
+    }
   });
 
   pendingOrderPayload = payload;
 
   let html = `<div class="receipt-header">STENTOR ORDER</div>`;
   html += `<p style="margin-bottom:6px;"><strong>Shop:</strong> ${payload["SHOP"]}</p>`;
-  html += `<p style="margin-bottom:6px;"><strong>Staff:</strong> ${payload["FULL NAME"]} (${payload["ID NO."]})</p>`;
+  html += `<p style="margin-bottom:6px;"><strong>Staff:</strong> ${payload["FULL NAME"] || payload["FULL NAME (2 Names)"]} (${payload["ID NO."]})</p>`;
   html += `<p style="margin-bottom:6px;"><strong>Phone:</strong> ${payload["PHONE NO."]}</p>`;
   
   let hasJuices = false;
@@ -741,8 +737,8 @@ function processOrder(e) {
      if (input5 && input5.getAttribute('data-val') !== "0") pieces5L = parseInt(input5.getAttribute('data-val'));
      if (input3 && input3.getAttribute('data-val') !== "0") pieces3L = parseInt(input3.getAttribute('data-val'));
      
-     if(pieces5L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} 5L - ${pieces5L}</li>`; }
-     if(pieces3L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} 3L - ${pieces3L}</li>`; }
+     if(pieces5L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces5L}</li>`; }
+     if(pieces3L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces3L}</li>`; }
   });
   juiceHtml += `</ul></div>`;
   if(hasJuices) html += juiceHtml;
@@ -800,7 +796,7 @@ async function confirmAndSendOrder() {
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
 
   } catch (error) { 
-      alert("Order Error: " + error.message); 
+      alert(error.message); 
   }
   
   btn.disabled = false; btn.innerText = oldText;
@@ -834,6 +830,7 @@ function downloadReceipt(btn) {
   btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px; border-color:var(--dynamic-primary); border-top-color:transparent;"></span> Generating...';
   btn.disabled = true;
 
+  // Build a constrained, beautiful HTML layout designed explicitly to fit on a single A4 page
   const tempDiv = document.createElement('div');
   tempDiv.style.width = '600px'; 
   tempDiv.style.padding = '20px';
@@ -848,7 +845,7 @@ function downloadReceipt(btn) {
   content.style.fontSize = '15px'; 
   content.style.borderRadius = '12px';
   content.style.padding = '24px';
-  content.style.pageBreakInside = 'avoid';
+  content.style.pageBreakInside = 'avoid'; // Crucial rule for 1-page fit
   
   tempDiv.appendChild(content);
 
@@ -933,6 +930,7 @@ function downloadReceipt(btn) {
                  onmousedown="startBranchEdit(event)" onmouseup="cancelBranchEdit(event)" onmouseleave="cancelBranchEdit(event)"
                  oncontextmenu="return false;">
               <label class="order-label">Branch / Shop</label>
+              <!-- Input receives no pointer events, the wrapper handles the touch safely -->
               <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly style="pointer-events: none;">
             </div>
             <div>
@@ -988,8 +986,7 @@ function downloadReceipt(btn) {
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
   
-  <!-- Overlay moved to body level for proper stacking -->
-  <div id="attendanceOverlay" onclick="closeOverlays()"></div>
+
 
   <div class="page-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
@@ -1052,15 +1049,14 @@ function downloadReceipt(btn) {
         <button class="success-back tap-effect" onclick="resetToStart()">← Submit Another</button>
       </div>
 
-    </div>
-  </div>
-
-  <!-- Camera wrapper moved outside page-wrapper to avoid stacking context issues -->
-  <div id="videoContainerWrapper">
-    <video id="cameraVideo" autoplay playsinline muted></video>
-    <button id="closeCameraBtn" class="tap-effect" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
-    <div class="camera-ui">
-      <div id="captureBtn" onclick="capturePhoto()"></div>
+      <!-- Camera overlay bounded tightly by the white container -->
+      <div id="videoContainerWrapper">
+        <video id="cameraVideo" autoplay playsinline muted></video>
+        <button id="closeCameraBtn" class="tap-effect" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
+        <div class="camera-ui">
+          <div id="captureBtn" onclick="capturePhoto()"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1076,9 +1072,13 @@ function downloadReceipt(btn) {
 </div>
 
 <script>
+// ==========================================
+// UNIFIED ATTENDANCE SYSTEM JS
+// ==========================================
 var currentTerminal = Storage.get('selected_terminal') || 'chandarana';
 var staff = [], branches = [], coords = null, staffName = "", photo = null;
 var activeFetchId = 0, currentAction = "", videoStream = null;
+
 var staffRestrictionError = null; 
 var warningTimer = null;
 
@@ -1204,6 +1204,7 @@ function showSuccess(id,txt){ var e=document.getElementById(id); e.innerHTML='<s
 function showError(id,txt)  { var e=document.getElementById(id); e.innerText=txt; e.className='att-msg error'; }
 function clearMsg(id)       { var e=document.getElementById(id); e.innerText=''; e.className='att-msg'; }
 
+// Full-screen pop-out zoom to fix CSS stacking constraints
 function toggleZoom() {
   var overlay = document.getElementById('attendanceOverlay');
   var clone = document.getElementById('zoomedClone');
@@ -1222,7 +1223,7 @@ function toggleZoom() {
       clone.onclick = toggleZoom;
       document.body.appendChild(clone);
       
-      void clone.offsetWidth;
+      void clone.offsetWidth; // Trigger reflow for transition
       clone.classList.add('zoomed');
       overlay.classList.add('show');
   }
@@ -1393,7 +1394,9 @@ function startCamera() {
       video.onloadedmetadata = function() {
         video.play().catch(function(){}); 
         
+        // The stacking fix
         document.getElementById('attendanceOverlay').classList.add('show');
+        document.getElementById('mainContainer').classList.add('elevated-container');
         document.getElementById('videoContainerWrapper').classList.add('expanded'); 
         
         video.classList.add('live'); 
@@ -1409,10 +1412,13 @@ function startCamera() {
 
 function stopCamera() {
   var wrapper = document.getElementById('videoContainerWrapper');
+  var container = document.getElementById('mainContainer');
   var overlay = document.getElementById('attendanceOverlay');
   
   wrapper.classList.remove('expanded'); 
+  container.classList.remove('elevated-container');
   
+  // Only turn off overlay if zoomed clone is not active
   if (!document.getElementById('zoomedClone')) {
       overlay.classList.remove('show');
   }
@@ -1431,10 +1437,10 @@ function stopCamera() {
 
 function capturePhoto() {
   var video = document.getElementById('cameraVideo');
+  var wrapper = document.getElementById('mainContainer'); 
   var vw = video.videoWidth || 1280, vh = video.videoHeight || 720;
   
-  var container = document.getElementById('mainContainer');
-  var cw = container.offsetWidth, ch = container.offsetHeight;
+  var cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
   var containerAspect = cw / ch;
   var videoAspect = vw / vh;
   
@@ -1531,5 +1537,6 @@ function finishSubmission(action) {
   document.getElementById('attSuccessScreen').style.display = 'flex';
 }
 </script>
+<div id="attendanceOverlay" onclick="closeOverlays()"></div>
 </body>
 </html>
