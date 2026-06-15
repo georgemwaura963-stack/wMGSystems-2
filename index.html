@@ -116,6 +116,7 @@ body.theme-carrefour .ui-input:focus, body.theme-carrefour .ui-select:focus {box
 
 .btn-primary { width:100%; height:50px; border-radius:12px; border:none; font-size:15px; font-weight:800; background:var(--button-secondary-bg); color:var(--dynamic-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition: 0.2s; }
 .btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.7; pointer-events: none; }
 .btn-primary.solid { background:var(--dynamic-primary); color:#fff; margin-top:8px;}
 .btn-spinner { border: 2px solid rgba(0,0,0,0.1); border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; width:16px; height:16px; margin-right:8px;}
 
@@ -160,14 +161,21 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .msg .dot{ display:inline-flex; width:16px; height:16px; background:var(--success-color); border-radius:50%; margin-right:6px; position:relative; margin-top:1px; }
 .msg .dot::after{ content:''; position:absolute; top:45%; left:50%; width:3.5px; height:7px; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* CAMERA OVERLAYS */
+/* CAMERA OVERLAYS (BLURRED BACKGROUND FIX) */
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: 0.35s; transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
 #cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transform: scaleX(-1); opacity: 0; transition: 0.4s; }
 #cameraVideo.live { opacity: 1; }
-#cameraBackdrop{ display:none;position:fixed;inset:0;z-index:59; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+/* Uniform frosted glass for camera and photo preview backgrounds */
+#cameraBackdrop{ display:none;position:fixed;inset:0;z-index:59; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 #cameraBackdrop.show{ display:block; }
-.camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:3; }
+#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 19999; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: 0.4s; }
+#photoBackdrop.show { opacity: 1; pointer-events: auto; }
+
+/* Fully transparent camera UI background (no weird shadow) */
+.camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:transparent; display:flex;align-items:center;justify-content:center; z-index:3; }
+
 #captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:0.1s;}
 #captureBtn::after{content:'';width:48px;height:48px;background:#fff;border-radius:50%;transition:0.1s}
 #captureBtn:active{transform:scale(0.88)}
@@ -177,8 +185,6 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .success-screen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; animation: sectionFadeIn 0.4s ease forwards; }
 .success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s; transition: 0.4s; cursor: zoom-in; position: relative; z-index: 20000;}
 .success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
-#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 19999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: 0.4s; }
-#photoBackdrop.show { opacity: 1; pointer-events: auto; }
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; padding:6px 20px;border-radius:999px; margin-bottom:24px; animation:bounceIn 0.5s;}
 .success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s;}
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
@@ -370,8 +376,7 @@ let activeStore = 'chandarana', currentTerminal = Storage.get('selected_terminal
 document.addEventListener('DOMContentLoaded', function() {
   loadOrderStaffBackground();
   cleanOldHistory();
-  processSyncQueue();
-  window.addEventListener('online', function(){ checkNetworkStatus(); processSyncQueue(); });
+  window.addEventListener('online', checkNetworkStatus);
   window.addEventListener('offline', checkNetworkStatus);
 });
 
@@ -536,16 +541,6 @@ function cleanOldHistory() {
   }
 }
 
-function processSyncQueue() {
-  if (!navigator.onLine) return; var qRaw = Storage.get('sync_queue'); if (!qRaw) return;
-  try {
-    var queue = JSON.parse(qRaw); if (queue.length === 0) return;
-    fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'recordAttendance', data:queue[0], terminal:currentTerminal}) }).then(r=>r.json()).then(j=>{
-      if(j.ok){ var currentQ = JSON.parse(Storage.get('sync_queue') || '[]'); currentQ.shift(); Storage.set('sync_queue', JSON.stringify(currentQ)); processSyncQueue(); }
-    }).catch(e=>{});
-  } catch(e) {}
-}
-
 function checkNetworkStatus() { var ind = document.getElementById('networkIndicator'); if (ind) navigator.onLine ? ind.classList.remove('offline') : ind.classList.add('offline'); }
 
 function switchTerminalAtt(term) {
@@ -619,15 +614,25 @@ function handleStaffInput() {
   var match = staff.find(s => s.id === val);
   if (match) {
     staffName = match.name;
-    cleanOldHistory(); // Secure clean check
+    cleanOldHistory();
     var historyRaw = Storage.get('local_history_' + currentTerminal), history = historyRaw ? JSON.parse(historyRaw) : {}, historyEntry = history[match.id];
     var lastAction = historyEntry ? historyEntry.action : null, lastTime = historyEntry ? historyEntry.time : null;
+    var currentHour = new Date().getHours();
 
-    if (lastAction === 'Clock Out') staffRestrictionError = "You have completed today's attendance.";
-    else if (lastAction === 'Clock In') {
-      if (lastTime && ((Date.now() - lastTime) / (1000 * 60 * 60)) < 5) staffRestrictionError = 'Cannot clock out before 5 hours.';
+    if (lastAction === 'Clock Out') {
+      staffRestrictionError = "You have completed today's attendance.";
+    } else if (lastAction === 'Clock In') {
+      var minsSince = lastTime ? (Date.now() - lastTime) / (1000 * 60) : 999;
+      
+      if (minsSince < 10) {
+         staffRestrictionError = 'You just clocked in. Please wait a few minutes before submitting again.';
+      } else if (currentHour < 13) {
+         staffRestrictionError = 'Clock outs are permitted from 1:00 PM onwards.';
+      }
       currentAction = 'Clock Out';
-    } else currentAction = 'Clock In';
+    } else {
+      currentAction = 'Clock In';
+    }
     
     document.getElementById('staffMsg').style.opacity = '1'; showSuccess('staffMsg', 'Welcome ' + staffName);
     if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4);
@@ -707,21 +712,46 @@ function capturePhoto() {
 function submitAttendance() {
   var branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
   if (!branch||!staffID||!currentAction||!photo) return;
-  Storage.set('last_staff_id_' + currentTerminal, staffID);
-  var histRaw = Storage.get('local_history_' + currentTerminal), history = histRaw ? JSON.parse(histRaw) : {};
-  history[staffID] = { action: currentAction, time: Date.now(), dateStr: new Date().toDateString() }; Storage.set('local_history_' + currentTerminal, JSON.stringify(history));
-  var queue = JSON.parse(Storage.get('sync_queue') || '[]'); queue.push({ name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() }); Storage.set('sync_queue', JSON.stringify(queue));
-  processSyncQueue();
   
+  var btn = document.getElementById('openCameraBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span>Submitting...'; }
+  showSuccess('cameraMsg', 'Saving to cloud...');
+
+  var payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() };
+
+  fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'recordAttendance', data:payload, terminal:currentTerminal}) })
+    .then(r=>r.json())
+    .then(j=>{
+       if (btn) { btn.disabled = false; btn.innerText = 'Take Selfie'; }
+       if (j.ok) {
+         // Save Lock State Locally only AFTER cloud succeeds
+         Storage.set('last_staff_id_' + currentTerminal, staffID);
+         var histRaw = Storage.get('local_history_' + currentTerminal), history = histRaw ? JSON.parse(histRaw) : {};
+         history[staffID] = { action: currentAction, time: Date.now(), dateStr: new Date().toDateString() }; 
+         Storage.set('local_history_' + currentTerminal, JSON.stringify(history));
+         
+         finishSubmission(currentAction);
+       } else {
+         showError('cameraMsg', j.error || 'Server error. Try again.');
+       }
+    })
+    .catch(e=>{
+       if (btn) { btn.disabled = false; btn.innerText = 'Take Selfie'; }
+       showError('cameraMsg', 'Network error. Please ensure you have internet and try again.');
+    });
+}
+
+function finishSubmission(action) {
+  var firstName = staffName.split(' ')[0] || staffName;
   var hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0), msg='';
-  if (currentAction === 'Clock In') {
+  if (action === 'Clock In') {
     if (timeVal < 6.5) msg="Fantastic start — you're early today! Keep it up."; else if (timeVal <= 7.66) msg="Great, you are on time for the morning shift."; else if (timeVal < 11.0) msg="Note: Late for morning shift."; else if (timeVal < 14.0) msg="Early for the second shift. Great job!"; else if (timeVal <= 14.66) msg="On time for the second shift. Have a productive afternoon!"; else msg="Note: Late for afternoon shift.";
   } else {
     msg = hrs < 16 ? "Have a wonderful afternoon!" : "Have a restful night!";
     if (hrs >= 18) msg += "<br><br><span style='display:block;'>And remember to place your order.</span>";
   }
-  document.getElementById('successBadge').textContent = currentAction.toUpperCase(); document.getElementById('successBadge').style.background = currentAction === 'Clock In' ? 'var(--success-color)' : 'var(--error-color)';
-  document.getElementById('successName').textContent = staffName.split(' ')[0] || staffName; document.getElementById('successMsg').innerHTML = msg;
+  document.getElementById('successBadge').textContent = action.toUpperCase(); document.getElementById('successBadge').style.background = action === 'Clock In' ? 'var(--success-color)' : 'var(--error-color)';
+  document.getElementById('successName').textContent = firstName; document.getElementById('successMsg').innerHTML = msg;
   document.getElementById('attMainContainer').style.overflow = 'visible'; document.getElementById('attMainForm').style.display = 'none'; document.getElementById('attSuccessScreen').style.display = 'flex';
 }
 
