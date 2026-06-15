@@ -8,7 +8,6 @@
 <meta name="theme-color" id="theme-color-meta" content="#059669">
 <title>Stentor Operations</title>
 
-<!-- PDF Generation Library for Orders -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
@@ -155,25 +154,27 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .msg .dot{ display:inline-flex; width:16px; height:16px; background:var(--success-color); border-radius:50%; margin-right:6px; position:relative; margin-top:1px; }
 .msg .dot::after{ content:''; position:absolute; top:45%; left:50%; width:3.5px; height:7px; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* BUG-FREE FULLSCREEN GLASS BACKDROP (Used for Camera & Zoom) */
+/* BUG-FREE FULLSCREEN GLASS BACKDROP */
 #fullscreen-glass {
-  display: none; position: fixed; inset: 0; z-index: 10000;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  position: fixed; inset: 0; z-index: 10000;
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  opacity: 0; transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease, visibility 0.25s;
 }
-#fullscreen-glass.show { display: block; opacity: 1; }
+#fullscreen-glass.show { visibility: visible; opacity: 1; pointer-events: auto; }
 
-/* REBUILT CAMERA UI (Outside of App Container to fix Z-Index clipping) */
+/* REBUILT CAMERA UI (Smooth slide/fade animation) */
 #camera-modal {
-  display: none; position: fixed; top: 50%; left: 50%;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0.9);
   width: 90vw; max-width: 400px; height: 60vh; max-height: 600px;
   border-radius: 24px; overflow: hidden; z-index: 10001; background: #000;
   box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-  opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.25s;
 }
-#camera-modal.expanded { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+#camera-modal.expanded { visibility: visible; opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 #cameraVideo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
 .camera-controls { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 10002; }
@@ -216,7 +217,7 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 
 <script>
 // >>> ADD YOUR APP SCRIPT URL HERE <<<
-const SCRIPT_URL = "https://script.google.com/macros/s/1HfjRD1jl4zNUex_aAVZaXLrTABxIAG8ylqBk7OUsq48/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 
 var Storage = { 
   set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}, 
@@ -303,7 +304,6 @@ var Storage = {
      VIEW: ATTENDANCE
 ========================== -->
 <div id="view-attendance" class="view-section">
-  
   <div class="hanging-sign-wrapper" id="signWrapper">
     <div class="chain left-chain"></div><div class="chain right-chain"></div>
     <div class="hanging-sign nudge" id="storeSign">Chandarana</div>
@@ -355,10 +355,10 @@ var Storage = {
 </div>
 
 <!-- =========================
-     MODALS (Placed outside containers for proper Z-Index)
+     MODALS
 ========================== -->
 
-<!-- Camera Modal -->
+<!-- Camera Modal (Smooth Animation) -->
 <div id="camera-modal">
   <video id="cameraVideo" autoplay playsinline muted></video>
   <button id="closeCameraBtn" onclick="stopCamera()">&#x2715;</button>
@@ -444,7 +444,7 @@ function switchTerminalOrder(store) {
 
 function loadOrderStaffBackground() {
   const cached = localStorage.getItem('order_staff'); if (cached) orderStaffCache = JSON.parse(cached);
-  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getOrderStaff' }) }).then(r => r.json()).then(res => { if(res.ok) { orderStaffCache = res.data; localStorage.setItem('order_staff', JSON.stringify(res.data)); } }).catch(e => {});
+  fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff' }) }).then(r => r.json()).then(res => { if(res.ok) { orderStaffCache = res.data; localStorage.setItem('order_staff', JSON.stringify(res.data)); } }).catch(e => {});
 }
 
 function instantOrderStaffCheck(val) {
@@ -545,7 +545,7 @@ function downloadReceipt(btn) {
 async function confirmAndSendOrder() {
   const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span>Submitting...';
   try {
-    const res = await (await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveOrder', store: activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour', data: pendingOrderPayload }) })).json();
+    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveOrder', store: activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour', data: pendingOrderPayload }) })).json();
     if (!res.ok) throw new Error(res.error);
     document.getElementById('orderConfirmModal').style.display = 'none'; document.getElementById('orderForm').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'none'; document.getElementById('orderSuccessScreen').style.display = 'flex';
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
@@ -553,7 +553,6 @@ async function confirmAndSendOrder() {
   btn.disabled = false; btn.innerText = 'Confirm & Send';
 }
 function resetOrderForm() { document.getElementById('orderSuccessScreen').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'flex'; document.getElementById('orderForm').style.display = 'block'; document.getElementById('o-notes').value = ''; renderDynamicOrderContent(); instantOrderStaffCheck(document.getElementById('o-id').value); }
-
 
 // --- ATTENDANCE SYSTEM LOGIC ---
 var staff = [], branches = [], coords = null, staffName = "", photo = null, activeFetchId = 0, currentAction = "", videoStream = null, staffRestrictionError = null, warningTimer = null;
@@ -580,7 +579,7 @@ function switchTerminalAtt(term) {
   var myId = ++activeFetchId, cacheKey = currentTerminal + '_portal_data', cached = false;
   try { var raw = Storage.get(cacheKey); if (raw) { var p = JSON.parse(raw); if (p && Array.isArray(p.branches)) { staff = p.staff || []; branches = p.branches || []; populateBranches(branches); restoreUserState(); cached = true; } } } catch(e) {}
   
-  fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'getPortalData', terminal:currentTerminal}) }).then(r=>r.json()).then(j => {
+  fetch(SCRIPT_URL, { method:'POST', headers: { 'Content-Type': 'text/plain' }, body:JSON.stringify({action:'getPortalData', terminal:currentTerminal}) }).then(r=>r.json()).then(j => {
     if (myId !== activeFetchId) return; var data = j.data; var changed = JSON.stringify(branches) !== JSON.stringify(data.branches) || JSON.stringify(staff) !== JSON.stringify(data.staff); staff = data.staff || []; branches = data.branches || [];
     try { Storage.set(cacheKey, JSON.stringify({staff:staff, branches:branches})); } catch(e) {}
     if (!cached || changed) { populateBranches(branches); restoreUserState(); } else { restoreUserState(); }
@@ -684,7 +683,7 @@ function submitAttendance() {
   showSuccess('cameraMsg', 'Saving to cloud...');
   var payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0 };
 
-  fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'recordAttendance', data:payload, terminal:currentTerminal}) })
+  fetch(SCRIPT_URL, { method:'POST', headers: { 'Content-Type': 'text/plain' }, body:JSON.stringify({action:'recordAttendance', data:payload, terminal:currentTerminal}) })
     .then(r=>r.json()).then(j=>{
        if (btn) { btn.disabled = false; btn.innerText = 'Take Selfie'; }
        if (j.ok) {
