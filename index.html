@@ -47,33 +47,41 @@ body {
   min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding: env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px);
   overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: var(--dynamic-primary);
+  background-color: var(--dynamic-primary); position: relative;
 }
 
-body.theme-hub { background: linear-gradient(135deg, #059669 0%, #2563eb 100%); }
+/* Background overlay to prevent gradient bleeding into solid views */
+body::before {
+  content: ""; position: fixed; inset: 0;
+  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+  opacity: 0; z-index: -1; transition: opacity 0.6s ease; pointer-events: none;
+}
+body.theme-hub { background-color: var(--bg-primary); }
+body.theme-hub::before { opacity: 1; }
+
 body.theme-chandarana { --dynamic-primary: var(--theme-chan); }
 body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
 
-.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative;}
-.view-section.active { display: flex; animation: fadeIn 0.4s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; transition: opacity 0.25s ease; opacity: 0; }
+.view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s ease forwards; }
+@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Floating Back Pill (Outside view-sections to prevent animation jumps) */
+/* Floating Back Pill (Outside view-sections) */
 .back-pill {
     position: fixed; bottom: 24px; left: 24px; z-index: 9999;
-    background: var(--text-primary); color: var(--bg-primary);
+    background: var(--dynamic-primary); color: #fff;
     font-weight: 800; font-size: 14px; padding: 12px 24px;
     border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     cursor: pointer; display: flex; align-items: center; gap: 8px;
-    transition: transform 0.2s, background 0.4s ease;
-    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.2s, background 0.4s ease, opacity 0.3s ease;
+    -webkit-tap-highlight-color: transparent; opacity: 0;
 }
 .back-pill:active { transform: scale(0.92); }
 
 /* ==========================================
    MAIN MENU UI
    ========================================== */
-.menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; max-width: 340px; }
+.menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; max-width: 340px; z-index: 2; }
 .hub-logo { font-size: 32px; font-weight: 900; color: #fff; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 8px; }
 .menu-subtitle { text-align: center; color: rgba(255,255,255,0.9); font-weight: 600; font-size: 15px; }
 
@@ -83,13 +91,18 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
   border-radius: 24px; padding: 20px; gap: 20px; width: 100%;
   box-shadow: 0 15px 35px var(--shadow-color); border: 1px solid var(--border-color);
   cursor: pointer; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s; 
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; opacity: 0;
 }
 .menu-card:active { transform: scale(0.96); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
 .mc-icon { font-size: 32px; background: var(--button-secondary-bg); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; flex-shrink: 0;}
 .mc-content { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
 .mc-content h3 { margin: 0 0 4px; font-size: 18px; font-weight: 800; color: var(--text-primary); }
 .mc-content p { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+
+@keyframes menuSlideLeft { 0% { transform: translateX(-50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes menuSlideRight { 0% { transform: translateX(50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+#view-menu.active .menu-card:nth-child(1) { animation: menuSlideLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+#view-menu.active .menu-card:nth-child(2) { animation: menuSlideRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 /* ==========================================
    ORDER SCREEN UI
@@ -108,8 +121,10 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
 .order-grid > div { flex: 1; min-width: 0; }
 
 .order-label { font-weight:800; font-size:11px; display:block; margin-bottom:6px; color:var(--text-primary); text-transform:uppercase; transition: color 0.4s ease;}
-.order-input, .order-textarea { width:100%; padding:14px 12px; border-radius:12px; border:2px solid var(--input-border); font-size:15px; background:var(--input-bg); color:var(--dynamic-primary); outline:none; font-family: inherit; font-weight: 800; transition: border-color 0.2s, background 0.2s; }
-.order-input:read-only { background: var(--bg-secondary); color: var(--text-secondary); border-color: transparent; }
+.order-input, .order-textarea { width:100%; padding:14px 12px; border-radius:12px; border:2px solid var(--input-border); font-size:15px; background:var(--input-bg); color:var(--dynamic-primary); outline:none; font-family: inherit; font-weight: 800; transition: border-color 0.2s, background 0.2s, color 0.4s; }
+
+/* Inactive looking fields, but colored strictly to tab color */
+.order-input:read-only { background: var(--bg-secondary); color: var(--dynamic-primary); border-color: transparent; cursor: default; }
 .order-input:focus, .order-textarea:focus { border-color:var(--dynamic-primary); background: var(--bg-primary); box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
 body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:focus {box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
 
@@ -118,19 +133,19 @@ body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:fo
 :-ms-input-placeholder { color: var(--text-tertiary); font-weight: 600; }
 ::placeholder { color: var(--text-tertiary); font-weight: 600; }
 
-.btn-primary { width:100%; height:54px; border-radius:14px; border:none; font-size:16px; font-weight:800; margin-top: 8px; background:var(--text-primary); color:var(--bg-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.1s, box-shadow 0.2s; }
+.btn-primary { width:100%; height:54px; border-radius:14px; border:none; font-size:16px; font-weight:800; margin-top: 8px; background:var(--dynamic-primary); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.1s, box-shadow 0.2s, background 0.4s; }
 .tap-effect:active { transform: translateY(2px) scale(0.97); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
 .order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--bg-primary); transition: border-color 0.3s; }
 .order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); outline: none; list-style: none; -webkit-tap-highlight-color: transparent;}
 .order-group-title::-webkit-details-marker { display: none; }
-.order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); transition: transform 0.3s; font-weight: 400;}
+.order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); transition: transform 0.3s, color 0.4s; font-weight: 400;}
 .order-group[open] { border-color: var(--dynamic-primary); }
 .order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
 .order-group-content { padding: 14px; border-top: 1px solid var(--border-color); }
 
 /* Juice Grid */
-.table-container { width: 100%; overflow-x: auto; overflow-y: hidden; border-radius: 12px; background: var(--bg-primary); border: 2px solid var(--dynamic-primary); margin-bottom: 15px;}
+.table-container { width: 100%; overflow-x: auto; overflow-y: hidden; border-radius: 12px; background: var(--bg-primary); border: 2px solid var(--dynamic-primary); margin-bottom: 15px; transition: border-color 0.4s ease;}
 table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
 th, td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
 th { background: var(--bg-secondary); font-weight: 900; color: var(--text-secondary); font-size: 12px; width: 35%; text-transform: uppercase;}
@@ -143,10 +158,10 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
   background: var(--input-bg); border: 2px solid var(--input-border);
   color: var(--text-tertiary); font-weight: 900; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
-  user-select: none; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s, border-color 0.2s, box-shadow 0.2s; 
+  user-select: none; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border-color 0.3s, box-shadow 0.3s, color 0.3s; 
   -webkit-tap-highlight-color: transparent;
 }
-.square-input.editing { transform: scale(1.35) translateY(-5px); z-index: 50; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--dynamic-primary); background: var(--bg-primary); color: var(--dynamic-primary); position: relative;}
+.square-input.editing { transform: scale(1.1) translateY(-2px); z-index: 50; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-color: var(--dynamic-primary); background: var(--bg-primary); color: var(--dynamic-primary); position: relative;}
 .square-input:active:not(.editing) { transform: scale(0.9); }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
@@ -169,7 +184,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .nudge-anim { animation: tabNudge 0.4s ease; }
 
 .success-screen { text-align: center; padding: 20px 0; display: none; flex-direction: column; align-items: center; }
-.success-screen.active { display: flex; animation: fadeIn 0.4s ease; }
+.success-screen.active { display: flex; animation: sectionFadeIn 0.4s ease forwards; }
 .circle-check { width: 80px; height: 80px; background: var(--success-color); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 16px; }
 
 /* ==========================================
@@ -242,8 +257,17 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </head>
 <body class="theme-hub">
 
+<!-- GLOBAL STORAGE OBJECT -->
+<script>
+var Storage = { 
+  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}, 
+  get:function(k){try{return localStorage.getItem(k)}catch(e){return null}}, 
+  remove:function(k){try{localStorage.removeItem(k)}catch(e){}} 
+};
+</script>
+
 <!-- Floating Back Pill (Global) -->
-<div class="back-pill" id="globalBackBtn" onclick="goHome()" style="display: none;">
+<div class="back-pill tap-effect" id="globalBackBtn" onclick="goHome()" style="display: none;">
   <span style="font-size: 16px; margin-right: 4px;">←</span> Menu
 </div>
 
@@ -255,38 +279,48 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOHinnhI5ORDdxxm4pJ
 // ==========================================
 let activeStore = 'chandarana'; 
 
-// Tracks order inputs so users don't lose progress when switching tabs
+// Tracks order inputs so users don't lose progress when switching tabs inside orders
 let orderState = {
-  chandarana: { id: '', notes: '', juices: {}, fresh: [], bottles: [], haccp: [] },
-  carrefour: { id: '', notes: '', juices: {}, fresh: [], bottles: [], haccp: [] }
+  chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] },
+  carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] }
 };
 
-function hideAllViews() { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); }
+function switchView(viewId) {
+    const views = document.querySelectorAll('.view-section');
+    let current = null;
+    views.forEach(v => {
+        if(v.classList.contains('active')) current = v;
+    });
+    
+    if(current && current.id !== viewId) {
+        current.style.opacity = '0';
+        setTimeout(() => {
+            current.classList.remove('active');
+            current.style.opacity = '1';
+            const target = document.getElementById(viewId);
+            target.classList.add('active');
+        }, 250);
+    } else if (!current) {
+        document.getElementById(viewId).classList.add('active');
+    }
+}
 
 function goHome() { 
-  hideAllViews(); 
+  const backBtn = document.getElementById('globalBackBtn');
+  backBtn.style.opacity = '0';
+  setTimeout(() => backBtn.style.display = 'none', 300);
+  
+  switchView('view-menu');
   document.body.className = 'theme-hub'; 
-  document.getElementById('view-menu').classList.add('active'); 
-  document.getElementById('globalBackBtn').style.display = 'none';
+  
   if(typeof stopCamera === 'function') stopCamera(); 
   var meta = document.getElementById('theme-color-meta');
   if (meta) meta.setAttribute('content', '#059669');
 }
 
-function resetOrderState() {
-  orderState = {
-    chandarana: { id: '', notes: '', juices: {}, fresh: [], bottles: [], haccp: [] },
-    carrefour: { id: '', notes: '', juices: {}, fresh: [], bottles: [], haccp: [] }
-  };
-}
-
 function saveOrderState() {
   if (!activeStore) return;
   const s = orderState[activeStore];
-  const idEl = document.getElementById('o-id');
-  if(idEl) s.id = idEl.value;
-  const noteEl = document.getElementById('o-notes');
-  if(noteEl) s.notes = noteEl.value;
   
   s.juices = {};
   document.querySelectorAll('.juice-input').forEach(el => {
@@ -301,8 +335,6 @@ function saveOrderState() {
 function restoreOrderState() {
   if (!activeStore) return;
   const s = orderState[activeStore];
-  document.getElementById('o-id').value = s.id || '';
-  document.getElementById('o-notes').value = s.notes || '';
   
   Object.keys(s.juices).forEach(key => {
     const parts = key.split('_');
@@ -317,34 +349,39 @@ function restoreOrderState() {
   s.fresh.forEach(item => { const el = document.querySelector(`.inp-fresh[value="${item.val}"]`); if(el) el.checked = item.checked; });
   s.bottles.forEach(item => { const el = document.querySelector(`.inp-bottle[value="${item.val}"]`); if(el) el.checked = item.checked; });
   s.haccp.forEach(item => { const el = document.querySelector(`.inp-haccp[value="${item.val}"]`); if(el) el.checked = item.checked; });
-  
-  instantOrderStaffCheck(s.id || ''); 
 }
 
 function openOrder() {
-  hideAllViews(); 
-  document.getElementById('view-orders').classList.add('active');
-  document.getElementById('globalBackBtn').style.display = 'flex';
+  const backBtn = document.getElementById('globalBackBtn');
+  backBtn.style.display = 'flex';
+  setTimeout(() => backBtn.style.opacity = '1', 10);
   
-  document.getElementById('orderForm').reset(); 
   document.getElementById('orderForm').style.display = 'block';
   document.getElementById('orderSuccessScreen').classList.remove('active'); 
-  document.getElementById('o-staffMsg').innerHTML = '';
-  document.getElementById('o-expanded-fields').classList.remove('revealed');
-  document.getElementById('o-locked-section').classList.remove('unlocked');
-  document.getElementById('o-name-container').style.opacity = '0';
-  document.getElementById('o-name-container').style.pointerEvents = 'none';
   
-  resetOrderState();
-  activeStore = 'chandarana';
-  switchTerminal('chandarana', 'order');
+  // Maintain user preference ID
+  const savedId = Storage.get('last_order_id');
+  if(savedId && !document.getElementById('o-id').value) {
+     document.getElementById('o-id').value = savedId;
+  }
+  
+  switchView('view-orders');
+  
+  // Initialize to last tab or default
+  if(!activeStore) activeStore = 'chandarana';
+  switchTerminal(activeStore, 'order');
+  
+  const currentId = document.getElementById('o-id').value;
+  if(currentId) instantOrderStaffCheck(currentId);
 }
 
 function openAttendance() {
-  hideAllViews(); 
-  document.getElementById('view-attendance').classList.add('active');
-  document.getElementById('globalBackBtn').style.display = 'flex';
-  attSwitchTerminal('chandarana'); 
+  const backBtn = document.getElementById('globalBackBtn');
+  backBtn.style.display = 'flex';
+  setTimeout(() => backBtn.style.opacity = '1', 10);
+  
+  switchView('view-attendance');
+  attSwitchTerminal(Storage.get('selected_terminal') || 'chandarana'); 
 }
 
 function switchTerminal(store, module) {
@@ -369,6 +406,10 @@ function switchTerminal(store, module) {
 
     renderDynamicOrderContent();
     restoreOrderState();
+    
+    // Re-verify ID under new store context
+    const currentId = document.getElementById('o-id').value;
+    if(currentId) instantOrderStaffCheck(currentId);
   }
 }
 
@@ -386,6 +427,12 @@ function loadOrderStaffBackground() {
        if(res.ok) {
           orderStaffCache = res.data;
           localStorage.setItem('order_staff', JSON.stringify(res.data));
+          
+          // Re-trigger check if order view is active
+          if (document.getElementById('view-orders').classList.contains('active')) {
+             const currentId = document.getElementById('o-id').value;
+             if(currentId) instantOrderStaffCheck(currentId);
+          }
        }
     }).catch(e => console.warn("Background order staff sync failed", e));
 }
@@ -402,45 +449,49 @@ function instantOrderStaffCheck(val) {
   
   if(val.length < 2) { 
     msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = '';
-    nameCont.style.opacity = '0'; nameCont.style.pointerEvents = 'none';
+    nameCont.style.opacity = '0';
     expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
     return;
   }
   
   const match = orderStaffCache.find(s => s.id === val);
-  if(match) {
-    if (match.shop !== activeStore) {
-       msgDiv.innerHTML = `ID belongs to ${match.shop === 'chandarana' ? 'Chandarana' : 'Carrefour'} team`; 
-       msgDiv.className = 'msg error';
-       nameCont.style.opacity = '0'; nameCont.style.pointerEvents = 'none';
-       expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
-       return;
-    }
-
+  if(match && match.shop === activeStore) {
+    Storage.set('last_order_id', val); // Save preference globally
+    
     msgDiv.innerHTML = '✓ ID Verified'; msgDiv.className = 'msg success';
     currentOrderStaffFullname = match.name;
-    const firstName = match.name.split(' ')[0] || match.name;
-    nameInp.value = firstName + '...';
+    
+    // Get first two names and append ellipsis if necessary
+    const parts = match.name.split(' ');
+    let displayName = parts.slice(0, 2).join(' ');
+    if (displayName.length > 15 || parts.length > 2) {
+       displayName += '...';
+    }
+    
+    nameInp.value = displayName;
     document.getElementById('o-branch').value = match.branch || '';
     document.getElementById('o-phone').value = match.phone || '';
     
-    nameCont.style.opacity = '1'; nameCont.style.pointerEvents = 'auto';
+    nameCont.style.opacity = '1';
     expFields.classList.add('revealed'); lockedSec.classList.add('unlocked');
   } else {
-    msgDiv.innerHTML = 'ID not found'; msgDiv.className = 'msg error';
-    nameCont.style.opacity = '0'; nameCont.style.pointerEvents = 'none';
+    msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error';
+    nameCont.style.opacity = '0';
     expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
   }
 }
 
-function toggleFullName() {
-  const nameInp = document.getElementById('o-name');
-  if (nameInp.value.endsWith('...')) {
-      nameInp.value = currentOrderStaffFullname;
-  } else {
-      const firstName = currentOrderStaffFullname.split(' ')[0] || currentOrderStaffFullname;
-      nameInp.value = firstName + '...';
-  }
+let branchEditTimer;
+function startBranchEdit() {
+   branchEditTimer = setTimeout(() => {
+      const b = document.getElementById('o-branch');
+      b.readOnly = false;
+      b.focus();
+      b.style.borderColor = 'var(--dynamic-primary)';
+   }, 1200); 
+}
+function cancelBranchEdit() {
+   clearTimeout(branchEditTimer);
 }
 
 const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
@@ -594,8 +645,10 @@ async function submitOrder(e) {
     await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveOrder', store: storeCap, data: payload }) });
     document.getElementById('orderForm').style.display = 'none'; document.getElementById('orderSuccessScreen').classList.add('active');
     
-    // Safely clear state for this specific store upon success
-    orderState[activeStore] = { id: '', notes: '', juices: {}, fresh: [], bottles: [], haccp: [] };
+    // Clear state for this specific store upon success
+    orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
+    document.getElementById('o-id').value = '';
+    Storage.remove('last_order_id');
 
   } catch (error) { alert("Error sending order. Check connection."); }
   btn.disabled = false; btn.innerText = 'Submit Order';
@@ -646,9 +699,9 @@ async function submitOrder(e) {
             <label class="order-label">Staff ID</label>
             <input type="tel" id="o-id" class="order-input" placeholder="Enter ID" required autocomplete="off" oninput="instantOrderStaffCheck(this.value)">
           </div>
-          <div id="o-name-container" style="opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+          <div id="o-name-container" style="opacity: 0; transition: opacity 0.3s;">
             <label class="order-label">Name</label>
-            <input type="text" id="o-name" class="order-input" placeholder="Name" readonly onclick="toggleFullName()" style="cursor: pointer; user-select: none;">
+            <input type="text" id="o-name" class="order-input" placeholder="Name" readonly style="pointer-events: none;">
           </div>
         </div>
         <div id="o-staffMsg" class="msg"></div>
@@ -657,11 +710,13 @@ async function submitOrder(e) {
           <div class="order-grid">
             <div>
               <label class="order-label">Branch / Shop</label>
-              <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly>
+              <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly
+                     ontouchstart="startBranchEdit()" ontouchend="cancelBranchEdit()"
+                     onmousedown="startBranchEdit()" onmouseup="cancelBranchEdit()" onmouseleave="cancelBranchEdit()">
             </div>
             <div>
               <label class="order-label">Phone No.</label>
-              <input type="tel" id="o-phone" class="order-input" placeholder="Phone" required readonly>
+              <input type="tel" id="o-phone" class="order-input" placeholder="Phone" required readonly style="pointer-events: none;">
             </div>
           </div>
         </div>
@@ -682,7 +737,7 @@ async function submitOrder(e) {
       <div class="circle-check">✓</div>
       <h2 style="margin-bottom:8px; font-weight:800;">Order Sent!</h2>
       <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Your order has been logged successfully.</p>
-      <button class="btn-primary tap-effect" onclick="goHome()">Back to Menu</button>
+      <button class="btn-primary tap-effect" type="button" onclick="goHome()">Back to Menu</button>
     </div>
   </div>
 </div>
@@ -778,7 +833,6 @@ async function submitOrder(e) {
 // ==========================================
 // UNIFIED ATTENDANCE SYSTEM JS
 // ==========================================
-var Storage={ set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}, get:function(k){try{return localStorage.getItem(k)}catch(e){return null}}, remove:function(k){try{localStorage.removeItem(k)}catch(e){}} };
 var currentTerminal = Storage.get('selected_terminal') || 'chandarana';
 var staff = [], branches = [], coords = null, staffName = "", photo = null;
 var activeFetchId = 0, currentAction = "", videoStream = null;
