@@ -39,9 +39,14 @@
   }
 }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color: transparent; /* Prevents ghost squares globally */
+}
 
-/* Global text selection prevention to stop ghost squares and highlighting */
+/* Global text selection prevention */
 body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
   color:var(--text-primary); 
@@ -49,11 +54,12 @@ body {
   padding: env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px);
   overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.3s ease;
   background-color: var(--dynamic-primary); position: relative;
-  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
 }
 
-input, textarea {
-  -webkit-user-select: auto; user-select: auto;
+input, textarea, select {
+  -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; user-select: auto;
 }
 
 /* Background overlay completely hidden unless theme-hub */
@@ -69,14 +75,6 @@ body.theme-hub::before { opacity: 1; visibility: visible; }
 body.theme-chandarana { background-color: var(--theme-chan); --dynamic-primary: var(--theme-chan); }
 body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
 
-/* utility to prevent text selection and highlight ghosts */
-.no-select {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
 /* INSTANT SMOOTH TRANSITIONS */
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
 .view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
@@ -90,7 +88,7 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
     border-radius: 50px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     cursor: pointer; display: flex; align-items: center; gap: 8px;
     transition: transform 0.2s, background 0.4s ease, opacity 0.3s ease;
-    -webkit-tap-highlight-color: transparent; opacity: 0; pointer-events: none;
+    opacity: 0; pointer-events: none;
 }
 .back-pill.show { opacity: 1; pointer-events: auto; }
 .back-pill:active { transform: scale(0.92); }
@@ -108,7 +106,7 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
   border-radius: 24px; padding: 22px; gap: 20px; width: 100%;
   box-shadow: 0 15px 35px var(--shadow-color); border: 1px solid var(--border-color);
   cursor: pointer; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s; 
-  -webkit-tap-highlight-color: transparent; opacity: 0;
+  opacity: 0;
 }
 .menu-card:active { transform: scale(0.96); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
 .mc-icon { font-size: 40px; background: var(--button-secondary-bg); width: 76px; height: 76px; display: flex; align-items: center; justify-content: center; border-radius: 20px; flex-shrink: 0;}
@@ -184,7 +182,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-label { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.chip-label { cursor: pointer; }
 .chip-label input { display: none; }
 .chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); transform: translateY(-2px); }
@@ -196,7 +194,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .top-bar { display:flex; justify-content:center; margin-bottom:15px; transition: opacity 0.3s ease;}
 .terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; }
 .pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); transition:all 0.4s cubic-bezier(0.25,1,0.5,1); z-index:1; }
-.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none; -webkit-tap-highlight-color:transparent;}
+.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none;}
 .pill-btn.active { color:#fff; }
 
 .success-screen { text-align: center; padding: 20px 0; display: none; flex-direction: column; align-items: center; }
@@ -229,6 +227,8 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
 .att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; }
+.elevated-container { z-index: 10001 !important; position: relative; }
+
 #mainFormAtt { width: 100%; }
 .network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8;transition:background 0.4s ease; box-shadow: 0 0 6px var(--success-color); }
 .network-indicator.offline{background:var(--text-tertiary);opacity:0.4; box-shadow:none;}
@@ -254,10 +254,8 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
 /* Camera UI */
-#cameraBackdrop, #photoBackdrop { display:none;position:fixed;inset:0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity:0; transition: opacity 0.4s ease;}
+#cameraBackdrop, #photoBackdrop { display:none;position:fixed;inset:0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity:0; transition: opacity 0.4s ease; z-index: 10000;}
 #cameraBackdrop.show, #photoBackdrop.show { display:block; opacity:1; pointer-events: auto;}
-#cameraBackdrop { z-index: 59; }
-#photoBackdrop { z-index: 19998; }
 
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
@@ -265,14 +263,14 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 #cameraVideo.live { opacity: 1; }
 
 .camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:4; }
-#captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s, opacity 0.3s ease;-webkit-tap-highlight-color:transparent; opacity: 1; }
+#captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s, opacity 0.3s ease; opacity: 1; }
 #captureBtn::after{content:'';width:48px;height:48px;background:#fff;border-radius:50%;transition:transform 0.1s}
 #captureBtn:active{transform:scale(0.88)}
-#closeCameraBtn{ position:absolute;top:16px;right:16px; width:36px;height:36px;border-radius:50%; background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3); color:#fff;font-size:16px; cursor:pointer; display:flex;align-items:center;justify-content:center; z-index:6; -webkit-tap-highlight-color:transparent; }
+#closeCameraBtn{ position:absolute;top:16px;right:16px; width:36px;height:36px;border-radius:50%; background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3); color:#fff;font-size:16px; cursor:pointer; display:flex;align-items:center;justify-content:center; z-index:6; }
 
 /* Att Success Screen */
 #attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:center; padding: 10px 4px; text-align:center; width:100%; }
-.success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
+.success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; }
 .success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
 
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; text-transform:uppercase;padding:6px 20px;border-radius:999px; margin-bottom: 24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
@@ -289,6 +287,10 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </head>
 <body class="theme-hub">
 
+<!-- Camera & Photo Zoom Backdrops (Global body level to ensure full screen blur) -->
+<div id="cameraBackdrop" onclick="stopCamera()"></div>
+<div id="photoBackdrop" onclick="toggleZoom()"></div>
+
 <!-- GLOBAL STORAGE OBJECT -->
 <script>
 var Storage = { 
@@ -299,7 +301,7 @@ var Storage = {
 </script>
 
 <!-- Floating Back Pill (Global) -->
-<div class="back-pill tap-effect no-select" id="globalBackBtn" onclick="goHome()">
+<div class="back-pill tap-effect" id="globalBackBtn" onclick="goHome()">
   <span style="font-size: 18px; margin-right: 4px;">←</span> Menu
 </div>
 
@@ -391,20 +393,10 @@ function openOrder() {
   document.getElementById('orderSuccessScreen').classList.remove('active'); 
   document.getElementById('orderSuccessScreen').style.display = 'none';
   
-  // Maintain user preference ID
-  const savedId = Storage.get('last_order_id');
-  if(savedId && !document.getElementById('o-id').value) {
-     document.getElementById('o-id').value = savedId;
-  }
-  
   switchView('view-orders');
   
-  // Initialize to last tab or default
   if(!activeStore) activeStore = 'chandarana';
   switchTerminal(activeStore, 'order', true);
-  
-  const currentId = document.getElementById('o-id').value;
-  if(currentId) instantOrderStaffCheck(currentId);
 }
 
 function openAttendance() {
@@ -447,7 +439,11 @@ function switchTerminal(store, module, force) {
     renderDynamicOrderContent();
     restoreOrderState();
     
-    // Re-verify ID under new store context
+    // Ensure ID is preserved across tabs
+    let savedId = Storage.get('last_order_id');
+    if (savedId && !document.getElementById('o-id').value) {
+        document.getElementById('o-id').value = savedId;
+    }
     const currentId = document.getElementById('o-id').value;
     if(currentId) instantOrderStaffCheck(currentId);
   }
@@ -606,7 +602,7 @@ function handleJuicePointerCancel(e) {
 }
 
 function renderDynamicOrderContent() {
-  let html = `<details class="order-group"><summary class="order-group-title no-select">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none; border-radius: 0 0 12px 12px; overflow: hidden;">`;
+  let html = `<details class="order-group"><summary class="order-group-title">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none; border-radius: 0 0 12px 12px; overflow: hidden;">`;
   html += `<div class="table-container" style="margin-bottom:0; border:none; border-radius:0; box-shadow:none;"><table><thead><tr><th>Flavor</th>`;
   VOLUMES.forEach(v => html += `<th>${v === '5L' ? '5 Litres' : '3 Litres'}</th>`);
   html += `</tr></thead><tbody>`;
@@ -615,7 +611,7 @@ function renderDynamicOrderContent() {
     html += `<tr><td class="flavor-name">${flavor}</td>`;
     VOLUMES.forEach(v => {
       let step = parseInt(v); 
-      html += `<td><div class="square-input juice-input no-select" data-flavor="${flavor}" data-vol="${v}" data-val="0" 
+      html += `<td><div class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" data-val="0" 
         ontouchstart="handleJuicePointerDown(event, ${step})" 
         ontouchend="handleJuicePointerUp(event, ${step})" 
         ontouchcancel="handleJuicePointerCancel(event)" 
@@ -627,31 +623,31 @@ function renderDynamicOrderContent() {
   });
   html += `</tbody></table></div></div></details>`;
 
-  html += `<details class="order-group"><summary class="order-group-title no-select">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
   } else {
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
   }
   html += `</div></div></details>`;
 
-  html += `<details class="order-group"><summary class="order-group-title no-select">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
-  html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
-  if(activeStore === 'carrefour') html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
+  html += `<details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
+  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
+  if(activeStore === 'carrefour') html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
   html += `</div></div></details>`;
 
-  html += `<details class="order-group"><summary class="order-group-title no-select">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
+  html += `<details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
-    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
+    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
   }
   html += `</div></div></details>`;
 
@@ -780,8 +776,15 @@ function resetToNewOrder() {
   
   renderDynamicOrderContent();
   
-  const currentId = document.getElementById('o-id').value;
-  if(currentId) instantOrderStaffCheck(currentId);
+  // Ensure ID is preserved and re-verified
+  let savedId = Storage.get('last_order_id');
+  if (savedId) {
+      document.getElementById('o-id').value = savedId;
+      instantOrderStaffCheck(savedId);
+  } else {
+      document.getElementById('o-id').value = '';
+      instantOrderStaffCheck('');
+  }
 }
 
 function downloadReceipt(btn) {
@@ -894,7 +897,7 @@ function downloadReceipt(btn) {
 
         <div id="o-expanded-fields" class="progressive-fields">
           <div class="order-grid">
-            <div style="position: relative;" class="tap-effect no-select"
+            <div style="position: relative;" class="tap-effect"
                  ontouchstart="startBranchEdit()" ontouchend="cancelBranchEdit()"
                  onmousedown="startBranchEdit()" onmouseup="cancelBranchEdit()" onmouseleave="cancelBranchEdit()">
               <label class="order-label">Branch / Shop</label>
@@ -961,10 +964,6 @@ function downloadReceipt(btn) {
     </div>
 
     <div class="att-container" id="mainContainer">
-      <!-- Backdrops placed inside mainContainer to interleave with z-index correctly -->
-      <div id="cameraBackdrop" onclick="stopCamera()"></div>
-      <div id="photoBackdrop" onclick="toggleZoom()"></div>
-      
       <div id="networkIndicator" class="network-indicator"></div>
 
       <div id="mainFormAtt">
@@ -1163,7 +1162,9 @@ function resetStepsFrom(n) {
 
 function resetToStart() {
   document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('mainFormAtt').style.display = 'block'; document.getElementById('mainContainer').style.overflow = 'hidden';
-  document.getElementById('successPhoto').classList.remove('zoomed'); document.getElementById('photoBackdrop').classList.remove('show');
+  document.getElementById('successPhoto').classList.remove('zoomed'); 
+  document.getElementById('photoBackdrop').classList.remove('show');
+  document.getElementById('mainContainer').classList.remove('elevated-container');
   resetStepsFrom(3); var branchVal = document.getElementById('branch').value; var staffVal = document.getElementById('staffID').value;
   if (branchVal && staffVal) handleStaffInputValue(staffVal);
 }
@@ -1173,9 +1174,18 @@ function showError(id,txt)  { var e=document.getElementById(id); e.innerText=txt
 function clearMsg(id)       { var e=document.getElementById(id); e.innerText=''; e.className='att-msg'; }
 
 function toggleZoom() {
-  var img = document.getElementById('successPhoto'); var backdrop = document.getElementById('photoBackdrop');
-  if (img.classList.contains('zoomed')) { img.classList.remove('zoomed'); backdrop.classList.remove('show'); } 
-  else { img.classList.add('zoomed'); backdrop.classList.add('show'); }
+  var img = document.getElementById('successPhoto'); 
+  var backdrop = document.getElementById('photoBackdrop');
+  var container = document.getElementById('mainContainer');
+  if (img.classList.contains('zoomed')) { 
+      img.classList.remove('zoomed'); 
+      backdrop.classList.remove('show'); 
+      container.classList.remove('elevated-container');
+  } else { 
+      img.classList.add('zoomed'); 
+      backdrop.classList.add('show'); 
+      container.classList.add('elevated-container');
+  }
 }
 
 function handleBranchChange(silent) {
@@ -1342,6 +1352,7 @@ function startCamera() {
       video.srcObject = stream;
       video.onloadedmetadata = function() {
         video.play().catch(function(){}); 
+        document.getElementById('mainContainer').classList.add('elevated-container');
         document.getElementById('videoContainerWrapper').classList.add('expanded'); 
         document.getElementById('cameraBackdrop').classList.add('show');
         video.classList.add('live'); 
@@ -1357,7 +1368,9 @@ function startCamera() {
 
 function stopCamera() {
   var wrapper = document.getElementById('videoContainerWrapper'), backdrop = document.getElementById('cameraBackdrop');
+  var container = document.getElementById('mainContainer');
   wrapper.classList.remove('expanded'); backdrop.classList.remove('show');
+  container.classList.remove('elevated-container');
   var video = document.getElementById('cameraVideo');
   video.classList.remove('live');
   
