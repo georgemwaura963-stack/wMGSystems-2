@@ -7,6 +7,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" id="theme-color-meta" content="#059669">
 <title>Stentor Operations</title>
+
+<!-- PDF Generation Library for Beautiful Custom Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap');
 
@@ -78,7 +82,7 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
 /* INSTANT SMOOTH TRANSITIONS */
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
 .view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none !important; } }
 
 /* Floating Back Pill */
 .back-pill {
@@ -122,7 +126,7 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
 /* ==========================================
    ORDER SCREEN UI
    ========================================== */
-.order-container { width: 100%; background:var(--bg-primary); padding:20px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); overflow:hidden; }
+.order-container { width: 100%; background:var(--bg-primary); padding:20px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); overflow:hidden; transition: background 0.4s ease;}
 .scrollable-container { max-height: 85vh; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px; }
 
 .section-card { border: 2px solid var(--border-color); border-radius: 18px; padding: 14px; background: var(--bg-primary); margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: border-color 0.3s; }
@@ -218,20 +222,29 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 #branchSelectModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:20000; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #branchSelectModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:320px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; }
 
-/* Print Mode for PDF Receipts */
-@media print {
-  body { background: #fff !important; margin: 0; padding: 0; color: #000 !important; }
-  body::before { display: none !important; }
-  #view-menu, #view-attendance, .back-pill, .top-bar, #orderForm, #orderSuccessScreen, #guideModal, #branchSelectModal { display: none !important; }
-  #view-orders { display: block !important; opacity: 1 !important; transform: none !important; }
-  .order-container { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-height: none !important; overflow: visible !important; }
-  
-  #orderConfirmModal { position: relative !important; display: block !important; background: transparent !important; z-index: 1; backdrop-filter: none !important; padding: 0 !important; }
-  #orderConfirmModal .modal-box { box-shadow: none !important; border: none !important; margin: 0 !important; max-width: 100% !important; max-height: none !important; padding: 0 !important; }
-  .modal-actions { display: none !important; }
-  .receipt-content { border: 2px solid #e5e7eb !important; background: #f9fafb !important; color: #111827 !important; padding: 20px !important; box-shadow: none !important; border-radius: 12px !important; margin-bottom: 0 !important;}
-  .receipt-header { display: block !important; text-align: center; font-size: 24px !important; font-weight: 900 !important; margin-bottom: 16px !important; color: #10b981 !important; text-transform: uppercase; }
-  h3 { display: none !important; }
+/* ==========================================
+   GLOBAL BACKDROP STYLES
+   ========================================== */
+#cameraBackdrop, #photoBackdrop {
+  position: fixed; inset: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.65); 
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.4s ease; 
+  pointer-events: none;
+}
+#cameraBackdrop { z-index: 10000; }
+#photoBackdrop { z-index: 19999; }
+
+#cameraBackdrop.show, #photoBackdrop.show { opacity: 1; pointer-events: auto; }
+
+/* Special Body State for Photo Zoom */
+body.photo-zoomed-active #mainContainer {
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: 20000 !important;
+}
+body.photo-zoomed-active #attSuccessScreen > *:not(.success-photo) {
+  opacity: 0; pointer-events: none;
 }
 
 /* ==========================================
@@ -246,7 +259,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 @keyframes swing { 0% { transform: rotateX(0deg) rotateZ(0deg); } 20% { transform: rotateX(25deg) rotateZ(-3deg); } 40% { transform: rotateX(-15deg) rotateZ(2deg); } 60% { transform: rotateX(8deg) rotateZ(-1deg); } 80% { transform: rotateX(-3deg) rotateZ(0deg); } 100% { transform: rotateX(0deg) rotateZ(0deg); } }
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
-.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; }
+.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; transition: background 0.4s ease; }
 .elevated-container { z-index: 10001 !important; position: relative; }
 
 #mainFormAtt { width: 100%; }
@@ -273,18 +286,7 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:6px;flex-shrink:0;position:relative; margin-top: 1px; }
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* Unified Backdrop Styles (Camera & Photo) */
-#cameraBackdrop, #photoBackdrop {
-  position:fixed; inset:0; 
-  background:rgba(0,0,0,0.65); 
-  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); 
-  opacity:0; transition: opacity 0.4s ease; 
-  pointer-events: none;
-}
-#cameraBackdrop { z-index: 10000; }
-#photoBackdrop { z-index: 19999; }
-#cameraBackdrop.show, #photoBackdrop.show { opacity:1; pointer-events:auto; }
-
+/* Camera UI */
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
 #cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
@@ -301,11 +303,11 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; }
 .success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
 
-.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; text-transform:uppercase;padding:6px 20px;border-radius:999px; margin-bottom: 24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
-.success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
+.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; text-transform:uppercase;padding:6px 20px;border-radius:999px; margin-bottom: 24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; transition: opacity 0.3s ease;}
+.success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; transition: opacity 0.3s ease;}
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
 .success-msg {font-size:15px;font-weight:600;color:var(--text-secondary);line-height:1.5; word-break: break-word;}
-.success-back{ width:100%;height:48px;background:var(--button-secondary-bg); color:var(--dynamic-primary);border:none;border-radius:12px; font-size:15px;font-weight:700;cursor:pointer; }
+.success-back{ width:100%;height:48px;background:var(--button-secondary-bg); color:var(--dynamic-primary);border:none;border-radius:12px; font-size:15px;font-weight:700;cursor:pointer; transition: opacity 0.3s ease;}
 
 #guideModal{ display:none;position:fixed;inset:0;background:var(--modal-overlay); z-index:19999;flex-direction:column;align-items:center;justify-content:center; padding:20px;backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #guideModal .modal-box{ background:var(--bg-primary);padding:28px;border-radius:20px; text-align:center;max-width:340px;width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
@@ -314,6 +316,10 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </style>
 </head>
 <body class="theme-hub">
+
+<!-- GLOBAL BACKDROPS AT ROOT LEVEL -->
+<div id="cameraBackdrop" onclick="stopCamera()"></div>
+<div id="photoBackdrop" onclick="toggleZoom()"></div>
 
 <!-- GLOBAL STORAGE OBJECT -->
 <script>
@@ -786,7 +792,7 @@ async function confirmAndSendOrder() {
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
 
   } catch (error) { 
-      alert("Error saving order: \n" + error.message + "\n\nPlease check your connection or Google Sheet."); 
+      alert("Error saving order: \n" + error.message + "\n\nPlease check your Google Sheet tabs."); 
   }
   
   btn.disabled = false; btn.innerText = oldText;
@@ -817,8 +823,55 @@ function resetToNewOrder() {
 }
 
 function downloadReceipt(btn) {
-  // Utilizing the pure CSS Print to PDF layout mapping specifically configured
-  window.print();
+  const oldText = btn.innerHTML;
+  btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px; border-color:var(--dynamic-primary); border-top-color:transparent;"></span> Generating...';
+  btn.disabled = true;
+
+  // Build an isolated, beautiful HTML layout to export as PDF
+  const tempDiv = document.createElement('div');
+  tempDiv.style.padding = '30px';
+  tempDiv.style.background = '#ffffff';
+  tempDiv.style.color = '#111827';
+  tempDiv.style.fontFamily = 'Nunito, sans-serif';
+  tempDiv.style.fontSize = '14px';
+  
+  const content = document.getElementById('orderSummaryDetails').cloneNode(true);
+  content.style.boxShadow = 'none';
+  content.style.border = '1px solid #e5e7eb';
+  content.style.margin = '0';
+  
+  const header = document.createElement('h2');
+  header.innerText = 'STENTOR ORDER';
+  header.style.textAlign = 'center';
+  header.style.color = '#10b981';
+  header.style.marginBottom = '20px';
+  header.style.fontWeight = '900';
+  header.style.textTransform = 'uppercase';
+  
+  tempDiv.appendChild(header);
+  tempDiv.appendChild(content);
+
+  const opt = {
+    margin:       0.4,
+    filename:     'Order_' + document.getElementById('o-id').value + '.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(tempDiv).save().then(() => {
+     btn.innerHTML = 'Saved! ✅';
+     setTimeout(() => {
+         btn.innerHTML = oldText;
+         btn.disabled = false;
+     }, 2000);
+  }).catch(err => {
+     btn.innerHTML = 'Error';
+     setTimeout(() => {
+         btn.innerHTML = oldText;
+         btn.disabled = false;
+     }, 2000);
+  });
 }
 </script>
 
@@ -934,9 +987,6 @@ function downloadReceipt(btn) {
 
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
-  <!-- Camera Backdrop spans the viewport natively behind mainContainer -->
-  <div id="cameraBackdrop" onclick="stopCamera()"></div>
-
   <div class="page-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
       <div class="chain left-chain"></div>
@@ -988,8 +1038,6 @@ function downloadReceipt(btn) {
       </div>
 
       <div id="attSuccessScreen">
-        <!-- Photo backdrop securely inside success screen bounding -->
-        <div id="photoBackdrop" onclick="toggleZoom()"></div>
         <img id="successPhoto" class="success-photo" src="" alt="Captured Selfie" onclick="toggleZoom()">
         
         <div class="success-badge" id="successBadge">CLOCK IN</div>
@@ -1140,7 +1188,7 @@ function resetToStart() {
   document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('mainFormAtt').style.display = 'block'; document.getElementById('mainContainer').style.overflow = 'hidden';
   document.getElementById('successPhoto').classList.remove('zoomed'); 
   document.getElementById('photoBackdrop').classList.remove('show');
-  document.getElementById('mainContainer').classList.remove('elevated-container');
+  document.body.classList.remove('photo-zoomed-active');
   resetStepsFrom(3); var branchVal = document.getElementById('branch').value; var staffVal = document.getElementById('staffID').value;
   if (branchVal && staffVal) handleStaffInputValue(staffVal);
 }
@@ -1152,15 +1200,14 @@ function clearMsg(id)       { var e=document.getElementById(id); e.innerText='';
 function toggleZoom() {
   var img = document.getElementById('successPhoto'); 
   var backdrop = document.getElementById('photoBackdrop');
-  var container = document.getElementById('mainContainer');
   if (img.classList.contains('zoomed')) { 
       img.classList.remove('zoomed'); 
       backdrop.classList.remove('show'); 
-      container.classList.remove('elevated-container');
+      document.body.classList.remove('photo-zoomed-active');
   } else { 
       img.classList.add('zoomed'); 
       backdrop.classList.add('show'); 
-      container.classList.add('elevated-container');
+      document.body.classList.add('photo-zoomed-active');
   }
 }
 
