@@ -222,30 +222,6 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 #branchSelectModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:20000; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #branchSelectModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:320px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; }
 
-/* ==========================================
-   GLOBAL BACKDROP STYLES
-   ========================================== */
-#cameraBackdrop, #photoBackdrop {
-  position: fixed; inset: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.65); 
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  opacity: 0; transition: opacity 0.4s ease; 
-  pointer-events: none;
-}
-#cameraBackdrop { z-index: 10000; }
-#photoBackdrop { z-index: 19999; }
-
-#cameraBackdrop.show, #photoBackdrop.show { opacity: 1; pointer-events: auto; }
-
-/* Special Body State for Photo Zoom */
-body.photo-zoomed-active #mainContainer {
-  background: transparent !important;
-  box-shadow: none !important;
-  z-index: 20000 !important;
-}
-body.photo-zoomed-active #attSuccessScreen > *:not(.success-photo) {
-  opacity: 0; pointer-events: none;
-}
 
 /* ==========================================
    ATTENDANCE SYSTEM UI
@@ -260,7 +236,6 @@ body.photo-zoomed-active #attSuccessScreen > *:not(.success-photo) {
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
 .att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; transition: background 0.4s ease; }
-.elevated-container { z-index: 10001 !important; position: relative; }
 
 #mainFormAtt { width: 100%; }
 .network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8;transition:background 0.4s ease; box-shadow: 0 0 6px var(--success-color); }
@@ -286,7 +261,31 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:6px;flex-shrink:0;position:relative; margin-top: 1px; }
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* Camera UI */
+/* PERFECT STACKING CONTEXTS FOR CAMERA & BLUR */
+#cameraBackdrop, #photoBackdrop {
+  position: fixed; inset: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.65); 
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.4s ease; 
+  pointer-events: none;
+}
+#cameraBackdrop { z-index: 10000; }
+#photoBackdrop  { z-index: 19999; }
+#cameraBackdrop.show, #photoBackdrop.show { opacity: 1; pointer-events: auto; }
+
+/* When Camera is active, elevate mainContainer explicitly */
+.elevated-container { z-index: 10001 !important; position: relative; }
+
+/* When Photo zoom is active, make mainContainer transparent to blur everything behind it */
+body.photo-zoomed-active #mainContainer {
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: 20000 !important;
+}
+body.photo-zoomed-active #attSuccessScreen > *:not(.success-photo) {
+  opacity: 0; pointer-events: none;
+}
+
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
 #cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
@@ -316,10 +315,6 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </style>
 </head>
 <body class="theme-hub">
-
-<!-- GLOBAL BACKDROPS AT ROOT LEVEL -->
-<div id="cameraBackdrop" onclick="stopCamera()"></div>
-<div id="photoBackdrop" onclick="toggleZoom()"></div>
 
 <!-- GLOBAL STORAGE OBJECT -->
 <script>
@@ -792,7 +787,7 @@ async function confirmAndSendOrder() {
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
 
   } catch (error) { 
-      alert("Error saving order: \n" + error.message + "\n\nPlease check your Google Sheet tabs."); 
+      alert(error.message); 
   }
   
   btn.disabled = false; btn.innerText = oldText;
@@ -827,36 +822,42 @@ function downloadReceipt(btn) {
   btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px; border-color:var(--dynamic-primary); border-top-color:transparent;"></span> Generating...';
   btn.disabled = true;
 
-  // Build an isolated, beautiful HTML layout to export as PDF
+  // Build an isolated, beautiful HTML layout to export as PDF cleanly on 1 page
   const tempDiv = document.createElement('div');
-  tempDiv.style.padding = '30px';
+  tempDiv.style.width = '650px'; 
+  tempDiv.style.maxWidth = '650px'; 
+  tempDiv.style.padding = '40px';
   tempDiv.style.background = '#ffffff';
   tempDiv.style.color = '#111827';
   tempDiv.style.fontFamily = 'Nunito, sans-serif';
-  tempDiv.style.fontSize = '14px';
   
   const content = document.getElementById('orderSummaryDetails').cloneNode(true);
   content.style.boxShadow = 'none';
-  content.style.border = '1px solid #e5e7eb';
+  content.style.border = '2px solid #e5e7eb';
   content.style.margin = '0';
+  content.style.fontSize = '15px'; 
+  content.style.borderRadius = '12px';
+  content.style.padding = '20px';
   
   const header = document.createElement('h2');
   header.innerText = 'STENTOR ORDER';
   header.style.textAlign = 'center';
   header.style.color = '#10b981';
-  header.style.marginBottom = '20px';
+  header.style.marginBottom = '24px';
   header.style.fontWeight = '900';
   header.style.textTransform = 'uppercase';
+  header.style.fontSize = '26px';
   
   tempDiv.appendChild(header);
   tempDiv.appendChild(content);
 
   const opt = {
-    margin:       0.4,
+    margin:       0.3,
     filename:     'Order_' + document.getElementById('o-id').value + '.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
+    image:        { type: 'jpeg', quality: 1 },
     html2canvas:  { scale: 2, useCORS: true },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['avoid-all'] } // Forces it to stay on one page
   };
 
   html2pdf().set(opt).from(tempDiv).save().then(() => {
@@ -987,6 +988,11 @@ function downloadReceipt(btn) {
 
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
+  
+  <!-- Backdrops are securely inside the specific view-section stacking context to prevent them from blurring the elevated camera frame -->
+  <div id="cameraBackdrop" onclick="stopCamera()"></div>
+  <div id="photoBackdrop" onclick="toggleZoom()"></div>
+
   <div class="page-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
       <div class="chain left-chain"></div>
@@ -1048,7 +1054,7 @@ function downloadReceipt(btn) {
         <button class="success-back tap-effect" onclick="resetToStart()">← Submit Another</button>
       </div>
 
-      <!-- Camera overlay safely bounded by mainContainer bounds -->
+      <!-- Camera overlay securely locked to main container boundaries -->
       <div id="videoContainerWrapper">
         <video id="cameraVideo" autoplay playsinline muted></video>
         <button id="closeCameraBtn" class="tap-effect" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
@@ -1059,7 +1065,7 @@ function downloadReceipt(btn) {
     </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Guide Modal -->
   <div id="guideModal" class="no-print">
     <div class="modal-box">
       <div id="guideIcon" style="font-size:44px;margin-bottom:10px;">🛑</div>
