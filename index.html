@@ -46,7 +46,7 @@ body {
   color:var(--text-primary); 
   min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding: env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px);
-  overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.3s ease;
   background-color: var(--dynamic-primary); position: relative;
 }
 
@@ -54,7 +54,7 @@ body {
 body::before {
   content: ""; position: fixed; inset: 0;
   background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
-  opacity: 0; z-index: -1; transition: opacity 0.6s ease; pointer-events: none;
+  opacity: 0; z-index: -1; transition: opacity 0.3s ease; pointer-events: none;
 }
 body.theme-hub { background-color: var(--bg-primary); }
 body.theme-hub::before { opacity: 1; }
@@ -63,15 +63,16 @@ body.theme-chandarana { --dynamic-primary: var(--theme-chan); }
 body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
 
 /* INSTANT SMOOTH TRANSITIONS */
-.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(20px); transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.view-section.active { opacity: 1; transform: translateY(0); }
+.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
+.view-section.active { display: flex; opacity: 1; transform: translateY(0); animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Floating Back Pill */
 .back-pill {
     position: fixed; bottom: 24px; left: 24px; z-index: 9999;
     background: var(--dynamic-primary); color: #fff;
-    font-weight: 800; font-size: 14px; padding: 12px 24px;
-    border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    font-weight: 800; font-size: 15px; padding: 14px 26px;
+    border-radius: 50px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     cursor: pointer; display: flex; align-items: center; gap: 8px;
     transition: transform 0.2s, background 0.4s ease, opacity 0.3s ease;
     -webkit-tap-highlight-color: transparent; opacity: 0; pointer-events: none;
@@ -83,25 +84,25 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
    MAIN MENU UI
    ========================================== */
 .menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; max-width: 340px; z-index: 2; }
-.hub-logo { font-size: 32px; font-weight: 900; color: #fff; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 8px; }
-.menu-subtitle { text-align: center; color: rgba(255,255,255,0.9); font-weight: 600; font-size: 15px; }
+.hub-logo { font-size: 36px; font-weight: 900; color: #fff; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 6px; }
+.menu-subtitle { text-align: center; color: rgba(255,255,255,0.9); font-weight: 700; font-size: 16px; margin-bottom: 10px; }
 
-.menu-cards { display: flex; flex-direction: column; gap: 20px; width: 100%; margin-top: 40px; }
+.menu-cards { display: flex; flex-direction: column; gap: 20px; width: 100%; margin-top: 30px; }
 .menu-card { 
   display: flex; align-items: center; background: var(--bg-primary); 
-  border-radius: 24px; padding: 20px; gap: 20px; width: 100%;
+  border-radius: 24px; padding: 22px; gap: 20px; width: 100%;
   box-shadow: 0 15px 35px var(--shadow-color); border: 1px solid var(--border-color);
   cursor: pointer; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s; 
   -webkit-tap-highlight-color: transparent; opacity: 0;
 }
 .menu-card:active { transform: scale(0.96); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-.mc-icon { font-size: 38px; background: var(--button-secondary-bg); width: 68px; height: 68px; display: flex; align-items: center; justify-content: center; border-radius: 16px; flex-shrink: 0;}
+.mc-icon { font-size: 40px; background: var(--button-secondary-bg); width: 76px; height: 76px; display: flex; align-items: center; justify-content: center; border-radius: 20px; flex-shrink: 0;}
 .mc-content { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-.mc-content h3 { margin: 0 0 4px; font-size: 22px; font-weight: 900; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px;}
-.mc-content p { margin: 0; font-size: 15px; font-weight: 600; color: var(--text-secondary); }
+.mc-content h3 { margin: 0 0 6px; font-size: 24px; font-weight: 900; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px;}
+.mc-content p { margin: 0; font-size: 15px; font-weight: 700; color: var(--text-secondary); }
 
-@keyframes menuSlideLeft { 0% { transform: translateX(-50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
-@keyframes menuSlideRight { 0% { transform: translateX(50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes menuSlideLeft { 0% { transform: translateX(-40px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes menuSlideRight { 0% { transform: translateX(40px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
 #view-menu.active .menu-card:nth-child(1) { animation: menuSlideLeft 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 #view-menu.active .menu-card:nth-child(2) { animation: menuSlideRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
@@ -124,7 +125,6 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --success-color:#3b
 .order-label { font-weight:800; font-size:11px; display:block; margin-bottom:6px; color:var(--text-primary); text-transform:uppercase; transition: color 0.4s ease;}
 .order-input, .order-textarea { width:100%; padding:14px 12px; border-radius:12px; border:2px solid var(--input-border); font-size:15px; background:var(--input-bg); color:var(--dynamic-primary); outline:none; font-family: inherit; font-weight: 800; transition: border-color 0.2s, background 0.2s, color 0.4s; }
 
-/* Inactive looking fields, colored strictly to tab color */
 .order-input:read-only { background: var(--bg-secondary); color: var(--dynamic-primary); border-color: transparent; cursor: default; }
 .order-input:focus, .order-textarea:focus { border-color:var(--dynamic-primary); background: var(--bg-primary); box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
 body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:focus {box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
@@ -159,11 +159,10 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
   background: var(--input-bg); border: 2px solid var(--input-border);
   color: var(--text-tertiary); font-weight: 900; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
-  user-select: none; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border-color 0.3s, box-shadow 0.3s, color 0.3s; 
+  user-select: none; transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s ease; 
   -webkit-tap-highlight-color: transparent;
 }
-.square-input.editing { transform: scale(1.1) translateY(-2px); z-index: 50; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-color: var(--dynamic-primary); background: var(--bg-primary); color: var(--dynamic-primary); position: relative;}
-.square-input:active:not(.editing) { transform: scale(0.9); }
+.square-input:active { transform: scale(0.92); }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -176,7 +175,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .msg { font-size:12px; font-weight:800; margin-top:6px; min-height:20px; color:var(--text-tertiary); display:flex; align-items:center;}
 .msg.success { color:var(--success-color); } .msg.error { color:var(--error-color); }
 
-.top-bar { display:flex; justify-content:center; margin-bottom:15px; }
+.top-bar { display:flex; justify-content:center; margin-bottom:15px; transition: opacity 0.3s ease;}
 .terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; }
 .pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); transition:all 0.4s cubic-bezier(0.25,1,0.5,1), opacity 0.2s ease; z-index:1; opacity:0; }
 .pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none; -webkit-tap-highlight-color:transparent;}
@@ -190,10 +189,14 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 #orderConfirmModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:19999; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #orderConfirmModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:360px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; }
 .receipt-header { display:none; }
-.receipt-content { flex: 1; overflow-y: auto; text-align: left; padding: 12px; background: var(--bg-secondary); border-radius: 12px; margin: 16px 0; border: 1px solid var(--border-color); color: var(--text-primary); font-size: 14px; line-height: 1.6; }
+.receipt-content { flex: 1; overflow-y: auto; text-align: left; padding: 14px; background: var(--bg-secondary); border-radius: 12px; margin: 16px 0; border: 1px solid var(--border-color); color: var(--text-primary); font-size: 14px; line-height: 1.6; font-weight: 700;}
 .modal-actions { display: flex; flex-direction: column; gap: 8px; }
 .btn-secondary { width:100%; height:46px; border-radius:12px; border:none; font-size:15px; font-weight:800; background:var(--button-secondary-bg); color:var(--dynamic-primary); cursor:pointer; transition: transform 0.1s; }
 .btn-secondary:active { transform: scale(0.97); }
+
+/* Branch Select Modal */
+#branchSelectModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:20000; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
+#branchSelectModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:320px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; }
 
 /* Print Styles for PDF Export */
 @media print {
@@ -204,7 +207,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
     .modal-box { box-shadow: none !important; border: none !important; width: 100%; max-width: none !important; padding: 0 !important; }
     .modal-actions, .no-print { display: none !important; }
     .receipt-header { display: block; text-align: center; font-size: 20px; font-weight: 900; color: #000; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px dashed #000; padding-bottom: 10px; }
-    .receipt-content { background: transparent !important; border: none !important; padding: 0 !important; color: #000 !important; font-family: monospace; font-size: 12px; }
+    .receipt-content { background: transparent !important; border: none !important; padding: 0 !important; color: #000 !important; font-family: monospace; font-size: 14px; font-weight: 600; }
 }
 
 /* ==========================================
@@ -288,7 +291,7 @@ var Storage = {
 
 <!-- Floating Back Pill (Global) -->
 <div class="back-pill tap-effect no-print" id="globalBackBtn" onclick="goHome()">
-  <span style="font-size: 16px; margin-right: 4px;">←</span> Menu
+  <span style="font-size: 18px; margin-right: 4px;">←</span> Menu
 </div>
 
 <script>
@@ -309,7 +312,9 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(v => {
         if (v.id === viewId) {
             v.style.display = 'flex';
-            void v.offsetWidth; // Trigger reflow for animation
+            // Trigger reflow to restart animations
+            v.classList.remove('active');
+            void v.offsetWidth; 
             v.classList.add('active');
         } else {
             v.classList.remove('active');
@@ -319,6 +324,9 @@ function switchView(viewId) {
 }
 
 function goHome() { 
+  if (document.getElementById('view-orders').classList.contains('active')) {
+      saveOrderState();
+  }
   const backBtn = document.getElementById('globalBackBtn');
   backBtn.classList.remove('show');
   
@@ -365,11 +373,14 @@ function restoreOrderState() {
 
 function openOrder() {
   const backBtn = document.getElementById('globalBackBtn');
+  backBtn.innerHTML = '<span style="font-size: 18px; margin-right: 4px;">←</span> Menu';
+  backBtn.setAttribute('onclick', 'goHome()');
   backBtn.classList.add('show');
   
   document.getElementById('orderForm').style.display = 'block';
   document.getElementById('orderTopBar').style.display = 'flex';
   document.getElementById('orderSuccessScreen').classList.remove('active'); 
+  document.getElementById('orderSuccessScreen').style.display = 'none';
   
   // Maintain user preference ID
   const savedId = Storage.get('last_order_id');
@@ -389,6 +400,8 @@ function openOrder() {
 
 function openAttendance() {
   const backBtn = document.getElementById('globalBackBtn');
+  backBtn.innerHTML = '<span style="font-size: 18px; margin-right: 4px;">←</span> Menu';
+  backBtn.setAttribute('onclick', 'goHome()');
   backBtn.classList.add('show');
   
   switchView('view-attendance');
@@ -498,17 +511,29 @@ function instantOrderStaffCheck(val) {
   }
 }
 
+// Shop Edit (Long Press logic using custom modal)
 let branchEditTimer;
 function startBranchEdit() {
    branchEditTimer = setTimeout(() => {
-      const b = document.getElementById('o-branch');
-      b.readOnly = false;
-      b.focus();
-      b.style.borderColor = 'var(--dynamic-primary)';
-   }, 1200); 
+      if (navigator.vibrate) navigator.vibrate(50);
+      openBranchSelectModal();
+   }, 1000); 
 }
 function cancelBranchEdit() {
    clearTimeout(branchEditTimer);
+}
+
+function openBranchSelectModal() {
+   const branches = [...new Set(orderStaffCache.filter(s => s.shop === activeStore).map(s => s.branch))].filter(Boolean).sort();
+   const list = document.getElementById('branchList');
+   list.innerHTML = branches.map(b => `<button class="btn-secondary" style="text-align:left; padding: 14px; font-size:16px;" onclick="selectCustomBranch('${b}')">${b}</button>`).join('');
+   document.getElementById('branchSelectModal').style.display = 'flex';
+}
+
+function selectCustomBranch(b) {
+   document.getElementById('o-branch').value = b;
+   document.getElementById('o-branch').style.borderColor = 'var(--dynamic-primary)';
+   document.getElementById('branchSelectModal').style.display = 'none';
 }
 
 const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
@@ -531,10 +556,9 @@ function handleJuicePointerDown(e, step) {
   e.preventDefault(); 
   const el = e.currentTarget;
   
-  el.classList.add('editing');
   el.pressTimer = setTimeout(() => {
       el.isLong = true;
-      el.classList.remove('editing');
+      if (navigator.vibrate) navigator.vibrate(50);
       
       let val = prompt("Edit exact quantity (or 0 to clear):", el.getAttribute('data-val') || "0");
       if(val !== null && val !== "") {
@@ -553,7 +577,6 @@ function handleJuicePointerDown(e, step) {
 function handleJuicePointerUp(e, step) {
   e.preventDefault();
   const el = e.currentTarget;
-  el.classList.remove('editing');
   clearTimeout(el.pressTimer);
   if(!el.isLong) {
       let currentVal = parseInt(el.getAttribute('data-val')) || 0;
@@ -570,7 +593,6 @@ function handleJuicePointerUp(e, step) {
 
 function handleJuicePointerCancel(e) {
   const el = e.currentTarget;
-  el.classList.remove('editing');
   clearTimeout(el.pressTimer);
   el.isLong = false;
 }
@@ -661,9 +683,9 @@ function processOrder(e) {
 
   // Build Summary HTML for the modal
   let html = `<div class="receipt-header">STENTOR ORDER</div>`;
-  html += `<p><strong>Shop:</strong> ${payload["SHOP"]}</p>`;
-  html += `<p><strong>Staff:</strong> ${payload["FULL NAME"] || payload["FULL NAME (2 Names)"]} (${payload["ID NO."]})</p>`;
-  html += `<p><strong>Phone:</strong> ${payload["PHONE NO."]}</p>`;
+  html += `<p style="margin-bottom:6px;"><strong>Shop:</strong> ${payload["SHOP"]}</p>`;
+  html += `<p style="margin-bottom:6px;"><strong>Staff:</strong> ${payload["FULL NAME"] || payload["FULL NAME (2 Names)"]} (${payload["ID NO."]})</p>`;
+  html += `<p style="margin-bottom:6px;"><strong>Phone:</strong> ${payload["PHONE NO."]}</p>`;
   
   let hasJuices = false;
   let juiceHtml = `<div style="margin-top:12px; border-top:1px dashed var(--border-color); padding-top:12px;"><strong>JUICES:</strong><br>`;
@@ -700,9 +722,18 @@ async function confirmAndSendOrder() {
     const storeCap = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
     await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveOrder', store: storeCap, data: pendingOrderPayload }) });
     
-    document.getElementById('orderTopBar').style.display = 'none';
+    // Hide Form and top bar entirely during success
+    document.getElementById('orderTopBar').style.opacity = '0';
+    setTimeout(() => { document.getElementById('orderTopBar').style.display = 'none'; }, 300);
+    
     document.getElementById('orderForm').style.display = 'none'; 
+    document.getElementById('orderSuccessScreen').style.display = 'flex';
     document.getElementById('orderSuccessScreen').classList.add('active');
+    
+    // Change top back pill to say "Back to Orders"
+    const backBtn = document.getElementById('globalBackBtn');
+    backBtn.innerHTML = '<span style="font-size: 18px; margin-right: 4px;">←</span> Orders';
+    backBtn.setAttribute('onclick', 'resetToNewOrder()');
     
     // Clear state for this specific store upon success
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
@@ -715,8 +746,15 @@ async function confirmAndSendOrder() {
 
 function resetToNewOrder() {
   document.getElementById('orderSuccessScreen').classList.remove('active');
+  document.getElementById('orderSuccessScreen').style.display = 'none';
+  
   document.getElementById('orderTopBar').style.display = 'flex';
+  setTimeout(() => { document.getElementById('orderTopBar').style.opacity = '1'; }, 10);
   document.getElementById('orderForm').style.display = 'block';
+  
+  const backBtn = document.getElementById('globalBackBtn');
+  backBtn.innerHTML = '<span style="font-size: 18px; margin-right: 4px;">←</span> Menu';
+  backBtn.setAttribute('onclick', 'goHome()');
   
   document.getElementById('o-notes').value = '';
   instantOrderStaffCheck('');
@@ -776,7 +814,7 @@ function resetToNewOrder() {
 
         <div id="o-expanded-fields" class="progressive-fields">
           <div class="order-grid">
-            <div>
+            <div style="position: relative;">
               <label class="order-label">Branch / Shop</label>
               <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly
                      ontouchstart="startBranchEdit()" ontouchend="cancelBranchEdit()"
@@ -803,9 +841,8 @@ function resetToNewOrder() {
 
     <div class="success-screen" id="orderSuccessScreen">
       <div class="circle-check">✓</div>
-      <h2 style="margin-bottom:8px; font-weight:800;">Order Sent!</h2>
-      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:24px;">Your order has been logged successfully.</p>
-      <button class="btn-primary tap-effect" type="button" onclick="resetToNewOrder()">Back to Orders</button>
+      <h2 style="margin-bottom:8px; font-weight:900;">Order Sent!</h2>
+      <p style="color:var(--text-secondary); font-size:15px; font-weight:600; margin-bottom:24px;">Your order has been logged successfully.</p>
     </div>
   </div>
 </div>
@@ -813,13 +850,22 @@ function resetToNewOrder() {
 <!-- Order Confirmation Modal -->
 <div id="orderConfirmModal">
    <div class="modal-box no-print">
-       <h3 style="color:var(--text-primary); margin: 0 0 10px; font-size:18px; font-weight:900;">Confirm Order</h3>
+       <h3 style="color:var(--text-primary); margin: 0 0 10px; font-size:22px; font-weight:900; text-transform: uppercase;">Confirm Order</h3>
        <div id="orderSummaryDetails" class="receipt-content"></div>
        <div class="modal-actions">
            <button class="btn-primary tap-effect" onclick="confirmAndSendOrder()">Confirm & Send</button>
            <button class="btn-secondary tap-effect" onclick="window.print()">Save as PDF</button>
            <button class="btn-secondary tap-effect" style="background:var(--input-bg); color:var(--text-secondary);" onclick="closeConfirmModal()">Back to Edit</button>
        </div>
+   </div>
+</div>
+
+<!-- Branch Select Modal -->
+<div id="branchSelectModal">
+   <div class="modal-box no-print">
+       <h3 style="color:var(--text-primary); margin: 0 0 16px; font-size:20px; font-weight:900; text-transform: uppercase;">Select Shop</h3>
+       <div id="branchList" style="overflow-y:auto; flex:1; text-align:left; display:flex; flex-direction:column; gap:8px;"></div>
+       <button class="btn-secondary tap-effect" style="margin-top:16px; background:var(--input-bg); color:var(--text-secondary);" onclick="document.getElementById('branchSelectModal').style.display='none'">Cancel</button>
    </div>
 </div>
 
