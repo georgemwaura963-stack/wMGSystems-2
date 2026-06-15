@@ -41,6 +41,7 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
+/* Global text selection prevention to stop ghost squares and highlighting */
 body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
   color:var(--text-primary); 
@@ -48,6 +49,11 @@ body {
   padding: env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px);
   overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.3s ease;
   background-color: var(--dynamic-primary); position: relative;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+
+input, textarea {
+  -webkit-user-select: auto; user-select: auto;
 }
 
 /* Background overlay completely hidden unless theme-hub */
@@ -67,9 +73,6 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
 .no-select {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -77,7 +80,6 @@ body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: v
 /* INSTANT SMOOTH TRANSITIONS */
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
 .view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-/* Ending with transform:none releases position:fixed elements inside it to cover the entire screen */
 @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
 
 /* Floating Back Pill */
@@ -153,7 +155,7 @@ body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:fo
 .tap-effect:active { transform: translateY(2px) scale(0.97); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 .btn-primary:disabled { opacity: 0.7; pointer-events: none; }
 
-.order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; background: var(--bg-primary); transition: border-color 0.3s; }
+.order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; background: var(--bg-primary); transition: border-color 0.3s; overflow: hidden; }
 .order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); outline: none; list-style: none; border-radius: 12px;}
 .order-group-title::-webkit-details-marker { display: none; }
 .order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); transition: transform 0.3s, color 0.4s; font-weight: 400;}
@@ -182,7 +184,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-label { cursor: pointer; }
+.chip-label { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .chip-label input { display: none; }
 .chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); transform: translateY(-2px); }
@@ -252,12 +254,16 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
 /* Camera UI */
+#cameraBackdrop, #photoBackdrop { display:none;position:fixed;inset:0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity:0; transition: opacity 0.4s ease;}
+#cameraBackdrop.show, #photoBackdrop.show { display:block; opacity:1; pointer-events: auto;}
+#cameraBackdrop { z-index: 59; }
+#photoBackdrop { z-index: 19998; }
+
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
 #cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
 #cameraVideo.live { opacity: 1; }
-#cameraBackdrop, #photoBackdrop { display:none;position:fixed;inset:0;z-index:10000; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity:0; transition: opacity 0.4s ease;}
-#cameraBackdrop.show, #photoBackdrop.show { display:block; opacity:1; pointer-events: auto;}
+
 .camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:4; }
 #captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s, opacity 0.3s ease;-webkit-tap-highlight-color:transparent; opacity: 1; }
 #captureBtn::after{content:'';width:48px;height:48px;background:#fff;border-radius:50%;transition:transform 0.1s}
@@ -283,10 +289,6 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </head>
 <body class="theme-hub">
 
-<!-- Camera & Photo Zoom Backdrops (Global body level to ensure full screen blur) -->
-<div id="cameraBackdrop" onclick="stopCamera()"></div>
-<div id="photoBackdrop" onclick="toggleZoom()"></div>
-
 <!-- GLOBAL STORAGE OBJECT -->
 <script>
 var Storage = { 
@@ -297,7 +299,7 @@ var Storage = {
 </script>
 
 <!-- Floating Back Pill (Global) -->
-<div class="back-pill tap-effect no-print no-select" id="globalBackBtn" onclick="goHome()">
+<div class="back-pill tap-effect no-select" id="globalBackBtn" onclick="goHome()">
   <span style="font-size: 18px; margin-right: 4px;">←</span> Menu
 </div>
 
@@ -486,6 +488,8 @@ function instantOrderStaffCheck(val) {
   
   if(val.length < 2) { 
     msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = '';
+    document.getElementById('o-branch').value = '';
+    document.getElementById('o-phone').value = '';
     nameCont.style.opacity = '0';
     expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
     Storage.remove('last_order_id');
@@ -513,6 +517,9 @@ function instantOrderStaffCheck(val) {
     expFields.classList.add('revealed'); lockedSec.classList.add('unlocked');
   } else {
     msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error';
+    nameInp.value = '';
+    document.getElementById('o-branch').value = '';
+    document.getElementById('o-phone').value = '';
     nameCont.style.opacity = '0';
     expFields.classList.remove('revealed'); lockedSec.classList.remove('unlocked');
   }
@@ -678,7 +685,7 @@ function processOrder(e) {
     
     let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0");
     if(qty !== "0") {
-        payload[`${juicePrefix} [${flavorKey}]`] = qty + "L";
+        payload[`${juicePrefix} [${flavorKey}]`] = qty;
     }
   });
 
@@ -700,8 +707,8 @@ function processOrder(e) {
      if (input5 && input5.getAttribute('data-val') !== "0") pieces5L = parseInt(input5.getAttribute('data-val'));
      if (input3 && input3.getAttribute('data-val') !== "0") pieces3L = parseInt(input3.getAttribute('data-val'));
      
-     if(pieces5L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces5L}L</li>`; }
-     if(pieces3L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces3L}L</li>`; }
+     if(pieces5L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces5L}</li>`; }
+     if(pieces3L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces3L}</li>`; }
   });
   juiceHtml += `</ul></div>`;
   if(hasJuices) html += juiceHtml;
@@ -783,36 +790,40 @@ function downloadReceipt(btn) {
   btn.disabled = true;
   
   setTimeout(() => {
-      let text = "STENTOR ORDER RECEIPT\n";
-      text += "Shop: " + document.getElementById('o-branch').value + "\n";
+      let text = "================================\n";
+      text += "     STENTOR ORDER RECEIPT      \n";
+      text += "================================\n\n";
+      text += "Shop:  " + document.getElementById('o-branch').value + "\n";
       text += "Staff: " + document.getElementById('o-name').value + " (" + document.getElementById('o-id').value + ")\n";
       text += "Phone: " + document.getElementById('o-phone').value + "\n\n";
       
       let hasJuices = false;
-      let jText = "JUICES:\n";
+      let jText = "--------------------------------\nJUICES\n--------------------------------\n";
       JUICES[activeStore].forEach(flavor => {
          ['5L','3L'].forEach(v => {
            const input = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${v}"]`);
            let val = input ? input.getAttribute('data-val') : "0";
            if(val && val !== "0") {
                hasJuices = true;
-               jText += `- ${flavor} - ${val}L\n`;
+               jText += `${flavor} - ${val}\n`;
            }
          });
       });
       if(hasJuices) text += jText + "\n";
       
       let fresh = Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el => el.value).join(', ');
-      if(fresh) text += "FRESH INPUTS:\n- " + fresh.replace(/, /g, "\n- ") + "\n\n";
+      if(fresh) text += "--------------------------------\nFRESH INPUTS\n--------------------------------\n" + fresh.replace(/, /g, "\n") + "\n\n";
       
       let bottles = Array.from(document.querySelectorAll('.inp-bottle:checked')).map(el => el.value).join(', ');
-      if(bottles) text += "BOTTLES:\n- " + bottles.replace(/, /g, "\n- ") + "\n\n";
+      if(bottles) text += "--------------------------------\nBOTTLES\n--------------------------------\n" + bottles.replace(/, /g, "\n") + "\n\n";
       
       let haccp = Array.from(document.querySelectorAll('.inp-haccp:checked')).map(el => el.value).join(', ');
-      if(haccp) text += "HACCP:\n- " + haccp.replace(/, /g, "\n- ") + "\n\n";
+      if(haccp) text += "--------------------------------\nHACCP SUPPLIES\n--------------------------------\n" + haccp.replace(/, /g, "\n") + "\n\n";
       
       let notes = document.getElementById('o-notes').value.trim();
-      if(notes) text += "NOTES:\n" + notes + "\n";
+      if(notes) text += "--------------------------------\nNOTES\n--------------------------------\n" + notes + "\n\n";
+      
+      text += "================================\n";
       
       const blob = new Blob([text], { type: 'text/plain' });
       const a = document.createElement('a');
@@ -950,6 +961,10 @@ function downloadReceipt(btn) {
     </div>
 
     <div class="att-container" id="mainContainer">
+      <!-- Backdrops placed inside mainContainer to interleave with z-index correctly -->
+      <div id="cameraBackdrop" onclick="stopCamera()"></div>
+      <div id="photoBackdrop" onclick="toggleZoom()"></div>
+      
       <div id="networkIndicator" class="network-indicator"></div>
 
       <div id="mainFormAtt">
