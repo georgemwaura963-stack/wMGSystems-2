@@ -43,7 +43,7 @@
   box-sizing:border-box;
   margin:0;
   padding:0;
-  -webkit-tap-highlight-color: transparent; /* Prevents ghost squares globally */
+  -webkit-tap-highlight-color: transparent; 
 }
 
 /* Global text selection prevention */
@@ -182,19 +182,23 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-label { cursor: pointer; }
+.chip-label { cursor: pointer; -webkit-tap-highlight-color: transparent !important; -webkit-touch-callout: none !important; user-select: none !important; outline: none !important;}
 .chip-label input { display: none; }
-.chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
+.chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; -webkit-touch-callout: none !important;}
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); transform: translateY(-2px); }
+.chip-label input:focus-visible + .chip-span { outline: none !important; box-shadow: none !important; }
 .chip-label:active .chip-span { transform: translateY(2px) scale(0.95); }
 
 .msg { font-size:12px; font-weight:800; margin-top:6px; min-height:20px; color:var(--text-tertiary); display:flex; align-items:center;}
 .msg.success { color:var(--success-color); } .msg.error { color:var(--error-color); }
 
+/* Unified Switcher Core CSS Fix */
 .top-bar { display:flex; justify-content:center; margin-bottom:15px; transition: opacity 0.3s ease;}
-.terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; }
-.pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); transition:all 0.4s cubic-bezier(0.25,1,0.5,1); z-index:1; }
-.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; outline:none;}
+.terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; overflow:hidden;}
+.pill-slider { position:absolute; top:4px; bottom:4px; border-radius:50px; background:var(--dynamic-primary); transition:transform 0.4s cubic-bezier(0.25,1,0.5,1); z-index:1; width: 110px;}
+.terminal-pill-wrapper.chandarana-active .pill-slider { transform: translateX(0); }
+.terminal-pill-wrapper.carrefour-active .pill-slider { transform: translateX(110px); }
+.pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0; width:110px; height:100%; font-size:14px; font-weight:900; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; outline:none; transition: color 0.3s;}
 .pill-btn.active { color:#fff; }
 
 .success-screen { text-align: center; padding: 20px 0; display: none; flex-direction: column; align-items: center; }
@@ -213,6 +217,22 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 /* Branch Select Modal */
 #branchSelectModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:20000; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #branchSelectModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:320px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; }
+
+/* Print Mode for PDF Receipts */
+@media print {
+  body { background: #fff !important; margin: 0; padding: 0; color: #000 !important; }
+  body::before { display: none !important; }
+  #view-menu, #view-attendance, .back-pill, .top-bar, #orderForm, #orderSuccessScreen, #guideModal, #branchSelectModal { display: none !important; }
+  #view-orders { display: block !important; opacity: 1 !important; transform: none !important; }
+  .order-container { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-height: none !important; overflow: visible !important; }
+  
+  #orderConfirmModal { position: relative !important; display: block !important; background: transparent !important; z-index: 1; backdrop-filter: none !important; padding: 0 !important; }
+  #orderConfirmModal .modal-box { box-shadow: none !important; border: none !important; margin: 0 !important; max-width: 100% !important; max-height: none !important; padding: 0 !important; }
+  .modal-actions { display: none !important; }
+  .receipt-content { border: 2px solid #e5e7eb !important; background: #f9fafb !important; color: #111827 !important; padding: 20px !important; box-shadow: none !important; border-radius: 12px !important; margin-bottom: 0 !important;}
+  .receipt-header { display: block !important; text-align: center; font-size: 24px !important; font-weight: 900 !important; margin-bottom: 16px !important; color: #10b981 !important; text-transform: uppercase; }
+  h3 { display: none !important; }
+}
 
 /* ==========================================
    ATTENDANCE SYSTEM UI
@@ -253,9 +273,17 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:6px;flex-shrink:0;position:relative; margin-top: 1px; }
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* Camera UI */
-#cameraBackdrop, #photoBackdrop { display:none;position:fixed;inset:0; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity:0; transition: opacity 0.4s ease; z-index: 10000;}
-#cameraBackdrop.show, #photoBackdrop.show { display:block; opacity:1; pointer-events: auto;}
+/* Unified Backdrop Styles (Camera & Photo) */
+#cameraBackdrop, #photoBackdrop {
+  position:fixed; inset:0; 
+  background:rgba(0,0,0,0.65); 
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); 
+  opacity:0; transition: opacity 0.4s ease; 
+  pointer-events: none;
+}
+#cameraBackdrop { z-index: 10000; }
+#photoBackdrop { z-index: 19999; }
+#cameraBackdrop.show, #photoBackdrop.show { opacity:1; pointer-events:auto; }
 
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
@@ -269,7 +297,7 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 #closeCameraBtn{ position:absolute;top:16px;right:16px; width:36px;height:36px;border-radius:50%; background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3); color:#fff;font-size:16px; cursor:pointer; display:flex;align-items:center;justify-content:center; z-index:6; }
 
 /* Att Success Screen */
-#attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:center; padding: 10px 4px; text-align:center; width:100%; }
+#attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:center; padding: 10px 4px; text-align:center; width:100%; position: relative; }
 .success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; }
 .success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
 
@@ -287,10 +315,6 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </head>
 <body class="theme-hub">
 
-<!-- Camera & Photo Zoom Backdrops (Global body level to ensure full screen blur) -->
-<div id="cameraBackdrop" onclick="stopCamera()"></div>
-<div id="photoBackdrop" onclick="toggleZoom()"></div>
-
 <!-- GLOBAL STORAGE OBJECT -->
 <script>
 var Storage = { 
@@ -301,7 +325,7 @@ var Storage = {
 </script>
 
 <!-- Floating Back Pill (Global) -->
-<div class="back-pill tap-effect" id="globalBackBtn" onclick="goHome()">
+<div class="back-pill tap-effect no-print" id="globalBackBtn" onclick="goHome()">
   <span style="font-size: 18px; margin-right: 4px;">←</span> Menu
 </div>
 
@@ -422,19 +446,13 @@ function switchTerminal(store, module, force) {
   if (meta) meta.setAttribute('content', hexColor);
 
   if (module === 'order') {
-    const btnChan = document.getElementById('o-btn-chandarana'); const btnCarr = document.getElementById('o-btn-carrefour');
-    btnChan.classList.toggle('active', store === 'chandarana'); btnCarr.classList.toggle('active', store === 'carrefour');
+    const wrapper = document.getElementById('o-terminal-wrapper');
+    if (wrapper) wrapper.className = 'terminal-pill-wrapper ' + store + '-active';
     
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            const activeBtn = store === 'chandarana' ? btnChan : btnCarr;
-            const sl = document.getElementById('o-pillSlider');
-            if (activeBtn && sl) { 
-                sl.style.width = activeBtn.offsetWidth + 'px'; 
-                sl.style.left = activeBtn.offsetLeft + 'px'; 
-            }
-        });
-    });
+    const btnChan = document.getElementById('o-btn-chandarana'); 
+    const btnCarr = document.getElementById('o-btn-carrefour');
+    if(btnChan) btnChan.classList.toggle('active', store === 'chandarana'); 
+    if(btnCarr) btnCarr.classList.toggle('active', store === 'carrefour');
 
     renderDynamicOrderContent();
     restoreOrderState();
@@ -458,7 +476,11 @@ function loadOrderStaffBackground() {
   const cached = localStorage.getItem('order_staff');
   if (cached) orderStaffCache = JSON.parse(cached);
 
-  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getOrderStaff' }) })
+  fetch(SCRIPT_URL, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'getOrderStaff' }) 
+    })
     .then(r => r.json()).then(res => {
        if(res.ok) {
           orderStaffCache = res.data;
@@ -523,20 +545,20 @@ function instantOrderStaffCheck(val) {
 
 // Shop Edit (Long Press logic)
 let branchEditTimer;
-function startBranchEdit() {
+function startBranchEdit(e) {
    branchEditTimer = setTimeout(() => {
       if (navigator.vibrate) navigator.vibrate(50);
       openBranchSelectModal();
-   }, 600); 
+   }, 500); 
 }
-function cancelBranchEdit() {
+function cancelBranchEdit(e) {
    clearTimeout(branchEditTimer);
 }
 
 function openBranchSelectModal() {
    const branches = [...new Set(orderStaffCache.filter(s => s.shop === activeStore).map(s => s.branch))].filter(Boolean).sort();
    const list = document.getElementById('branchList');
-   list.innerHTML = branches.map(b => `<button class="btn-secondary" style="text-align:left; padding: 14px; font-size:16px;" onclick="selectCustomBranch('${b}')">${b}</button>`).join('');
+   list.innerHTML = branches.map(b => `<button class="btn-secondary tap-effect" style="text-align:left; padding: 14px; font-size:16px;" onclick="selectCustomBranch('${b}')">${b}</button>`).join('');
    document.getElementById('branchSelectModal').style.display = 'flex';
 }
 
@@ -625,29 +647,29 @@ function renderDynamicOrderContent() {
 
   html += `<details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span tap-effect">Ginger</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span tap-effect">Lime</span></label>`;
+    html += `<label class="chip-label"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span tap-effect">Sugarcane (Full)</span></label>`;
+    html += `<label class="chip-label"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span tap-effect">Sugarcane (Half)</span></label>`;
   } else {
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span tap-effect">Sugarcane</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span tap-effect">Ginger</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span tap-effect">Lime</span></label>`;
   }
   html += `</div></div></details>`;
 
   html += `<details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
-  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
-  if(activeStore === 'carrefour') html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
+  html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span tap-effect">1 Litre</span></label>`;
+  html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span tap-effect">500ml</span></label>`;
+  if(activeStore === 'carrefour') html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span tap-effect">250ml</span></label>`;
   html += `</div></div></details>`;
 
   html += `<details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
+  html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span tap-effect">Sampling Cups</span></label>`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span tap-effect">Gloves</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span tap-effect">Hairnets</span></label>`;
+    html += `<label class="chip-label"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span tap-effect">Towels</span></label>`;
   }
   html += `</div></div></details>`;
 
@@ -741,7 +763,14 @@ async function confirmAndSendOrder() {
 
   try {
     const storeCap = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
-    await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveOrder', store: storeCap, data: pendingOrderPayload }) });
+    const response = await fetch(SCRIPT_URL, { 
+      method: "POST", 
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'saveOrder', store: storeCap, data: pendingOrderPayload }) 
+    });
+    
+    const res = await response.json();
+    if (!res.ok) throw new Error(res.error || "Failed to save order.");
     
     closeConfirmModal();
     
@@ -757,7 +786,7 @@ async function confirmAndSendOrder() {
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
 
   } catch (error) { 
-      alert("Error sending order. Check connection."); 
+      alert("Error saving order: \n" + error.message + "\n\nPlease check your connection or Google Sheet."); 
   }
   
   btn.disabled = false; btn.innerText = oldText;
@@ -788,60 +817,8 @@ function resetToNewOrder() {
 }
 
 function downloadReceipt(btn) {
-  const oldText = btn.innerHTML;
-  btn.innerHTML = 'Downloading... ⬇️';
-  btn.disabled = true;
-  
-  setTimeout(() => {
-      let text = "================================\n";
-      text += "     STENTOR ORDER RECEIPT      \n";
-      text += "================================\n\n";
-      text += "Shop:  " + document.getElementById('o-branch').value + "\n";
-      text += "Staff: " + document.getElementById('o-name').value + " (" + document.getElementById('o-id').value + ")\n";
-      text += "Phone: " + document.getElementById('o-phone').value + "\n\n";
-      
-      let hasJuices = false;
-      let jText = "--------------------------------\nJUICES\n--------------------------------\n";
-      JUICES[activeStore].forEach(flavor => {
-         ['5L','3L'].forEach(v => {
-           const input = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${v}"]`);
-           let val = input ? input.getAttribute('data-val') : "0";
-           if(val && val !== "0") {
-               hasJuices = true;
-               jText += `${flavor} - ${val}\n`;
-           }
-         });
-      });
-      if(hasJuices) text += jText + "\n";
-      
-      let fresh = Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el => el.value).join(', ');
-      if(fresh) text += "--------------------------------\nFRESH INPUTS\n--------------------------------\n" + fresh.replace(/, /g, "\n") + "\n\n";
-      
-      let bottles = Array.from(document.querySelectorAll('.inp-bottle:checked')).map(el => el.value).join(', ');
-      if(bottles) text += "--------------------------------\nBOTTLES\n--------------------------------\n" + bottles.replace(/, /g, "\n") + "\n\n";
-      
-      let haccp = Array.from(document.querySelectorAll('.inp-haccp:checked')).map(el => el.value).join(', ');
-      if(haccp) text += "--------------------------------\nHACCP SUPPLIES\n--------------------------------\n" + haccp.replace(/, /g, "\n") + "\n\n";
-      
-      let notes = document.getElementById('o-notes').value.trim();
-      if(notes) text += "--------------------------------\nNOTES\n--------------------------------\n" + notes + "\n\n";
-      
-      text += "================================\n";
-      
-      const blob = new Blob([text], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'Order_' + document.getElementById('o-id').value + '.txt';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      
-      btn.innerHTML = 'Saved! ✅';
-      setTimeout(() => {
-          btn.innerHTML = oldText;
-          btn.disabled = false;
-      }, 2000);
-  }, 400); 
+  // Utilizing the pure CSS Print to PDF layout mapping specifically configured
+  window.print();
 }
 </script>
 
@@ -874,8 +851,8 @@ function downloadReceipt(btn) {
 <div id="view-orders" class="view-section">
   <div class="order-container scrollable-container">
     <div class="top-bar" id="orderTopBar">
-      <div class="terminal-pill-wrapper">
-        <div class="pill-slider" id="o-pillSlider"></div>
+      <div class="terminal-pill-wrapper chandarana-active" id="o-terminal-wrapper">
+        <div class="pill-slider"></div>
         <button class="pill-btn active" id="o-btn-chandarana" type="button" onclick="switchTerminal('chandarana', 'order')">Chandarana</button>
         <button class="pill-btn" id="o-btn-carrefour" type="button" onclick="switchTerminal('carrefour', 'order')">Carrefour</button>
       </div>
@@ -897,9 +874,10 @@ function downloadReceipt(btn) {
 
         <div id="o-expanded-fields" class="progressive-fields">
           <div class="order-grid">
-            <div style="position: relative;" class="tap-effect"
-                 ontouchstart="startBranchEdit()" ontouchend="cancelBranchEdit()"
-                 onmousedown="startBranchEdit()" onmouseup="cancelBranchEdit()" onmouseleave="cancelBranchEdit()">
+            <div style="position: relative; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;" 
+                 ontouchstart="startBranchEdit(event)" ontouchend="cancelBranchEdit(event)" ontouchcancel="cancelBranchEdit(event)"
+                 onmousedown="startBranchEdit(event)" onmouseup="cancelBranchEdit(event)" onmouseleave="cancelBranchEdit(event)"
+                 oncontextmenu="return false;">
               <label class="order-label">Branch / Shop</label>
               <!-- Input receives no pointer events, the wrapper handles the touch safely -->
               <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly style="pointer-events: none;">
@@ -934,7 +912,7 @@ function downloadReceipt(btn) {
 
 <!-- Order Confirmation Modal -->
 <div id="orderConfirmModal">
-   <div class="modal-box no-print">
+   <div class="modal-box">
        <h3 style="color:var(--text-primary); margin: 0 0 10px; font-size:22px; font-weight:900; text-transform: uppercase;">Confirm Order</h3>
        <div id="orderSummaryDetails" class="receipt-content"></div>
        <div class="modal-actions">
@@ -956,6 +934,9 @@ function downloadReceipt(btn) {
 
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
+  <!-- Camera Backdrop spans the viewport natively behind mainContainer -->
+  <div id="cameraBackdrop" onclick="stopCamera()"></div>
+
   <div class="page-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
       <div class="chain left-chain"></div>
@@ -968,8 +949,8 @@ function downloadReceipt(btn) {
 
       <div id="mainFormAtt">
         <div class="top-bar" style="justify-content: flex-end; margin-bottom: 20px;">
-          <div class="terminal-pill-wrapper">
-            <div class="pill-slider" id="pillSlider"></div>
+          <div class="terminal-pill-wrapper chandarana-active" id="a-terminal-wrapper">
+            <div class="pill-slider"></div>
             <button class="pill-btn active" id="btn-chandarana" onclick="attSwitchTerminal('chandarana')">
               <span class="full-text">Chandarana</span>
             </button>
@@ -1007,7 +988,10 @@ function downloadReceipt(btn) {
       </div>
 
       <div id="attSuccessScreen">
+        <!-- Photo backdrop securely inside success screen bounding -->
+        <div id="photoBackdrop" onclick="toggleZoom()"></div>
         <img id="successPhoto" class="success-photo" src="" alt="Captured Selfie" onclick="toggleZoom()">
+        
         <div class="success-badge" id="successBadge">CLOCK IN</div>
         <div class="success-card">
           <div class="success-name" id="successName"></div>
@@ -1016,7 +1000,7 @@ function downloadReceipt(btn) {
         <button class="success-back tap-effect" onclick="resetToStart()">← Submit Another</button>
       </div>
 
-      <!-- Camera overlay -->
+      <!-- Camera overlay safely bounded by mainContainer bounds -->
       <div id="videoContainerWrapper">
         <video id="cameraVideo" autoplay playsinline muted></video>
         <button id="closeCameraBtn" class="tap-effect" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
@@ -1096,19 +1080,11 @@ function updateTerminalUIAtt() {
 
   var title = document.getElementById('storeSign'); if(title) title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1);
   triggerSignAnimation();
+  
+  const wrapper = document.getElementById('a-terminal-wrapper');
+  if (wrapper) wrapper.className = 'terminal-pill-wrapper ' + currentTerminal + '-active';
   document.getElementById('btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana');
   document.getElementById('btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour');
-  
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-        const ab = document.querySelector('#view-attendance .pill-btn.active');
-        const sl = document.getElementById('pillSlider'); 
-        if (ab && sl) { 
-            sl.style.width = ab.offsetWidth + 'px'; 
-            sl.style.left = ab.offsetLeft + 'px'; 
-        }
-    });
-  });
 }
 
 function attSwitchTerminal(term, force) {
