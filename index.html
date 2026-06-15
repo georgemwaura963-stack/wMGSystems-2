@@ -63,10 +63,22 @@ body.theme-hub::before { opacity: 1; visibility: visible; }
 body.theme-chandarana { background-color: var(--theme-chan); --dynamic-primary: var(--theme-chan); }
 body.theme-carrefour { background-color: var(--theme-carr); --dynamic-primary: var(--theme-carr); --success-color:#3b82f6; }
 
+/* utility to prevent text selection and highlight ghosts */
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* INSTANT SMOOTH TRANSITIONS */
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
-.view-section.active { display: flex; opacity: 1; transform: translateY(0); animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+.view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+/* Ending with transform:none releases position:fixed elements inside it to cover the entire screen */
+@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
 
 /* Floating Back Pill */
 .back-pill {
@@ -142,7 +154,7 @@ body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:fo
 .btn-primary:disabled { opacity: 0.7; pointer-events: none; }
 
 .order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; background: var(--bg-primary); transition: border-color 0.3s; }
-.order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); outline: none; list-style: none; -webkit-tap-highlight-color: transparent; border-radius: 12px;}
+.order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); outline: none; list-style: none; border-radius: 12px;}
 .order-group-title::-webkit-details-marker { display: none; }
 .order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); transition: transform 0.3s, color 0.4s; font-weight: 400;}
 .order-group[open] { border-color: var(--dynamic-primary); }
@@ -151,7 +163,7 @@ body.theme-carrefour .order-input:focus, body.theme-carrefour .order-textarea:fo
 .order-group-content { padding: 14px; border-top: 1px solid var(--border-color); }
 
 /* Juice Grid */
-.table-container { width: 100%; overflow-x: auto; overflow-y: hidden; border-radius: 12px; background: var(--bg-primary); margin-bottom: 15px; transition: border-color 0.4s ease;}
+.table-container { width: 100%; overflow-x: auto; overflow-y: hidden; background: var(--bg-primary); transition: border-color 0.4s ease;}
 table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
 th, td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
 th { background: var(--bg-secondary); font-weight: 900; color: var(--text-secondary); font-size: 12px; width: 35%; text-transform: uppercase;}
@@ -164,14 +176,13 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
   background: var(--input-bg); border: 2px solid var(--input-border);
   color: var(--text-tertiary); font-weight: 900; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
-  user-select: none; transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s ease; 
-  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s ease; 
 }
 .square-input:active { transform: scale(0.92); }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-label { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.chip-label { cursor: pointer; }
 .chip-label input { display: none; }
 .chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); transition: 0.2s; }
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.15); transform: translateY(-2px); }
@@ -202,18 +213,6 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 /* Branch Select Modal */
 #branchSelectModal { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:20000; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
 #branchSelectModal .modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:320px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; }
-
-/* Print Styles for PDF Export */
-@media print {
-    body { background: #fff !important; margin: 0; padding: 0; }
-    body * { visibility: hidden; }
-    #orderConfirmModal, #orderConfirmModal * { visibility: visible; }
-    #orderConfirmModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: white; padding: 10px; display: block !important; backdrop-filter: none; background: transparent; }
-    .modal-box { box-shadow: none !important; border: none !important; width: 100%; max-width: none !important; padding: 0 !important; }
-    .modal-actions, .no-print { display: none !important; }
-    .receipt-header { display: block; text-align: center; font-size: 20px; font-weight: 900; color: #000; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px dashed #000; padding-bottom: 10px; }
-    .receipt-content { background: transparent !important; border: none !important; padding: 0 !important; color: #000 !important; font-family: monospace; font-size: 14px; font-weight: 600; box-shadow: none !important; }
-}
 
 /* ==========================================
    ATTENDANCE SYSTEM UI
@@ -257,8 +256,8 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
 #cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
 #cameraVideo.live { opacity: 1; }
-#cameraBackdrop{ display:none;position:fixed;inset:0;z-index:59; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-#cameraBackdrop.show{ display:block; }
+#cameraBackdrop, #photoBackdrop { display:none;position:fixed;inset:0;z-index:10000; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity:0; transition: opacity 0.4s ease;}
+#cameraBackdrop.show, #photoBackdrop.show { display:block; opacity:1; pointer-events: auto;}
 .camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:20px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:4; }
 #captureBtn{ width:64px;height:64px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s, opacity 0.3s ease;-webkit-tap-highlight-color:transparent; opacity: 1; }
 #captureBtn::after{content:'';width:48px;height:48px;background:#fff;border-radius:50%;transition:transform 0.1s}
@@ -269,8 +268,7 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 #attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:center; padding: 10px 4px; text-align:center; width:100%; }
 .success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
 .success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
-#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 19999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-#photoBackdrop.show { opacity: 1; pointer-events: auto; }
+
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; text-transform:uppercase;padding:6px 20px;border-radius:999px; margin-bottom: 24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
 .success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
@@ -285,6 +283,10 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 </head>
 <body class="theme-hub">
 
+<!-- Camera & Photo Zoom Backdrops (Global body level to ensure full screen blur) -->
+<div id="cameraBackdrop" onclick="stopCamera()"></div>
+<div id="photoBackdrop" onclick="toggleZoom()"></div>
+
 <!-- GLOBAL STORAGE OBJECT -->
 <script>
 var Storage = { 
@@ -295,7 +297,7 @@ var Storage = {
 </script>
 
 <!-- Floating Back Pill (Global) -->
-<div class="back-pill tap-effect no-print" id="globalBackBtn" onclick="goHome()">
+<div class="back-pill tap-effect no-print no-select" id="globalBackBtn" onclick="goHome()">
   <span style="font-size: 18px; margin-right: 4px;">←</span> Menu
 </div>
 
@@ -516,13 +518,13 @@ function instantOrderStaffCheck(val) {
   }
 }
 
-// Shop Edit (Long Press logic using custom modal)
+// Shop Edit (Long Press logic)
 let branchEditTimer;
 function startBranchEdit() {
    branchEditTimer = setTimeout(() => {
       if (navigator.vibrate) navigator.vibrate(50);
       openBranchSelectModal();
-   }, 1000); 
+   }, 600); 
 }
 function cancelBranchEdit() {
    clearTimeout(branchEditTimer);
@@ -565,17 +567,11 @@ function handleJuicePointerDown(e, step) {
       el.isLong = true;
       if (navigator.vibrate) navigator.vibrate(50);
       
-      let val = prompt("Edit exact quantity (or 0 to clear):", el.getAttribute('data-val') || "0");
-      if(val !== null && val !== "") {
-          let num = parseInt(val);
-          if(!isNaN(num) && num >= 0) {
-              el.setAttribute('data-val', num);
-              el.innerText = num === 0 ? '-' : num;
-              el.classList.toggle('has-value', num > 0);
-              
-              if (num > 0) handleJuiceExclusivity(el);
-          }
-      }
+      // Clear action on long press
+      el.setAttribute('data-val', "0");
+      el.innerText = '-';
+      el.classList.remove('has-value');
+      
   }, 400);
 }
 
@@ -603,7 +599,7 @@ function handleJuicePointerCancel(e) {
 }
 
 function renderDynamicOrderContent() {
-  let html = `<details class="order-group"><summary class="order-group-title">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none;">`;
+  let html = `<details class="order-group"><summary class="order-group-title no-select">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none; border-radius: 0 0 12px 12px; overflow: hidden;">`;
   html += `<div class="table-container" style="margin-bottom:0; border:none; border-radius:0; box-shadow:none;"><table><thead><tr><th>Flavor</th>`;
   VOLUMES.forEach(v => html += `<th>${v === '5L' ? '5 Litres' : '3 Litres'}</th>`);
   html += `</tr></thead><tbody>`;
@@ -612,7 +608,7 @@ function renderDynamicOrderContent() {
     html += `<tr><td class="flavor-name">${flavor}</td>`;
     VOLUMES.forEach(v => {
       let step = parseInt(v); 
-      html += `<td><div class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" data-val="0" 
+      html += `<td><div class="square-input juice-input no-select" data-flavor="${flavor}" data-vol="${v}" data-val="0" 
         ontouchstart="handleJuicePointerDown(event, ${step})" 
         ontouchend="handleJuicePointerUp(event, ${step})" 
         ontouchcancel="handleJuicePointerCancel(event)" 
@@ -624,31 +620,31 @@ function renderDynamicOrderContent() {
   });
   html += `</tbody></table></div></div></details>`;
 
-  html += `<details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<details class="order-group"><summary class="order-group-title no-select">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="radio" name="sg_chan" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`;
   } else {
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`;
   }
   html += `</div></div></details>`;
 
-  html += `<details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
-  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
-  if(activeStore === 'carrefour') html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
+  html += `<details class="order-group"><summary class="order-group-title no-select">Bottles</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label>`;
+  html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
+  if(activeStore === 'carrefour') html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
   html += `</div></div></details>`;
 
-  html += `<details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
-  html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
+  html += `<details class="order-group"><summary class="order-group-title no-select">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group">`;
+  html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
   if(activeStore === 'chandarana') {
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
-    html += `<label class="chip-label tap-effect"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Gloves"><span class="chip-span">Gloves</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Hairnets"><span class="chip-span">Hairnets</span></label>`;
+    html += `<label class="chip-label tap-effect no-select"><input type="checkbox" class="inp-haccp" value="Towels"><span class="chip-span">Towels</span></label>`;
   }
   html += `</div></div></details>`;
 
@@ -676,13 +672,14 @@ function processOrder(e) {
   JUICES[activeStore].forEach(flavor => {
     let flavorKey = flavor;
     if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; }
-    let quantities = [];
-    VOLUMES.forEach(v => {
-      const input = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${v}"]`);
-      let val = input ? input.getAttribute('data-val') : "0";
-      if(val && val !== "0") quantities.push(`${v}: ${val}`);
-    });
-    if(quantities.length > 0) payload[`${juicePrefix} [${flavorKey}]`] = quantities.join(', ');
+    
+    let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0";
+    let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0";
+    
+    let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0");
+    if(qty !== "0") {
+        payload[`${juicePrefix} [${flavorKey}]`] = qty + "L";
+    }
   });
 
   pendingOrderPayload = payload;
@@ -703,8 +700,8 @@ function processOrder(e) {
      if (input5 && input5.getAttribute('data-val') !== "0") pieces5L = parseInt(input5.getAttribute('data-val'));
      if (input3 && input3.getAttribute('data-val') !== "0") pieces3L = parseInt(input3.getAttribute('data-val'));
      
-     if(pieces5L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces5L} (5L)</li>`; }
-     if(pieces3L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces3L} (3L)</li>`; }
+     if(pieces5L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces5L}L</li>`; }
+     if(pieces3L > 0) { hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${pieces3L}L</li>`; }
   });
   juiceHtml += `</ul></div>`;
   if(hasJuices) html += juiceHtml;
@@ -780,8 +777,10 @@ function resetToNewOrder() {
   if(currentId) instantOrderStaffCheck(currentId);
 }
 
-function downloadReceipt() {
-  try { window.print(); } catch(e) {}
+function downloadReceipt(btn) {
+  const oldText = btn.innerHTML;
+  btn.innerHTML = 'Downloading... ⬇️';
+  btn.disabled = true;
   
   setTimeout(() => {
       let text = "STENTOR ORDER RECEIPT\n";
@@ -797,7 +796,7 @@ function downloadReceipt() {
            let val = input ? input.getAttribute('data-val') : "0";
            if(val && val !== "0") {
                hasJuices = true;
-               jText += `- ${flavor} - ${val} (${v})\n`;
+               jText += `- ${flavor} - ${val}L\n`;
            }
          });
       });
@@ -822,7 +821,13 @@ function downloadReceipt() {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-  }, 500);
+      
+      btn.innerHTML = 'Saved! ✅';
+      setTimeout(() => {
+          btn.innerHTML = oldText;
+          btn.disabled = false;
+      }, 2000);
+  }, 400); 
 }
 </script>
 
@@ -878,11 +883,12 @@ function downloadReceipt() {
 
         <div id="o-expanded-fields" class="progressive-fields">
           <div class="order-grid">
-            <div style="position: relative;">
+            <div style="position: relative;" class="tap-effect no-select"
+                 ontouchstart="startBranchEdit()" ontouchend="cancelBranchEdit()"
+                 onmousedown="startBranchEdit()" onmouseup="cancelBranchEdit()" onmouseleave="cancelBranchEdit()">
               <label class="order-label">Branch / Shop</label>
-              <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly
-                     ontouchstart="startBranchEdit()" ontouchend="cancelBranchEdit()"
-                     onmousedown="startBranchEdit()" onmouseup="cancelBranchEdit()" onmouseleave="cancelBranchEdit()">
+              <!-- Input receives no pointer events, the wrapper handles the touch safely -->
+              <input type="text" id="o-branch" class="order-input" placeholder="Branch" required readonly style="pointer-events: none;">
             </div>
             <div>
               <label class="order-label">Phone No.</label>
@@ -919,7 +925,7 @@ function downloadReceipt() {
        <div id="orderSummaryDetails" class="receipt-content"></div>
        <div class="modal-actions">
            <button class="btn-secondary tap-effect" style="background:var(--bg-secondary); color:var(--text-secondary); border: 1px solid var(--border-color);" onclick="closeConfirmModal()">Back to Edit</button>
-           <button class="btn-secondary tap-effect" onclick="downloadReceipt()">Save as PDF</button>
+           <button class="btn-secondary tap-effect" onclick="downloadReceipt(this)">Save as PDF</button>
            <button class="btn-primary tap-effect" id="confirmSendBtn" onclick="confirmAndSendOrder()">Confirm & Send</button>
        </div>
    </div>
@@ -936,9 +942,6 @@ function downloadReceipt() {
 
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
-  <div id="cameraBackdrop" onclick="stopCamera()"></div>
-  <div id="photoBackdrop" onclick="toggleZoom()"></div>
-
   <div class="page-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
       <div class="chain left-chain"></div>
