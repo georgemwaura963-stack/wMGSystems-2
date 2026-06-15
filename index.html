@@ -224,6 +224,40 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 
 
 /* ==========================================
+   PERFECT CAMERA AND ZOOM BLUR (STACKING CONTEXT FIX)
+   ========================================== */
+#attendanceOverlay {
+  position: fixed; inset: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+}
+#attendanceOverlay.show {
+  opacity: 1; pointer-events: auto;
+}
+.elevated-container {
+  z-index: 1000 !important; 
+  position: relative;
+}
+
+/* Styles for the Zoomed Photo Clone Appended directly to Body */
+.success-photo-clone {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  z-index: 99999;
+  margin: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px var(--success-color);
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s ease, opacity 0.3s ease;
+}
+.success-photo-clone.zoomed {
+  transform: translate(-50%, -50%) scale(2.6);
+  border-radius: 8%;
+}
+
+/* ==========================================
    ATTENDANCE SYSTEM UI
    ========================================== */
 .page-wrapper { display: flex; flex-direction: column; align-items: center; margin-top: -24px; width: 100%; max-width: 400px; }
@@ -235,7 +269,7 @@ td.flavor-name { text-align: left; font-weight: 800; font-size: 11px; padding-le
 @keyframes swing { 0% { transform: rotateX(0deg) rotateZ(0deg); } 20% { transform: rotateX(25deg) rotateZ(-3deg); } 40% { transform: rotateX(-15deg) rotateZ(2deg); } 60% { transform: rotateX(8deg) rotateZ(-1deg); } 80% { transform: rotateX(-3deg) rotateZ(0deg); } 100% { transform: rotateX(0deg) rotateZ(0deg); } }
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
-.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; transition: background 0.4s ease; }
+.att-container { width: 100%; aspect-ratio: 1 / 1; background:var(--bg-primary); padding:24px 22px; border-radius:24px; box-shadow:0 15px 35px var(--shadow-color); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; transition: background 0.4s ease; z-index: 1;}
 
 #mainFormAtt { width: 100%; }
 .network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8;transition:background 0.4s ease; box-shadow: 0 0 6px var(--success-color); }
@@ -261,31 +295,7 @@ body.theme-carrefour .att-input:focus, body.theme-carrefour .att-select:focus {b
 .att-msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:6px;flex-shrink:0;position:relative; margin-top: 1px; }
 .att-msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* PERFECT STACKING CONTEXTS FOR CAMERA & BLUR */
-#cameraBackdrop, #photoBackdrop {
-  position: fixed; inset: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.65); 
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  opacity: 0; transition: opacity 0.4s ease; 
-  pointer-events: none;
-}
-#cameraBackdrop { z-index: 10000; }
-#photoBackdrop  { z-index: 19999; }
-#cameraBackdrop.show, #photoBackdrop.show { opacity: 1; pointer-events: auto; }
-
-/* When Camera is active, elevate mainContainer explicitly */
-.elevated-container { z-index: 10001 !important; position: relative; }
-
-/* When Photo zoom is active, make mainContainer transparent to blur everything behind it */
-body.photo-zoomed-active #mainContainer {
-  background: transparent !important;
-  box-shadow: none !important;
-  z-index: 20000 !important;
-}
-body.photo-zoomed-active #attSuccessScreen > *:not(.success-photo) {
-  opacity: 0; pointer-events: none;
-}
-
+/* Camera UI securely bounded by mainContainer bounds */
 #videoContainerWrapper{ position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: scale(0.95); opacity:0; pointer-events:none; }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: scale(1); }
 #cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
@@ -299,8 +309,7 @@ body.photo-zoomed-active #attSuccessScreen > *:not(.success-photo) {
 
 /* Att Success Screen */
 #attSuccessScreen{ display:none; flex-direction:column; align-items:center; justify-content:center; padding: 10px 4px; text-align:center; width:100%; position: relative; }
-.success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; }
-.success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
+.success-photo{ width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; position: relative; z-index: 10; transition: opacity 0.3s;}
 
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; text-transform:uppercase;padding:6px 20px;border-radius:999px; margin-bottom: 24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; transition: opacity 0.3s ease;}
 .success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; transition: opacity 0.3s ease;}
@@ -348,7 +357,6 @@ function switchView(viewId) {
     document.querySelectorAll('.view-section').forEach(v => {
         if (v.id === viewId) {
             v.style.display = 'flex';
-            // Trigger reflow to restart animations
             v.classList.remove('active');
             void v.offsetWidth; 
             v.classList.add('active');
@@ -458,7 +466,6 @@ function switchTerminal(store, module, force) {
     renderDynamicOrderContent();
     restoreOrderState();
     
-    // Ensure ID is preserved across tabs
     let savedId = Storage.get('last_order_id');
     if (savedId && !document.getElementById('o-id').value) {
         document.getElementById('o-id').value = savedId;
@@ -592,12 +599,9 @@ function handleJuicePointerDown(e, step) {
   el.pressTimer = setTimeout(() => {
       el.isLong = true;
       if (navigator.vibrate) navigator.vibrate(50);
-      
-      // Clear action on long press
       el.setAttribute('data-val', "0");
       el.innerText = '-';
       el.classList.remove('has-value');
-      
   }, 400);
 }
 
@@ -775,7 +779,6 @@ async function confirmAndSendOrder() {
     
     closeConfirmModal();
     
-    // Hide Form and top bar entirely during success
     document.getElementById('orderTopBar').style.opacity = '0';
     setTimeout(() => { document.getElementById('orderTopBar').style.display = 'none'; }, 300);
     
@@ -783,7 +786,6 @@ async function confirmAndSendOrder() {
     document.getElementById('orderSuccessScreen').style.display = 'flex';
     document.getElementById('orderSuccessScreen').classList.add('active');
     
-    // Clear state for this specific store upon success
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
 
   } catch (error) { 
@@ -806,7 +808,6 @@ function resetToNewOrder() {
   
   renderDynamicOrderContent();
   
-  // Ensure ID is preserved and re-verified
   let savedId = Storage.get('last_order_id');
   if (savedId) {
       document.getElementById('o-id').value = savedId;
@@ -822,11 +823,10 @@ function downloadReceipt(btn) {
   btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px; border-color:var(--dynamic-primary); border-top-color:transparent;"></span> Generating...';
   btn.disabled = true;
 
-  // Build an isolated, beautiful HTML layout to export as PDF cleanly on 1 page
+  // Build a constrained, beautiful HTML layout designed explicitly to fit on a single A4 page
   const tempDiv = document.createElement('div');
-  tempDiv.style.width = '650px'; 
-  tempDiv.style.maxWidth = '650px'; 
-  tempDiv.style.padding = '40px';
+  tempDiv.style.width = '600px'; 
+  tempDiv.style.padding = '20px';
   tempDiv.style.background = '#ffffff';
   tempDiv.style.color = '#111827';
   tempDiv.style.fontFamily = 'Nunito, sans-serif';
@@ -837,18 +837,9 @@ function downloadReceipt(btn) {
   content.style.margin = '0';
   content.style.fontSize = '15px'; 
   content.style.borderRadius = '12px';
-  content.style.padding = '20px';
+  content.style.padding = '24px';
+  content.style.pageBreakInside = 'avoid'; // Crucial rule for 1-page fit
   
-  const header = document.createElement('h2');
-  header.innerText = 'STENTOR ORDER';
-  header.style.textAlign = 'center';
-  header.style.color = '#10b981';
-  header.style.marginBottom = '24px';
-  header.style.fontWeight = '900';
-  header.style.textTransform = 'uppercase';
-  header.style.fontSize = '26px';
-  
-  tempDiv.appendChild(header);
   tempDiv.appendChild(content);
 
   const opt = {
@@ -856,8 +847,7 @@ function downloadReceipt(btn) {
     filename:     'Order_' + document.getElementById('o-id').value + '.pdf',
     image:        { type: 'jpeg', quality: 1 },
     html2canvas:  { scale: 2, useCORS: true },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: ['avoid-all'] } // Forces it to stay on one page
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
   };
 
   html2pdf().set(opt).from(tempDiv).save().then(() => {
@@ -989,9 +979,8 @@ function downloadReceipt(btn) {
 <!-- ATTENDANCE VIEW -->
 <div id="view-attendance" class="view-section">
   
-  <!-- Backdrops are securely inside the specific view-section stacking context to prevent them from blurring the elevated camera frame -->
-  <div id="cameraBackdrop" onclick="stopCamera()"></div>
-  <div id="photoBackdrop" onclick="toggleZoom()"></div>
+  <!-- The overlay lives inside the same stacking context as the white attendance square -->
+  <div id="attendanceOverlay" onclick="closeOverlays()"></div>
 
   <div class="page-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
@@ -1054,7 +1043,7 @@ function downloadReceipt(btn) {
         <button class="success-back tap-effect" onclick="resetToStart()">← Submit Another</button>
       </div>
 
-      <!-- Camera overlay securely locked to main container boundaries -->
+      <!-- Camera overlay bounded tightly by the white container -->
       <div id="videoContainerWrapper">
         <video id="cameraVideo" autoplay playsinline muted></video>
         <button id="closeCameraBtn" class="tap-effect" onclick="stopCamera()" aria-label="Close camera">&#x2715;</button>
@@ -1086,6 +1075,15 @@ var activeFetchId = 0, currentAction = "", videoStream = null;
 
 var staffRestrictionError = null; 
 var warningTimer = null;
+
+function closeOverlays() {
+  if (document.getElementById('videoContainerWrapper').classList.contains('expanded')) {
+     stopCamera();
+  }
+  if (document.getElementById('zoomedClone')) {
+     toggleZoom();
+  }
+}
 
 function cleanOldHistory() {
   var histRaw = Storage.get('local_history_' + currentTerminal);
@@ -1192,9 +1190,6 @@ function resetStepsFrom(n) {
 
 function resetToStart() {
   document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('mainFormAtt').style.display = 'block'; document.getElementById('mainContainer').style.overflow = 'hidden';
-  document.getElementById('successPhoto').classList.remove('zoomed'); 
-  document.getElementById('photoBackdrop').classList.remove('show');
-  document.body.classList.remove('photo-zoomed-active');
   resetStepsFrom(3); var branchVal = document.getElementById('branch').value; var staffVal = document.getElementById('staffID').value;
   if (branchVal && staffVal) handleStaffInputValue(staffVal);
 }
@@ -1203,17 +1198,28 @@ function showSuccess(id,txt){ var e=document.getElementById(id); e.innerHTML='<s
 function showError(id,txt)  { var e=document.getElementById(id); e.innerText=txt; e.className='att-msg error'; }
 function clearMsg(id)       { var e=document.getElementById(id); e.innerText=''; e.className='att-msg'; }
 
+// Full-screen pop-out zoom to fix CSS stacking constraints
 function toggleZoom() {
-  var img = document.getElementById('successPhoto'); 
-  var backdrop = document.getElementById('photoBackdrop');
-  if (img.classList.contains('zoomed')) { 
-      img.classList.remove('zoomed'); 
-      backdrop.classList.remove('show'); 
-      document.body.classList.remove('photo-zoomed-active');
+  var overlay = document.getElementById('attendanceOverlay');
+  var clone = document.getElementById('zoomedClone');
+  
+  if (clone) { 
+      clone.style.transform = 'translate(-50%, -50%) scale(1)';
+      clone.style.opacity = '0';
+      overlay.classList.remove('show');
+      setTimeout(() => clone.remove(), 400);
   } else { 
-      img.classList.add('zoomed'); 
-      backdrop.classList.add('show'); 
-      document.body.classList.add('photo-zoomed-active');
+      var img = document.getElementById('successPhoto');
+      clone = document.createElement('img');
+      clone.src = img.src;
+      clone.id = 'zoomedClone';
+      clone.className = 'success-photo-clone';
+      clone.onclick = toggleZoom;
+      document.body.appendChild(clone);
+      
+      void clone.offsetWidth; // Trigger reflow for transition
+      clone.classList.add('zoomed');
+      overlay.classList.add('show');
   }
 }
 
@@ -1381,9 +1387,12 @@ function startCamera() {
       video.srcObject = stream;
       video.onloadedmetadata = function() {
         video.play().catch(function(){}); 
+        
+        // The stacking fix
+        document.getElementById('attendanceOverlay').classList.add('show');
         document.getElementById('mainContainer').classList.add('elevated-container');
         document.getElementById('videoContainerWrapper').classList.add('expanded'); 
-        document.getElementById('cameraBackdrop').classList.add('show');
+        
         video.classList.add('live'); 
         btn.classList.remove('loading');
         btn.innerText = 'Take Selfie'; 
@@ -1396,10 +1405,18 @@ function startCamera() {
 }
 
 function stopCamera() {
-  var wrapper = document.getElementById('videoContainerWrapper'), backdrop = document.getElementById('cameraBackdrop');
+  var wrapper = document.getElementById('videoContainerWrapper');
   var container = document.getElementById('mainContainer');
-  wrapper.classList.remove('expanded'); backdrop.classList.remove('show');
+  var overlay = document.getElementById('attendanceOverlay');
+  
+  wrapper.classList.remove('expanded'); 
   container.classList.remove('elevated-container');
+  
+  // Only turn off overlay if zoomed clone is not active
+  if (!document.getElementById('zoomedClone')) {
+      overlay.classList.remove('show');
+  }
+  
   var video = document.getElementById('cameraVideo');
   video.classList.remove('live');
   
