@@ -80,7 +80,10 @@ body.theme-carrefour {--dynamic-primary:var(--theme-carr);--success-color:#3b82f
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
 
-.back-pill { position: fixed; bottom: 24px; left: 24px; z-index: 9999; background: var(--dynamic-primary); color: #fff; font-weight: 800; font-size: 15px; padding: 14px 26px; border-radius: 50px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; opacity: 0; pointer-events: none; }
+/* Back Button adopting opposite theme color dynamically */
+.back-pill { position: fixed; bottom: 24px; left: 24px; z-index: 9999; background: var(--theme-chan); color: #fff; font-weight: 800; font-size: 15px; padding: 14px 26px; border-radius: 50px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; opacity: 0; pointer-events: none; }
+body.theme-chandarana .back-pill { background: var(--theme-carr); }
+body.theme-carrefour .back-pill { background: var(--theme-chan); }
 .back-pill.show { opacity: 1; pointer-events: auto; }
 .back-pill:active { transform: scale(0.92); }
 
@@ -122,8 +125,14 @@ body.theme-carrefour .ui-input:focus, body.theme-carrefour .ui-select:focus {box
 
 /* ORDERS SPECIFIC */
 .section-card { border: 1px solid var(--border-color); border-radius: 18px; padding: 14px; background: var(--bg-primary); margin-bottom: 15px; }
-.locked-form { opacity: 0.4; pointer-events: none; filter: grayscale(100%); transition: 0.4s; }
-.locked-form.unlocked { opacity: 1; pointer-events: auto; filter: grayscale(0%); }
+
+/* Themed ID Input Field */
+#o-id { border: 2px solid var(--dynamic-primary); color: var(--dynamic-primary); font-weight: 900; font-size: 18px; background-color: var(--button-secondary-bg); }
+#o-id::placeholder { color: var(--dynamic-primary); opacity: 0.5; font-weight: 700; }
+
+.locked-form { opacity: 0.4; pointer-events: none; transition: 0.4s; }
+.locked-form.unlocked { opacity: 1; pointer-events: auto; }
+
 .order-group { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; background: var(--bg-primary); overflow: hidden; }
 .order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); outline: none; list-style: none; }
 .order-group-title::-webkit-details-marker { display: none; }
@@ -164,16 +173,24 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:8px;flex-shrink:0;position:relative; margin-top: 2px; }
 .msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* CAMERA UI REFINEMENTS (Frosted Glass & Adjusted Positioning) */
-#cameraBackdrop { display:none; position:fixed; inset:0; z-index:59; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-#cameraBackdrop.show { display:block; }
+/* PERFECT FULL-SCREEN FROSTED GLASS OVERLAYS */
+#cameraBackdrop, #photoBackdrop { 
+  display:none; position:fixed; 
+  top:0; left:0; right:0; bottom:0; 
+  width:100vw; height:100vh; height:100dvh; 
+  background:rgba(0,0,0,0.4); 
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); 
+  margin:0; padding:0; z-index:10000; 
+  opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+}
+#cameraBackdrop.show, #photoBackdrop.show { display:block; opacity:1; pointer-events:auto; }
 
 #videoContainerWrapper{ 
   position:fixed; top: 46%; left: 50%; 
   width:88%; max-width:360px; 
-  aspect-ratio: 4 / 4.8; /* Shorter to lift the bottom up nicely */
+  aspect-ratio: 4 / 4.8; 
   max-height: 65vh; 
-  border-radius:24px; overflow:hidden; z-index:60; background-color: #000; 
+  border-radius:24px; overflow:hidden; z-index:10001; background-color: #000; 
   transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); 
   transform: translate(-50%, -50%) scale(0.95); opacity:0; pointer-events:none; 
 }
@@ -190,18 +207,15 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 
 /* SUCCESS SCREENS & SMOOTH PHOTO ZOOM */
 #attSuccessScreen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; }
-.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
+.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 9999; -webkit-tap-highlight-color: transparent; }
 
-/* Photo Zoom perfectly centered slightly high */
+/* Photo Zoom beautifully centered above the full screen blur */
 .success-photo.zoomed { 
   position: fixed; top: 45%; left: 50%; 
   transform: translate(-50%, -50%) scale(2.6); 
   border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.5); 
-  cursor: zoom-out; margin: 0; z-index: 20000; 
+  cursor: zoom-out; margin: 0; z-index: 10001; 
 }
-
-#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 19999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-#photoBackdrop.show { opacity: 1; pointer-events: auto; }
 
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; margin-bottom:24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
 .success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
@@ -460,6 +474,7 @@ function updatePillSlider(containerId, sliderId) {
 let orderStaffCache = { chandarana: [], carrefour: [] }; 
 let currentOrderStaffFullname = "";
 let orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } };
+let orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; // Preserves ID per tab
 
 function openOrder() {
   document.getElementById('globalBackBtn').classList.add('show');
@@ -468,7 +483,12 @@ function openOrder() {
 }
 
 function switchTerminalOrder(store) {
-  saveOrderState(); activeStore = store; document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
+  // Save ID before switching so we can perfectly restore it later
+  orderStoreState[activeStore].id = document.getElementById('o-id').value;
+  saveOrderState(); 
+  
+  activeStore = store; 
+  document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
   var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   var meta = document.getElementById('theme-color-meta'); if (meta) meta.setAttribute('content', store === 'chandarana' ? (isDark ? '#059669' : '#10b981') : (isDark ? '#2563eb' : '#3b82f6'));
 
@@ -477,12 +497,12 @@ function switchTerminalOrder(store) {
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider');
   renderDynamicOrderContent(); restoreOrderState();
   
-  document.getElementById('o-id').value = '';
+  // Load specific saved ID for this newly selected store
+  let savedId = orderStoreState[store].id || Storage.get('last_order_id_' + store) || '';
+  document.getElementById('o-id').value = savedId;
   
-  let savedId = Storage.get('last_order_id_' + store); 
-  if (savedId) document.getElementById('o-id').value = savedId;
-  
-  instantOrderStaffCheck(document.getElementById('o-id').value);
+  // Checking this instantly unlocks the form without any grayscale wiping if the ID is valid!
+  instantOrderStaffCheck(savedId);
 }
 
 function loadOrderStaffBackground() {
@@ -677,6 +697,10 @@ function triggerSignAnimation() {
 
 function switchTerminalAtt(term, isInitialOpen = false) {
   if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { triggerSignAnimation(); return; }
+  
+  // Save ID before switching so progress is preserved when we come back
+  if (!isInitialOpen) { Storage.set('last_staff_id_' + currentTerminal, document.getElementById('staffID').value); }
+
   currentTerminal = term; Storage.set('selected_terminal', term);
   staff = []; branches = []; lastSelectedBranch = ""; lastValidatedId = "";
   document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
@@ -698,9 +722,9 @@ function switchTerminalAtt(term, isInitialOpen = false) {
   document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour');
   updatePillSlider('a-terminal-wrapper', 'a-pill-slider');
   
-  if (!isInitialOpen) { document.getElementById('staffID').value = ''; }
+  resetStepsFrom(1);
+  document.getElementById('staffID').value = ''; 
   
-  resetStepsFrom(2); 
   initAppAtt();
 }
 
@@ -717,7 +741,6 @@ function populateBranches(list) {
   
   if (select.innerHTML !== options) { select.innerHTML = options; }
   
-  // FIX: Make sure success message is kept to prevent it from disappearing during live refresh.
   if (currentVal) { 
     select.value = currentVal; 
     lastSelectedBranch = currentVal;
@@ -730,11 +753,11 @@ function populateBranches(list) {
 function restoreUserState() {
   const savedBranch = Storage.get('last_branch_' + currentTerminal);
   const branchEl = document.getElementById('branch');
-  if (savedBranch && branchEl.value !== savedBranch) { branchEl.value = savedBranch; if (branchEl.value) handleBranchChange(true); }
+  if (savedBranch) { branchEl.value = savedBranch; handleBranchChange(true); }
   
   const savedStaffID = Storage.get('last_staff_id_' + currentTerminal);
   const staffEl = document.getElementById('staffID');
-  if (savedStaffID && staff.length > 0 && staffEl.value === '') { staffEl.value = savedStaffID; handleStaffInput(); } 
+  if (savedStaffID && staff.length > 0) { staffEl.value = savedStaffID; handleStaffInput(); } 
 }
 
 function initAppAtt() {
@@ -803,7 +826,12 @@ function handleBranchChange(isInit = false) {
   
   Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected');
   
-  if (lastSelectedBranch !== val && !isInit) { if (document.getElementById('step2').classList.contains('activeStep') && document.getElementById('staffID').value !== '') { resetStepsFrom(2); } }
+  // FIX: Clear Progress if the user changes the branch manually. Wipes ID and resets steps.
+  if (lastSelectedBranch !== val && !isInit) { 
+    document.getElementById('staffID').value = '';
+    resetStepsFrom(2); 
+  }
+  
   lastSelectedBranch = val;
   if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); }
   const staffEl = document.getElementById('staffID'); if (staffEl.value.length >= 2) { handleStaffInput(); }
@@ -841,7 +869,6 @@ function handleStaffInput() {
     const msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '1';
     showSuccess('staffMsg', `Welcome ${staffName}`);
     
-    // Ensure active steps are maintained or restored for valid IDs
     if (!isSameUser) {
       if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4);
       if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3);
@@ -879,7 +906,6 @@ function doVerifyGPS(isRetry) {
       else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
     },
     err => { 
-      // FIX: Ensure users are clearly instructed to tap again if it times out
       if(err.code===1) { 
         showGuideModal('gps'); 
         showError('gpsMsg', 'Location Denied. Tap Verify again.');
