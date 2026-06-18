@@ -164,15 +164,15 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:8px;flex-shrink:0;position:relative; margin-top: 2px; }
 .msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* CAMERA UI REFINEMENTS (Uniform Dark Blur-Free Backdrops) */
-#cameraBackdrop { display:none; position:fixed; inset:0; z-index:59; background: rgba(0,0,0,0.9); }
+/* CAMERA UI REFINEMENTS (Frosted Glass & Adjusted Positioning) */
+#cameraBackdrop { display:none; position:fixed; inset:0; z-index:59; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 #cameraBackdrop.show { display:block; }
 
 #videoContainerWrapper{ 
-  position:fixed; top: 50%; left: 50%; 
-  width:92%; max-width:400px; 
-  aspect-ratio: 3 / 4; /* Perfect height to match the main UI square */
-  max-height: 70vh; 
+  position:fixed; top: 46%; left: 50%; 
+  width:88%; max-width:360px; 
+  aspect-ratio: 4 / 4.8; /* Shorter to lift the bottom up nicely */
+  max-height: 65vh; 
   border-radius:24px; overflow:hidden; z-index:60; background-color: #000; 
   transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); 
   transform: translate(-50%, -50%) scale(0.95); opacity:0; pointer-events:none; 
@@ -200,7 +200,7 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
   cursor: zoom-out; margin: 0; z-index: 20000; 
 }
 
-#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 19999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 19999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 #photoBackdrop.show { opacity: 1; pointer-events: auto; }
 
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; margin-bottom:24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
@@ -231,7 +231,7 @@ var Storage = {
 
 // PURGE CACHE DAILY
 function purgeCacheAtMidnight() {
-  var today = new Date().toDateString(); // e.g., "Thu Jun 18 2026"
+  var today = new Date().toDateString(); 
   if (Storage.get('cache_date') !== today) {
     Storage.remove('chandarana_portal_data');
     Storage.remove('carrefour_portal_data');
@@ -418,7 +418,7 @@ function purgeCacheAtMidnight() {
 let activeStore = 'chandarana', currentTerminal = Storage.get('selected_terminal') || 'chandarana';
 
 document.addEventListener('DOMContentLoaded', function() {
-  purgeCacheAtMidnight(); // Boot cache check
+  purgeCacheAtMidnight(); 
   loadOrderStaffBackground(); 
   window.addEventListener('online', checkNetworkStatus); 
   window.addEventListener('offline', checkNetworkStatus);
@@ -477,10 +477,8 @@ function switchTerminalOrder(store) {
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider');
   renderDynamicOrderContent(); restoreOrderState();
   
-  // WIPE the ID so users don't accidentally order for the wrong store
   document.getElementById('o-id').value = '';
   
-  // Try to restore an ID specifically saved for this store earlier
   let savedId = Storage.get('last_order_id_' + store); 
   if (savedId) document.getElementById('o-id').value = savedId;
   
@@ -517,21 +515,19 @@ function instantOrderStaffCheck(val) {
     Storage.remove('last_order_id_' + activeStore); return; 
   }
   
-  // Look only in the currently active tab's list
   const match = orderStaffCache[activeStore].find(s => s.id === val);
   
   if(match) {
     Storage.set('last_order_id_' + activeStore, val); 
     msgDiv.innerHTML = '<span class="dot"></span> ID Verified'; msgDiv.className = 'msg success'; 
     currentOrderStaffFullname = match.name;
-    const parts = match.name.split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
+    const parts = match.name.trim().split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
     document.getElementById('o-branch').value = match.branch || ''; document.getElementById('o-phone').value = match.phone || '';
     nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
   } else { 
     msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg';
     nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
     
-    // Fallback checking live database
     fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val }) })
     .then(r => r.json())
     .then(res => {
@@ -549,12 +545,7 @@ const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APP
 
 function handleJuiceTouch(e, step) {
   const el = e.currentTarget;
-  
-  if (e.type === 'touchmove') { 
-    el.hasScrolled = true; 
-    clearTimeout(el.pressTimer); 
-    return; 
-  }
+  if (e.type === 'touchmove') { el.hasScrolled = true; clearTimeout(el.pressTimer); return; }
   
   if (e.type === 'touchstart' || e.type === 'mousedown') { 
     el.hasScrolled = false;
@@ -566,7 +557,7 @@ function handleJuiceTouch(e, step) {
   } 
   else if (e.type === 'touchend' || e.type === 'mouseup') { 
     clearTimeout(el.pressTimer); 
-    if (el.hasScrolled) return; // FIX: Ignores tap if user was scrolling
+    if (el.hasScrolled) return; 
     if (e.cancelable) e.preventDefault(); 
     
     if(!el.isLong) { 
@@ -582,9 +573,7 @@ function handleJuiceTouch(e, step) {
     } 
     el.isLong = false; 
   } 
-  else { 
-    clearTimeout(el.pressTimer); el.isLong = false; 
-  }
+  else { clearTimeout(el.pressTimer); el.isLong = false; }
 }
 
 function renderDynamicOrderContent() {
@@ -621,7 +610,6 @@ function processOrder(e) {
     let flavorKey = flavor; if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; } 
     let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0"; let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0"; let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0"); 
     
-    // FIX: Print as L instead of Pieces
     if(qty !== "0") { payload[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${flavorKey}]`] = qty; hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${qty} L</li>`; } 
   });
   juiceHtml += `</ul></div>`; if(hasJuices) html += juiceHtml;
@@ -674,7 +662,7 @@ let staff = [], branches = [], coords = null, staffName = "", photo = null;
 let activeFetchId = 0, currentAction = "", videoStream = null;
 let lastSelectedBranch = ""; 
 let staffRestrictionError = null, warningTimer = null; 
-let lastValidatedId = ""; // Fixes the bug where steps wipe themselves!
+let lastValidatedId = ""; 
 
 function openAttendance() { 
   document.getElementById('globalBackBtn').classList.add('show'); 
@@ -727,13 +715,16 @@ function populateBranches(list) {
   const currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
   const options = '<option value="">Choose Branch</option>' + list.map(b => `<option value="${b[0]}">${b[0]}</option>`).join('');
   
-  // FIX: Force visual update
   if (select.innerHTML !== options) { select.innerHTML = options; }
+  
+  // FIX: Make sure success message is kept to prevent it from disappearing during live refresh.
   if (currentVal) { 
     select.value = currentVal; 
     lastSelectedBranch = currentVal;
+    showSuccess('branchMsg', 'Branch Selected');
+  } else {
+    clearMsg('branchMsg');
   }
-  clearMsg('branchMsg'); 
 }
 
 function restoreUserState() {
@@ -764,7 +755,6 @@ function initAppAtt() {
     staff = data.staff || []; branches = data.branches || [];
     try { Storage.set(cacheKey, JSON.stringify({staff, branches})); } catch(e) {}
     
-    // FIX: Do not blindly call restoreUserState if the user is already interacting with the form!
     if (!cached || changed) { 
       populateBranches(branches); 
       if (!document.getElementById('staffID').value) {
@@ -827,7 +817,6 @@ function handleStaffInput() {
   
   const match = staff.find(s => s.id === val);
   if (match) {
-    // FIX: If the user is just typing the same valid ID, DO NOT reset their GPS/Camera!
     const isSameUser = (lastValidatedId === val);
     lastValidatedId = val;
     
@@ -852,8 +841,11 @@ function handleStaffInput() {
     const msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '1';
     showSuccess('staffMsg', `Welcome ${staffName}`);
     
+    // Ensure active steps are maintained or restored for valid IDs
     if (!isSameUser) {
       if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4);
+      if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3);
+    } else {
       if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3);
     }
   } else { 
@@ -886,7 +878,20 @@ function doVerifyGPS(isRetry) {
       if (dist > maxDist) { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showError('gpsMsg', dist>1000 ? `Too far (${(dist/1000).toFixed(1)}km)` : `Too far (${Math.round(dist)}m) — move closer`); } } 
       else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
     },
-    err => { if(err.code===1) { showGuideModal('gps'); } else { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showGuideModal('gps_signal'); } } },
+    err => { 
+      // FIX: Ensure users are clearly instructed to tap again if it times out
+      if(err.code===1) { 
+        showGuideModal('gps'); 
+        showError('gpsMsg', 'Location Denied. Tap Verify again.');
+      } else { 
+        if (!isRetry && navigator.onLine) { 
+          setTimeout(() => doVerifyGPS(true), 500); 
+        } else { 
+          showGuideModal('gps_signal'); 
+          showError('gpsMsg', 'Weak Signal. Tap Verify again.');
+        } 
+      } 
+    },
     {enableHighAccuracy:true, timeout:15000, maximumAge: isRetry ? 0 : 30000}
   );
 }
