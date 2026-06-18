@@ -29,6 +29,9 @@
   --border-color:#e5e7eb; --input-bg:#f9fafb; --input-border:#d1d5db;
   --button-secondary-bg:#eff6ff;
   --success-color:#10b981; --error-color:#ef4444;
+  --warning-bg:#fef2f2; --warning-border:#fecaca; --warning-text:#b91c1c;
+  --success-card-bg:#f0fdf4; --success-card-border:#bbf7d0;
+  --label-text:#6b7280;
   --theme-chan:#10b981; --theme-carr:#3b82f6; 
   --dynamic-primary:var(--theme-chan);
   --modal-overlay:rgba(0,0,0,0.65); --shadow-color:rgba(0,0,0,0.1);
@@ -41,6 +44,9 @@
     --border-color:#374151; --input-bg:#374151; --input-border:#4b5563;
     --button-secondary-bg:#1e3a8a;
     --success-color:#34d399; --error-color:#f87171;
+    --warning-bg:#450a0a; --warning-border:#7f1d1d; --warning-text:#fca5a5;
+    --success-card-bg:#064e3b; --success-card-border:#065f46;
+    --label-text:#9ca3af;
     --theme-chan:#059669; --theme-carr:#2563eb; 
     --modal-overlay:rgba(0,0,0,0.85); --shadow-color:rgba(0,0,0,0.5);
   }
@@ -58,7 +64,7 @@ body {
   transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-user-select: none; user-select: none;
 }
-input, textarea, select { -webkit-user-select: auto; user-select: auto; }
+input, textarea, select { -webkit-user-select: auto; user-select: auto; font-family: inherit;}
 
 /* THEME HANDLING */
 body::before { content: ""; position: fixed; inset: 0; background: linear-gradient(135deg, #059669 0%, #2563eb 100%); opacity: 0; visibility: hidden; z-index: -1; transition: opacity 0.3s ease; pointer-events: none; }
@@ -71,6 +77,7 @@ body.theme-carrefour {--dynamic-primary:var(--theme-carr);--success-color:#3b82f
 .view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); }
 .view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+@keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
 
 .back-pill { position: fixed; bottom: 24px; left: 24px; z-index: 9999; background: var(--dynamic-primary); color: #fff; font-weight: 800; font-size: 15px; padding: 14px 26px; border-radius: 50px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; opacity: 0; pointer-events: none; }
@@ -94,20 +101,20 @@ body.theme-carrefour {--dynamic-primary:var(--theme-carr);--success-color:#3b82f
 /* TERMINAL PILLS (CENTERED & SHARED) */
 .top-bar { display:flex; justify-content:center; margin-bottom:20px; width: 100%;}
 .terminal-pill-wrapper { position:relative; display:inline-flex; background:var(--input-bg); border:1px solid var(--border-color); border-radius:50px; padding:4px; height:46px; align-items:center; }
-.pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); transition:all 0.35s cubic-bezier(0.25,1,0.5,1); z-index:1; }
+.pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:all 0.35s cubic-bezier(0.25,1,0.5,1); z-index:1; }
 .pill-btn { position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:14px; font-weight:800; color:var(--text-secondary); cursor:pointer; outline:none; transition:color 0.2s; }
 .pill-btn.active { color:#fff; }
 
 /* SHARED INPUTS & BUTTONS */
-.input-label { font-weight:700; font-size:12px; display:block; margin-bottom:8px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px;}
-.ui-input, .ui-select { width:100%; height:48px; padding:0 14px; border-radius:12px; border:1px solid var(--input-border); font-size:15px; font-weight:700; background:var(--input-bg); color:var(--text-primary); font-family: inherit; transition: 0.2s; outline:none; -webkit-appearance:none; }
+.input-label { font-weight:700; font-size:12px; display:block; margin-bottom:8px; color:var(--label-text); text-transform:uppercase; letter-spacing:0.5px;}
+.ui-input, .ui-select { width:100%; height:52px; padding:0 16px; border-radius:14px; border:1px solid var(--input-border); font-size:16px; font-weight:700; background:var(--input-bg); color:var(--text-primary); transition: 0.2s; outline:none; -webkit-appearance:none; }
 .ui-input:focus, .ui-select:focus { border-color:var(--dynamic-primary); background:var(--bg-primary); box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
 body.theme-carrefour .ui-input:focus, body.theme-carrefour .ui-select:focus {box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
 .ui-input:read-only { background: var(--bg-secondary); color: var(--dynamic-primary); border-color: transparent; }
 
-.btn-primary { width:100%; height:50px; border-radius:12px; border:none; font-size:15px; font-weight:800; background:var(--button-secondary-bg); color:var(--dynamic-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition: 0.2s; }
+.btn-primary { width:100%; height:52px; border-radius:14px; border:none; font-size:15px; font-weight:800; background:var(--button-secondary-bg); color:var(--dynamic-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 0.1s, opacity 0.2s, background 0.2s; }
 .btn-primary:active { transform: scale(0.97); }
-.btn-primary:disabled { opacity: 0.7; pointer-events: none; }
+.btn-primary:disabled { opacity: 0.5; pointer-events: none; }
 .btn-primary.solid { background:var(--dynamic-primary); color:#fff; margin-top:8px;}
 .btn-secondary { width:100%; height:46px; border-radius:12px; border:none; font-size:15px; font-weight:800; background:var(--button-secondary-bg); color:var(--dynamic-primary); cursor:pointer; transition: transform 0.1s; }
 .btn-secondary:active { transform: scale(0.97); }
@@ -135,88 +142,61 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); transform: translateY(-2px); }
 
 /* ATTENDANCE SPECIFIC */
-.hanging-sign-wrapper { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 15px; perspective: 800px; z-index: 10; width: 240px; }
-.chain { position: absolute; top: -30px; width: 5px; height: 34px; background: linear-gradient(to right, #9ca3af, #f3f4f6, #9ca3af); border-radius: 3px; z-index: 1; }
-.chain::before { content: ''; position: absolute; top: -6px; left: -3.5px; width: 12px; height: 12px; border-radius: 50%; background: var(--dynamic-primary); border: 3.5px solid #d1d5db; transition: 0.6s; }
+.app-wrapper { position: relative; width: 100%; max-width: 420px; display: flex; flex-direction:column; align-items: center; justify-content: center; padding-top:20px; }
+
+.hanging-sign-wrapper { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: -5px; perspective: 800px; z-index: 10; width: 240px; }
+.chain { position: absolute; top: -30px; width: 5px; height: 34px; background: linear-gradient(to right, #9ca3af, #f3f4f6, #9ca3af); border-radius: 3px; box-shadow: inset 0 0 3px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2); z-index: 1; }
+.chain::before { content: ''; position: absolute; top: -6px; left: -3.5px; width: 12px; height: 12px; border-radius: 50%; background: var(--dynamic-primary); border: 3.5px solid #d1d5db; box-shadow: 0 8px 12px rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.7); box-sizing: border-box; transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 .left-chain { left: 40px; } .right-chain { right: 40px; }
-.hanging-sign { background: var(--bg-primary); color: var(--dynamic-primary); padding: 12px 10px; border-radius: 12px; font-weight: 900; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform-origin: top center; transition: color 0.4s; position: relative; z-index: 2; }
+.hanging-sign { background: var(--bg-primary); color: var(--dynamic-primary); padding: 12px 10px; border-radius: 12px; font-weight: 900; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center; width: 100%; display: block; box-sizing: border-box; box-shadow: 0 10px 25px var(--shadow-color), inset 0 -3px 0 rgba(0,0,0,0.05); transform-origin: top center; transition: color 0.4s ease; position: relative; z-index: 2; }
 @keyframes swing { 0% { transform: rotateX(0deg) rotateZ(0deg); } 20% { transform: rotateX(25deg) rotateZ(-3deg); } 40% { transform: rotateX(-15deg) rotateZ(2deg); } 60% { transform: rotateX(8deg) rotateZ(-1deg); } 80% { transform: rotateX(-3deg) rotateZ(0deg); } 100% { transform: rotateX(0deg) rotateZ(0deg); } }
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
-.network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8; }
-.network-indicator.offline{background:var(--text-tertiary);opacity:0.4; }
-.step-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 12px}
+.network-indicator{ position:absolute;top:18px;left:18px;width:8px;height:8px;border-radius:50%; background:var(--success-color);opacity:0.8;transition:background 0.4s ease; box-shadow: 0 0 6px var(--success-color); }
+.network-indicator.offline{background:var(--text-tertiary);opacity:0.4; box-shadow:none;}
 
-/* Flicker-free step animations */
-@keyframes popIn { 0% { transform: scale(0.95); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-.step { opacity:0.3; pointer-events:none; transition: opacity 0.3s ease; transform: scale(0.95); }
-.step.activeStep { opacity:1; pointer-events:auto; transform: scale(1); animation: popIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.step-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 16px}
+.step { opacity:0.3; pointer-events:none; transition: opacity 0.4s ease; }
+.step.activeStep { opacity:1; pointer-events:auto; animation:bounceIn 0.45s ease; }
 
-.msg{ font-size:12px;font-weight:600;margin-top:6px; min-height:38px; color:var(--text-tertiary);display:flex; transition: 0.3s; opacity: 1; }
-.msg.success{color:var(--success-color);font-size:13px} .msg.error{color:var(--error-color)}
-.msg .dot{ display:inline-flex; width:16px; height:16px; background:var(--success-color); border-radius:50%; margin-right:6px; position:relative; margin-top:1px; }
-.msg .dot::after{ content:''; position:absolute; top:45%; left:50%; width:3.5px; height:7px; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
+.msg{ font-size:13px;font-weight:600;margin-top:8px; min-height:42px; align-items:flex-start; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.3s ease, color 0.3s ease; opacity: 1; }
+.msg.success{color:var(--success-color);font-size:14px} .msg.error{color:var(--error-color)}
+.msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--success-color);border-radius:50%; margin-right:8px;flex-shrink:0;position:relative; margin-top: 2px; }
+.msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-/* CAMERA & PHOTO BACKDROPS (Smooth Fades) */
-#cameraBackdrop, #photoBackdrop {
-  position: fixed; inset: 0; z-index: 10000;
-  background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease;
-}
-#cameraBackdrop.show, #photoBackdrop.show { opacity: 1; visibility: visible; }
+/* CAMERA & PHOTO BACKDROPS */
+#cameraBackdrop { display:none;position:fixed;inset:0;z-index:59; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+#cameraBackdrop.show { display:block; }
 
-/* CAMERA UI - Raised, Transparent Controls */
-#videoContainerWrapper {
-  position: fixed; top: 40%; left: 50%;
-  width: 90%; max-width: 400px; aspect-ratio: 4 / 5.2;
-  border-radius: 24px; overflow: hidden; z-index: 10001; background: #000;
-  transform: translate(-50%, -50%) scale(0.95);
-  opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1), visibility 0.35s ease;
-}
-#videoContainerWrapper.expanded { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
-#cameraVideo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+#videoContainerWrapper{ position:fixed; top: 50%; left: 50%; width:90%; max-width:400px; aspect-ratio: 4 / 5.2; min-height: 520px; border-radius:24px; overflow:hidden; z-index:60; background-color: #000; transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: translate(-50%, -50%) scale(0.95); opacity:0; pointer-events:none; }
+#videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: translate(-50%, -50%) scale(1); }
 
-.camera-ui {
-  position: absolute; bottom: 0; left: 0; right: 0; padding: 24px;
-  display: flex; align-items: center; justify-content: center; z-index: 3;
-  background: transparent; 
-}
-#captureBtn {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: rgba(255,255,255,0.3); border: 4px solid rgba(255,255,255,0.95);
-  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s;
-}
-#captureBtn::after { content: ''; width: 48px; height: 48px; background: #fff; border-radius: 50%; }
-#captureBtn:active { transform: scale(0.88); }
+#cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
+#cameraVideo.live { opacity: 1; }
+
+.camera-ui{ position:absolute;bottom:0;left:0;right:0; padding:24px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex;align-items:center;justify-content:center; z-index:3; }
+#captureBtn{ width:68px;height:68px;border-radius:50%; background:rgba(255,255,255,0.3);border:4px solid rgba(255,255,255,0.95); cursor:pointer;display:flex;align-items:center;justify-content:center; transition:transform 0.1s;-webkit-tap-highlight-color:transparent; }
+#captureBtn::after{content:'';width:50px;height:50px;background:#fff;border-radius:50%;transition:transform 0.1s}
+#captureBtn:active{transform:scale(0.88)}
+#captureBtn:active::after{transform:scale(0.9)}
 
 /* SUCCESS SCREENS & SMOOTH PHOTO ZOOM */
-.success-screen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; animation: sectionFadeIn 0.4s ease forwards; }
+#attSuccessScreen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; }
+.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease; cursor: zoom-in; position: relative; z-index: 20000; -webkit-tap-highlight-color: transparent; }
+.success-photo.zoomed { transform: scale(2.6); border-radius: 8%; box-shadow: 0 0 0 1.5px var(--success-color), 0 10px 30px rgba(0,0,0,0.3); cursor: zoom-out; }
 
-.success-photo {
-  width: 110px; height: 110px; object-fit: cover; border-radius: 50%;
-  box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 16px;
-  cursor: zoom-in; position: relative; z-index: 2; 
-  transition: all 0.4s cubic-bezier(0.25, 1, 0.4, 1);
-}
-.success-photo.zoomed {
-  position: fixed; left: 50%; top: 40%;
-  transform: translate(-50%, -50%) scale(2.6); 
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 2px var(--success-color);
-  cursor: zoom-out; margin: 0; z-index: 10005;
-}
+#photoBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 19999; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+#photoBackdrop.show { opacity: 1; pointer-events: auto; }
 
-.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:13px;font-weight:800; padding:6px 20px;border-radius:999px; margin-bottom:24px; animation:popIn 0.5s;}
-.success-card{ background:var(--bg-secondary);border:1px solid var(--border-color); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:popIn 0.5s;}
+.success-badge{ background:var(--dynamic-primary);color:#fff;font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; margin-bottom:24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
+.success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
 .success-msg {font-size:15px;font-weight:600;color:var(--text-secondary);line-height:1.5}
 
 /* RECEIPT & MODALS */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:19999; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
-.modal-box { background:var(--bg-primary); padding:24px; border-radius:20px; text-align:center; max-width:360px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; }
-.modal-instructions{ background:var(--input-bg);color:var(--text-secondary); padding:16px;border-radius:12px;margin-bottom:18px; font-size:13px;line-height:1.6;text-align:left; border: 1px solid var(--border-color); }
-
+.modal-overlay { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:19999; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
+.modal-box { background:var(--bg-primary); padding:28px; border-radius:20px; text-align:center; max-width:360px; width:100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; }
+.modal-instructions{ background:var(--input-bg);color:var(--text-secondary); padding:16px;border-radius:12px;margin-bottom:18px; font-size:14px;line-height:1.6;text-align:left; border: 1px solid var(--border-color); }
 .receipt-header { display:none; }
 .receipt-content { flex: 1; overflow-y: auto; text-align: left; padding: 16px; background: var(--bg-primary); border-radius: 12px; margin: 16px 0; border: 1px solid var(--border-color); color: var(--text-primary); font-size: 14px; line-height: 1.6; font-weight: 700; box-shadow: 0 4px 12px var(--shadow-color); }
 .modal-actions { display: flex; flex-direction: column; gap: 8px; }
@@ -233,6 +213,17 @@ var Storage = {
   get:function(k){try{return localStorage.getItem(k)}catch(e){return null}}, 
   remove:function(k){try{localStorage.removeItem(k)}catch(e){}} 
 };
+
+// PURGE CACHE DAILY (To prevent yesterday's Clock-In from locking you out)
+function purgeCacheAtMidnight() {
+  var today = new Date().toDateString(); // e.g., "Thu Jun 18 2026"
+  if (Storage.get('cache_date') !== today) {
+    Storage.remove('chandarana_portal_data');
+    Storage.remove('carrefour_portal_data');
+    Storage.remove('order_staff');
+    Storage.set('cache_date', today);
+  }
+}
 </script>
 
 <!-- BACK BUTTON -->
@@ -297,7 +288,7 @@ var Storage = {
       </div>
     </form>
 
-    <div class="success-screen" id="orderSuccessScreen">
+    <div class="success-screen" id="orderSuccessScreen" style="display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
       <div style="width:80px;height:80px;background:var(--success-color);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:16px;">✓</div>
       <h2 style="font-weight:900; margin-bottom:8px;">Order Sent!</h2>
       <p style="color:var(--text-secondary); font-size:15px; font-weight:600; margin-bottom:24px;">Your order has been logged securely.</p>
@@ -309,70 +300,72 @@ var Storage = {
 <!-- =========================
      VIEW: ATTENDANCE
 ========================== -->
-<!-- Independent Camera Backdrop (closes camera when tapped) -->
-<div id="cameraBackdrop" onclick="stopCamera()"></div>
-<!-- Independent Photo Zoom Backdrop (closes photo when tapped) -->
-<div id="photoBackdrop" onclick="toggleZoom()"></div>
-
-<!-- Floating Camera UI -->
-<div id="videoContainerWrapper">
-  <video id="cameraVideo" autoplay playsinline muted></video>
-  <div class="camera-ui">
-    <div id="captureBtn" onclick="capturePhoto()"></div>
-  </div>
-</div>
-
 <div id="view-attendance" class="view-section">
   
-  <div class="app-container" id="attMainContainer" style="margin-top: 24px;">
-    
+  <div id="cameraBackdrop" onclick="stopCamera()"></div>
+  <div id="photoBackdrop" onclick="toggleZoom()"></div>
+  
+  <div class="app-wrapper">
     <div class="hanging-sign-wrapper" id="signWrapper">
       <div class="chain left-chain"></div><div class="chain right-chain"></div>
       <div class="hanging-sign nudge" id="storeSign">Chandarana</div>
     </div>
 
-    <div id="networkIndicator" class="network-indicator"></div>
+    <div class="app-container" id="attMainContainer">
+      <div id="networkIndicator" class="network-indicator"></div>
 
-    <div id="attMainForm">
-      <div class="top-bar">
-        <div class="terminal-pill-wrapper" id="a-terminal-wrapper">
-          <div class="pill-slider" id="a-pill-slider"></div>
-          <button class="pill-btn active" id="a-btn-chandarana" onclick="switchTerminalAtt('chandarana')">Chandarana</button>
-          <button class="pill-btn" id="a-btn-carrefour" onclick="switchTerminalAtt('carrefour')">Carrefour</button>
+      <div id="attMainForm">
+        <div class="top-bar">
+          <div class="terminal-pill-wrapper" id="a-terminal-wrapper">
+            <div class="pill-slider" id="a-pill-slider"></div>
+            <button class="pill-btn active" id="a-btn-chandarana" onclick="switchTerminalAtt('chandarana')">Chandarana</button>
+            <button class="pill-btn" id="a-btn-carrefour" onclick="switchTerminalAtt('carrefour')">Carrefour</button>
+          </div>
+        </div>
+
+        <div class="step-grid">
+          <div id="step1" class="step activeStep">
+            <label class="input-label">Branch</label>
+            <select id="branch" class="ui-select"><option value="">Loading...</option></select>
+            <div id="branchMsg" class="msg"></div>
+          </div>
+          <div id="step2" class="step">
+            <label class="input-label">Staff ID</label>
+            <input id="staffID" class="ui-input" type="tel" placeholder="Enter ID" autocomplete="off">
+            <div id="staffMsg" class="msg"></div>
+          </div>
+          <div id="step3" class="step">
+            <label class="input-label">GPS Location</label>
+            <button class="btn-primary" onclick="verifyGPS()">Verify</button>
+            <div id="gpsMsg" class="msg"></div>
+          </div>
+          <div id="step4" class="step">
+            <label class="input-label">Identity</label>
+            <button class="btn-primary" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
+            <div id="cameraMsg" class="msg"></div>
+          </div>
         </div>
       </div>
 
-      <div class="step-grid">
-        <div id="step1" class="step activeStep">
-          <label class="input-label">Branch</label>
-          <select id="branch" class="ui-select"><option value="">Loading...</option></select>
-          <div id="branchMsg" class="msg"></div>
+      <div id="attSuccessScreen">
+        <img id="successPhoto" class="success-photo" src="" alt="Captured Selfie" onclick="toggleZoom()">
+        <div class="success-badge" id="successBadge">CLOCK IN</div>
+        <div class="success-card">
+          <div class="success-name" id="successName"></div>
+          <div class="success-msg" id="successMsg"></div>
         </div>
-        <div id="step2" class="step">
-          <label class="input-label">Staff ID</label>
-          <input id="staffID" class="ui-input" type="tel" placeholder="Enter ID" autocomplete="off">
-          <div id="staffMsg" class="msg"></div>
-        </div>
-        <div id="step3" class="step">
-          <label class="input-label">GPS Location</label>
-          <button class="btn-primary" onclick="verifyGPS()">Verify</button>
-          <div id="gpsMsg" class="msg"></div>
-        </div>
-        <div id="step4" class="step">
-          <label class="input-label">Identity</label>
-          <button class="btn-primary" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
-          <div id="cameraMsg" class="msg"></div>
-        </div>
+        <button class="btn-primary solid" onclick="resetAttForm()">← Submit Another</button>
       </div>
-    </div>
-
-    <div id="attSuccessScreen" class="success-screen">
-      <img id="successPhoto" class="success-photo" src="" alt="Selfie" onclick="toggleZoom()">
-      <div class="success-badge" id="successBadge">CLOCK IN</div>
-      <div class="success-card"><div class="success-name" id="successName"></div><div class="success-msg" id="successMsg"></div></div>
-      <button class="btn-primary" onclick="resetAttForm()">← Submit Another</button>
     </div>
   </div>
+
+  <div id="videoContainerWrapper">
+    <video id="cameraVideo" autoplay playsinline muted></video>
+    <div class="camera-ui">
+      <div id="captureBtn" onclick="capturePhoto()"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- =========================
@@ -391,7 +384,7 @@ var Storage = {
   </div>
 </div>
 
-<!-- Guide Modal -->
+<!-- Guide Modal (Attendance) -->
 <div id="guideModal" class="modal-overlay">
   <div class="modal-box">
     <div id="guideIcon" style="font-size:44px;margin-bottom:10px;">🛑</div>
@@ -409,11 +402,16 @@ var Storage = {
 let activeStore = 'chandarana', currentTerminal = Storage.get('selected_terminal') || 'chandarana';
 
 document.addEventListener('DOMContentLoaded', function() {
+  purgeCacheAtMidnight(); // Boot cache check
   loadOrderStaffBackground(); 
-  window.addEventListener('online', checkNetworkStatus); window.addEventListener('offline', checkNetworkStatus);
+  window.addEventListener('online', checkNetworkStatus); 
+  window.addEventListener('offline', checkNetworkStatus);
 });
 
-function checkNetworkStatus() { var ind = document.getElementById('networkIndicator'); if (ind) navigator.onLine ? ind.classList.remove('offline') : ind.classList.add('offline'); }
+function checkNetworkStatus() { 
+  const ind = document.getElementById('networkIndicator'); 
+  if (ind) navigator.onLine ? ind.classList.remove('offline') : ind.classList.add('offline'); 
+}
 
 function switchView(viewId) {
   document.querySelectorAll('.view-section').forEach(v => {
@@ -421,26 +419,28 @@ function switchView(viewId) {
     else { v.classList.remove('active'); v.style.display = 'none'; }
   });
 }
+
 function goHome() { 
   if (document.getElementById('view-orders').classList.contains('active')) saveOrderState();
+  if (document.getElementById('view-attendance').classList.contains('active')) stopCamera();
+  
   document.getElementById('globalBackBtn').classList.remove('show');
   switchView('view-menu'); document.body.className = 'theme-hub';
-  var meta = document.getElementById('theme-color-meta'); if (meta) meta.setAttribute('content', '#059669');
-  stopCamera();
+  const meta = document.getElementById('theme-color-meta'); if (meta) meta.setAttribute('content', '#059669');
 }
 
 function updatePillSlider(containerId, sliderId) {
   setTimeout(() => {
     const ab = document.querySelector(`#${containerId} .pill-btn.active`);
     const sl = document.getElementById(sliderId);
-    if (ab && sl) {
-      sl.style.width = ab.offsetWidth + 'px';
-      sl.style.left = ab.offsetLeft + 'px';
-    }
+    if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; }
   }, 50);
 }
 
-// --- ORDER SYSTEM LOGIC ---
+
+// ==========================================
+// ORDER SYSTEM LOGIC
+// ==========================================
 let orderStaffCache = [], currentOrderStaffFullname = "";
 let orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } };
 
@@ -458,18 +458,18 @@ function switchTerminalOrder(store) {
   document.getElementById('o-btn-chandarana').classList.toggle('active', store === 'chandarana'); document.getElementById('o-btn-carrefour').classList.toggle('active', store === 'carrefour');
   
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider');
-
   renderDynamicOrderContent(); restoreOrderState();
+  
   let savedId = Storage.get('last_order_id'); if (savedId && !document.getElementById('o-id').value) document.getElementById('o-id').value = savedId;
   instantOrderStaffCheck(document.getElementById('o-id').value);
 }
 
 function loadOrderStaffBackground() {
+  purgeCacheAtMidnight();
   const cached = localStorage.getItem('order_staff'); if (cached) orderStaffCache = JSON.parse(cached);
   fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff' }) }).then(r => r.json()).then(res => { if(res.ok) { orderStaffCache = res.data; localStorage.setItem('order_staff', JSON.stringify(res.data)); } }).catch(e => {});
 }
 
-// Fixed live-fallback checking for ordering system
 function instantOrderStaffCheck(val) {
   val = val.trim(); const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
   if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').value = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); Storage.remove('last_order_id'); return; }
@@ -481,22 +481,13 @@ function instantOrderStaffCheck(val) {
     document.getElementById('o-branch').value = match.branch || ''; document.getElementById('o-phone').value = match.phone || '';
     nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
   } else { 
-    // Fallback live check to database
     msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg';
     nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
-    
     fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val }) })
     .then(r => r.json())
     .then(res => {
-       if (res.found && document.getElementById('o-id').value.trim() === val) {
-          orderStaffCache.push({id: val, name: res.name, phone: res.phone, branch: res.branch});
-          instantOrderStaffCheck(val);
-       } else if (!res.found && document.getElementById('o-id').value.trim() === val) {
-          msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error';
-       }
-    }).catch(e => {
-       if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; }
-    });
+       if (res.found && document.getElementById('o-id').value.trim() === val) { orderStaffCache.push({id: val, name: res.name, phone: res.phone, branch: res.branch}); instantOrderStaffCheck(val); } else if (!res.found && document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
+    }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
   }
 }
 
@@ -505,8 +496,7 @@ const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APP
 function handleJuiceTouch(e, step) {
   e.preventDefault(); const el = e.currentTarget;
   if(e.type === 'touchstart' || e.type === 'mousedown') { el.pressTimer = setTimeout(() => { el.isLong = true; if(navigator.vibrate) navigator.vibrate(50); el.setAttribute('data-val', "0"); el.innerText = '-'; el.classList.remove('has-value'); }, 400);
-  } else if (e.type === 'touchend' || e.type === 'mouseup') { clearTimeout(el.pressTimer); if(!el.isLong) { let currentVal = parseInt(el.getAttribute('data-val')) || 0; currentVal += step; if(currentVal > 60) currentVal = 0; el.setAttribute('data-val', currentVal); el.innerText = currentVal === 0 ? '-' : currentVal; el.classList.toggle('has-value', currentVal > 0); const flavor = el.getAttribute('data-flavor'), vol = el.getAttribute('data-vol'), otherVol = vol === '5L' ? '3L' : '5L'; const otherEl = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${otherVol}"]`); if (currentVal > 0 && otherEl && parseInt(otherEl.getAttribute('data-val')) > 0) { otherEl.setAttribute('data-val', 0); otherEl.innerText = '-'; otherEl.classList.remove('has-value'); } } el.isLong = false;
-  } else { clearTimeout(el.pressTimer); el.isLong = false; }
+  } else if (e.type === 'touchend' || e.type === 'mouseup') { clearTimeout(el.pressTimer); if(!el.isLong) { let currentVal = parseInt(el.getAttribute('data-val')) || 0; currentVal += step; if(currentVal > 60) currentVal = 0; el.setAttribute('data-val', currentVal); el.innerText = currentVal === 0 ? '-' : currentVal; el.classList.toggle('has-value', currentVal > 0); const flavor = el.getAttribute('data-flavor'), vol = el.getAttribute('data-vol'), otherVol = vol === '5L' ? '3L' : '5L'; const otherEl = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${otherVol}"]`); if (currentVal > 0 && otherEl && parseInt(otherEl.getAttribute('data-val')) > 0) { otherEl.setAttribute('data-val', 0); otherEl.innerText = '-'; otherEl.classList.remove('has-value'); } } el.isLong = false; } else { clearTimeout(el.pressTimer); el.isLong = false; }
 }
 
 function renderDynamicOrderContent() {
@@ -529,64 +519,40 @@ function processOrder(e) {
   e.preventDefault(); if(!document.getElementById('o-name').value) return alert("Valid Staff ID required.");
   const payload = { "SHOP": document.getElementById('o-branch').value, [activeStore==='chandarana'?"FULL NAME":"FULL NAME (2 Names)"]: currentOrderStaffFullname, "ID NO.": document.getElementById('o-id').value, "PHONE NO.": document.getElementById('o-phone').value, "FRESH INPUTS": Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el=>el.value).join(', '), "BOTTLES": Array.from(document.querySelectorAll('.inp-bottle:checked')).map(el=>el.value).join(', '), "HACCP SUPPLIES": Array.from(document.querySelectorAll('.inp-haccp:checked')).map(el=>el.value).join(', '), "NOTES": document.getElementById('o-notes').value };
   
-  let html = `<div class="receipt-header">STENTOR ORDER</div>`;
-  html += `<p style="margin-bottom:6px;"><strong>Shop:</strong> ${payload["SHOP"]}</p>`;
-  html += `<p style="margin-bottom:6px;"><strong>Staff:</strong> ${currentOrderStaffFullname} (${payload["ID NO."]})</p>`;
-  html += `<p style="margin-bottom:6px;"><strong>Phone:</strong> ${payload["PHONE NO."]}</p>`;
-  
-  let hasJuices = false;
-  let juiceHtml = `<div style="margin-top:12px; padding-top:12px; border-top:2px solid var(--dynamic-primary);"><strong style="color:var(--dynamic-primary);">JUICES</strong><ul style="margin:8px 0 0 20px; padding:0;">`;
+  let html = `<div class="receipt-header">STENTOR ORDER</div><p style="margin-bottom:6px;"><strong>Shop:</strong> ${payload["SHOP"]}</p><p style="margin-bottom:6px;"><strong>Staff:</strong> ${currentOrderStaffFullname} (${payload["ID NO."]})</p><p style="margin-bottom:6px;"><strong>Phone:</strong> ${payload["PHONE NO."]}</p>`;
+  let hasJuices = false; let juiceHtml = `<div style="margin-top:12px; padding-top:12px; border-top:2px solid var(--dynamic-primary);"><strong style="color:var(--dynamic-primary);">JUICES</strong><ul style="margin:8px 0 0 20px; padding:0;">`;
   
   JUICES[activeStore].forEach(flavor => { 
     let flavorKey = flavor; if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; } 
-    let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0";
-    let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0";
-    let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0"); 
-    if(qty !== "0") {
-      payload[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${flavorKey}]`] = qty; 
-      hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${qty} Pieces</li>`;
-    } 
+    let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0"; let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0"; let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0"); 
+    if(qty !== "0") { payload[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${flavorKey}]`] = qty; hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${qty} Pieces</li>`; } 
   });
-  
-  juiceHtml += `</ul></div>`;
-  if(hasJuices) html += juiceHtml;
+  juiceHtml += `</ul></div>`; if(hasJuices) html += juiceHtml;
 
-  function formatList(title, commaStr) {
-      if(!commaStr) return '';
-      let items = commaStr.split(',').map(s => s.trim()).filter(Boolean);
-      return `<div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color);"><strong style="color:var(--dynamic-primary);">${title}</strong><ul style="margin:8px 0 0 20px; padding:0;">` + items.map(i => `<li style="margin-bottom:4px;">${i}</li>`).join('') + `</ul></div>`;
-  }
+  function formatList(title, commaStr) { if(!commaStr) return ''; let items = commaStr.split(',').map(s => s.trim()).filter(Boolean); return `<div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color);"><strong style="color:var(--dynamic-primary);">${title}</strong><ul style="margin:8px 0 0 20px; padding:0;">` + items.map(i => `<li style="margin-bottom:4px;">${i}</li>`).join('') + `</ul></div>`; }
 
   if(payload["FRESH INPUTS"]) html += formatList("FRESH INPUTS", payload["FRESH INPUTS"]);
   if(payload["BOTTLES"]) html += formatList("BOTTLES", payload["BOTTLES"]);
   if(payload["HACCP SUPPLIES"]) html += formatList("HACCP SUPPLIES", payload["HACCP SUPPLIES"]);
   if(payload["NOTES"]) html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color);"><strong style="color:var(--dynamic-primary);">NOTES</strong><br>${payload["NOTES"]}</div>`;
 
-  pendingOrderPayload = payload;
-  document.getElementById('orderSummaryDetails').innerHTML = html;
-  document.getElementById('orderConfirmModal').style.display = 'flex';
+  pendingOrderPayload = payload; document.getElementById('orderSummaryDetails').innerHTML = html; document.getElementById('orderConfirmModal').style.display = 'flex';
 }
 
 function closeConfirmModal() { document.getElementById('orderConfirmModal').style.display = 'none'; }
 
 function downloadReceipt(btn) {
-  const oldText = btn.innerHTML;
-  btn.innerHTML = '<span class="btn-spinner"></span> Generating...'; btn.disabled = true;
-
+  const oldText = btn.innerHTML; btn.innerHTML = '<span class="btn-spinner"></span> Generating...'; btn.disabled = true;
   const tempDiv = document.createElement('div'); tempDiv.style.width = '600px'; tempDiv.style.padding = '20px'; tempDiv.style.background = '#ffffff'; tempDiv.style.color = '#111827'; tempDiv.style.fontFamily = 'Nunito, sans-serif';
   const content = document.getElementById('orderSummaryDetails').cloneNode(true);
   content.style.boxShadow = 'none'; content.style.border = '2px solid #e5e7eb'; content.style.margin = '0'; content.style.fontSize = '15px'; content.style.borderRadius = '12px'; content.style.padding = '24px'; content.style.pageBreakInside = 'avoid'; 
   tempDiv.appendChild(content);
 
   const opt = { margin: 0.3, filename: 'Order_' + document.getElementById('o-id').value + '.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
-  
   html2pdf().set(opt).from(tempDiv).outputPdf('blob').then(function(pdfBlob) {
-     const url = URL.createObjectURL(pdfBlob);
-     const a = document.createElement('a'); a.href = url; a.download = opt.filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+     const url = URL.createObjectURL(pdfBlob); const a = document.createElement('a'); a.href = url; a.download = opt.filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
      btn.innerHTML = 'Saved! ✅'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 2000); 
-  }).catch(err => { 
-     btn.innerHTML = 'Error'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 2000); 
-  });
+  }).catch(err => { btn.innerHTML = 'Error'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 2000); });
 }
 
 async function confirmAndSendOrder() {
@@ -599,12 +565,17 @@ async function confirmAndSendOrder() {
   } catch (err) { alert(err.message); }
   btn.disabled = false; btn.innerText = 'Confirm & Send';
 }
+
 function resetOrderForm() { document.getElementById('orderSuccessScreen').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'flex'; document.getElementById('orderForm').style.display = 'block'; document.getElementById('o-notes').value = ''; renderDynamicOrderContent(); instantOrderStaffCheck(document.getElementById('o-id').value); }
 
 
-// --- ATTENDANCE SYSTEM LOGIC ---
-var staff = [], branches = [], coords = null, staffName = "", photo = null, activeFetchId = 0, currentAction = "", videoStream = null, staffRestrictionError = null, warningTimer = null;
-let lastSelectedBranch = "";
+// ==========================================
+// ATTENDANCE SYSTEM LOGIC
+// ==========================================
+let staff = [], branches = [], coords = null, staffName = "", photo = null;
+let activeFetchId = 0, currentAction = "", videoStream = null;
+let lastSelectedBranch = ""; 
+let staffRestrictionError = null, warningTimer = null; 
 
 function openAttendance() { 
   document.getElementById('globalBackBtn').classList.add('show'); 
@@ -614,238 +585,289 @@ function openAttendance() {
 
 function triggerSignAnimation() {
   const sign = document.getElementById('storeSign');
-  if (sign) {
-      sign.classList.remove('nudge');
-      requestAnimationFrame(() => { requestAnimationFrame(() => { sign.classList.add('nudge'); }); });
-  }
+  if (sign) { sign.classList.remove('nudge'); void sign.offsetWidth; sign.classList.add('nudge'); }
 }
 
 function switchTerminalAtt(term, isInitialOpen = false) {
-  if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { 
-    triggerSignAnimation(); return; 
-  }
-  
-  currentTerminal = term; Storage.set('selected_terminal', term); staff = []; branches = []; lastSelectedBranch = "";
+  if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { triggerSignAnimation(); return; }
+  currentTerminal = term; Storage.set('selected_terminal', term);
+  staff = []; branches = []; lastSelectedBranch = "";
   document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
   
-  document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('attMainForm').style.display='block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
+  document.getElementById('attSuccessScreen').style.display = 'none';
+  document.getElementById('attMainForm').style.display = 'block';
+  document.getElementById('attMainContainer').style.overflow = 'hidden';
   
-  document.body.className = 'theme-' + currentTerminal; var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  var meta = document.getElementById('theme-color-meta'); if (meta) meta.setAttribute('content', currentTerminal === 'chandarana' ? (isDark ? '#059669' : '#10b981') : (isDark ? '#2563eb' : '#3b82f6'));
+  document.body.className = `theme-${currentTerminal}`;
+  const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const hexColor = currentTerminal === 'chandarana' ? (isDark ? '#059669' : '#10b981') : (isDark ? '#2563eb' : '#3b82f6');
+  const meta = document.getElementById('theme-color-meta'); if (meta) meta.setAttribute('content', hexColor);
   
-  var title = document.getElementById('storeSign'); title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1);
+  const title = document.getElementById('storeSign');
+  title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1);
   triggerSignAnimation();
   
-  document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour');
-  
+  document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana');
+  document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour');
   updatePillSlider('a-terminal-wrapper', 'a-pill-slider');
   
-  if (!isInitialOpen) {
-    document.getElementById('staffID').value = ''; 
-  }
+  if (!isInitialOpen) { document.getElementById('staffID').value = ''; }
   
   resetStepsFrom(2); 
   initAppAtt();
 }
 
-function populateBranches(list) { 
-  if (!Array.isArray(list)) return; 
-  const select = document.getElementById('branch');
-  const currentVal = select.value; 
-  const options = '<option value="">Choose Branch</option>' + list.map(b => `<option value="${b[0]}">${b[0]}</option>`).join('');
-  if (select.innerHTML !== options) {
-      select.innerHTML = options;
-      if (currentVal) select.value = currentVal;
-  }
+function fetchFromServer(action, data) {
+  return fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:action, data:data, terminal:currentTerminal}) })
+    .then(r => r.json()).then(j => { if(!j.ok) throw new Error(j.error||'Server error'); return j.data; });
 }
 
-function restoreUserState() { 
-  var savedBranch = Storage.get('last_branch_' + currentTerminal); 
+function populateBranches(list) {
+  if (!Array.isArray(list)) return;
+  const select = document.getElementById('branch');
+  const currentVal = select.value;
+  const options = '<option value="">Choose Branch</option>' + list.map(b => `<option value="${b[0]}">${b[0]}</option>`).join('');
+  if (select.innerHTML !== options) { select.innerHTML = options; if (currentVal) select.value = currentVal; }
+  clearMsg('branchMsg'); 
+}
+
+function restoreUserState() {
+  const savedBranch = Storage.get('last_branch_' + currentTerminal);
   const branchEl = document.getElementById('branch');
-  if (savedBranch && branchEl.value !== savedBranch) { 
-    branchEl.value = savedBranch; 
-    if (branchEl.value) handleBranchChange(true); 
-  } 
+  if (savedBranch && branchEl.value !== savedBranch) { branchEl.value = savedBranch; if (branchEl.value) handleBranchChange(true); }
   
-  var savedStaffID = Storage.get('last_staff_id_' + currentTerminal); 
+  const savedStaffID = Storage.get('last_staff_id_' + currentTerminal);
   const staffEl = document.getElementById('staffID');
-  if (savedStaffID && staff.length > 0 && staffEl.value === '') { 
-    staffEl.value = savedStaffID; handleStaffInput.call(staffEl); 
-  } else if (staffEl.value !== '') {
-    handleStaffInput.call(staffEl); 
-  }
+  if (savedStaffID && staff.length > 0 && staffEl.value === '') { staffEl.value = savedStaffID; handleStaffInput.call(staffEl); } 
+  else if (staffEl.value !== '') { handleStaffInput.call(staffEl); }
 }
 
 function initAppAtt() {
-  var myId = ++activeFetchId, cacheKey = currentTerminal + '_portal_data', cached = false;
-  try { var raw = Storage.get(cacheKey); if (raw) { var p = JSON.parse(raw); if (p && Array.isArray(p.branches)) { staff = p.staff || []; branches = p.branches || []; populateBranches(branches); restoreUserState(); cached = true; } } } catch(e) {}
+  purgeCacheAtMidnight(); // Boot cache check inside Attendance
+
+  const myId = ++activeFetchId;
+  const cacheKey = currentTerminal + '_portal_data';
+  let cached = false;
   
-  fetch(SCRIPT_URL, { method:'POST', headers: { 'Content-Type': 'text/plain' }, body:JSON.stringify({action:'getPortalData', terminal:currentTerminal}) }).then(r=>r.json()).then(j => {
-    if (myId !== activeFetchId) return; var data = j.data; var changed = JSON.stringify(branches) !== JSON.stringify(data.branches) || JSON.stringify(staff) !== JSON.stringify(data.staff); staff = data.staff || []; branches = data.branches || [];
-    try { Storage.set(cacheKey, JSON.stringify({staff:staff, branches:branches})); } catch(e) {}
-    if (!cached || changed) { populateBranches(branches); restoreUserState(); } else { restoreUserState(); }
-  }).catch(()=>{ if (myId === activeFetchId && branches.length === 0) document.getElementById('branch').innerHTML = '<option value="">Offline — waiting for connection</option>'; });
+  try {
+    const raw = Storage.get(cacheKey);
+    if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.branches)) { staff = p.staff || []; branches = p.branches || []; populateBranches(branches); restoreUserState(); cached = true; } }
+  } catch(e) {}
+  
+  fetchFromServer('getPortalData', {}).then(data => {
+    if (myId !== activeFetchId) return;
+    const changed = JSON.stringify(branches) !== JSON.stringify(data.branches) || JSON.stringify(staff) !== JSON.stringify(data.staff);
+    staff = data.staff || []; branches = data.branches || [];
+    try { Storage.set(cacheKey, JSON.stringify({staff, branches})); } catch(e) {}
+    if (!cached || changed) { populateBranches(branches); restoreUserState(); } else { restoreUserState(); } 
+  }).catch(() => {
+    if (myId === activeFetchId && branches.length === 0) document.getElementById('branch').innerHTML = '<option value="">Offline — waiting for connection</option>';
+  });
 }
 
 function activateStep(n) { document.getElementById('step'+n).classList.add('activeStep'); }
-
-function resetStepsFrom(n) { 
-  for (var i = n; i <= 4; i++) { var el = document.getElementById('step'+i); if (el) el.classList.remove('activeStep'); } 
-  // IMPORTANT: Deliberately omitted staffID clearing so it does not auto-delete while typing
-  if (n<=2) { staffName=''; clearMsg('staffMsg'); staffRestrictionError = null; } 
-  if (n<=3) { coords=null; clearMsg('gpsMsg'); } 
-  if (n<=4) { photo=null; stopCamera(); clearMsg('cameraMsg'); document.getElementById('successPhoto').src=''; } 
+function resetStepsFrom(n) {
+  for (let i = n; i <= 4; i++) { const el = document.getElementById('step'+i); if (el) el.classList.remove('activeStep'); }
+  if (n <= 2) { staffName = ''; clearMsg('staffMsg'); staffRestrictionError = null; }
+  if (n <= 3) { coords = null; clearMsg('gpsMsg'); }
+  if (n <= 4) { photo = null; stopCamera(); clearMsg('cameraMsg'); document.getElementById('successPhoto').src = ''; }
 }
 
-function clearMsg(id) { document.getElementById(id).innerText=''; document.getElementById(id).className='msg'; }
-function showSuccess(id,txt) { document.getElementById(id).innerHTML='<span class="dot"></span> '+txt; document.getElementById(id).className='msg success'; }
-function showError(id,txt) { document.getElementById(id).innerText=txt; document.getElementById(id).className='msg error'; }
+function resetAttForm() {
+  document.getElementById('attSuccessScreen').style.display='none';
+  document.getElementById('attMainForm').style.display='block';
+  document.getElementById('attMainContainer').style.overflow = 'hidden';
+  document.getElementById('successPhoto').classList.remove('zoomed');
+  document.getElementById('photoBackdrop').classList.remove('show');
+  
+  document.getElementById('staffID').value = ''; 
+  resetStepsFrom(3); 
+  handleBranchChange(true);
+  initAppAtt();
+}
 
-function handleBranchChange(isInit = false) { 
-  var val = document.getElementById('branch').value; 
-  if (!val) { resetStepsFrom(2); clearMsg('branchMsg'); lastSelectedBranch = ""; return; } 
+function showSuccess(id,txt){ const e=document.getElementById(id); e.innerHTML=`<span class="dot"></span> ${txt}`; e.className='msg success'; }
+function showError(id,txt)  { const e=document.getElementById(id); e.innerText=txt; e.className='msg error'; }
+function clearMsg(id)       { const e=document.getElementById(id); e.innerText=''; e.className='msg'; }
+
+function toggleZoom() {
+  const img = document.getElementById('successPhoto'), backdrop = document.getElementById('photoBackdrop');
+  if (img.classList.contains('zoomed')) { img.classList.remove('zoomed'); backdrop.classList.remove('show'); } 
+  else { img.classList.add('zoomed'); backdrop.classList.add('show'); }
+}
+
+function handleBranchChange(isInit = false) {
+  const val = document.getElementById('branch').value;
+  if (!val) { resetStepsFrom(2); clearMsg('branchMsg'); lastSelectedBranch = ""; return; }
   
-  Storage.set('last_branch_' + currentTerminal, val); 
-  showSuccess('branchMsg','Branch Selected'); 
+  Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected');
   
+  if (lastSelectedBranch !== val && !isInit) { if (document.getElementById('step2').classList.contains('activeStep') && document.getElementById('staffID').value !== '') { resetStepsFrom(2); } }
   lastSelectedBranch = val;
-
-  if (!document.getElementById('step2').classList.contains('activeStep')) activateStep(2); 
-  
-  const staffEl = document.getElementById('staffID');
-  if (staffEl.value.length >= 2) { handleStaffInput.call(staffEl); }
+  if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); }
+  const staffEl = document.getElementById('staffID'); if (staffEl.value.length >= 2) { handleStaffInput.call(staffEl); }
 }
-document.getElementById('branch').onchange = () => handleBranchChange(false);
+document.getElementById('branch').addEventListener('change', () => handleBranchChange(false));
 
+// Includes Cache Date check to reset statuses correctly
 function handleStaffInput() {
-  var val = this.value.trim(); staffRestrictionError = null; if (val.length < 2) { resetStepsFrom(3); return; }
-  var match = staff.find(s => s.id === val);
+  const val = this.value.trim(); staffRestrictionError = null; 
+  if (val.length < 2) { resetStepsFrom(3); clearMsg('staffMsg'); return; }
   
+  const match = staff.find(s => s.id === val);
   if (match) {
     staffName = match.name;
-    const lastAction = match.status; 
+    let lastAction = match.status; 
     const lastTime = match.lastTime;
 
-    if (lastAction === 'Clock Out') { staffRestrictionError = "You have already clocked in and out today.";
-    } else if (lastAction === 'Clock In') {
+    // IMPORTANT CHECK: Reset action to null if the cached record is NOT from today
+    if (lastTime) {
+      const d = new Date(lastTime);
+      const now = new Date();
+      if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) {
+        lastAction = null; 
+      }
+    }
+
+    if (lastAction === 'Clock Out') { staffRestrictionError = 'You have already clocked in and out today.'; } 
+    else if (lastAction === 'Clock In') {
       if (lastTime && (Date.now() - lastTime) / (1000 * 60 * 60) < 3) { staffRestrictionError = 'Clock out at the end of your shift.'; }
       currentAction = 'Clock Out';
     } else { currentAction = 'Clock In'; }
     
-    document.getElementById('staffMsg').style.opacity = '1'; showSuccess('staffMsg', 'Welcome ' + staffName);
+    const msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '1';
+    showSuccess('staffMsg', `Welcome ${staffName}`);
+    
     if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4);
     if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3);
-  } else { resetStepsFrom(3); showError('staffMsg','Invalid Staff ID.'); }
+  } else { resetStepsFrom(3); showError('staffMsg','Invalid Staff ID. Please check.'); }
 }
 document.getElementById('staffID').oninput = handleStaffInput;
 
 function showGuideModal(type) {
-  var m=document.getElementById('guideModal'), t=document.getElementById('guideTitle'), tx=document.getElementById('guideText'), i=document.getElementById('guideIcon');
-  if (type==='gps') { i.textContent='📍'; t.textContent='Location Blocked'; t.style.color='var(--error-color)'; tx.innerHTML='<p>We need your location to verify you are at the branch.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong><br>Settings → Privacy & Security → Location Services → Allow Safari/Chrome.</p><p style="margin-top:8px"><strong>🤖 Android:</strong><br>⋮ Menu → Settings → Site settings → Location → Allow.</p>'; }
-  else if (type==='gps_signal') { i.textContent='📡'; t.textContent='Weak GPS Signal'; t.style.color='var(--warning-text)'; tx.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; }
-  else if (type==='camera') { i.textContent='📸'; t.textContent='Camera Access Denied'; t.style.color='var(--error-color)'; tx.innerHTML='<p>Camera permission is required to capture your identity securely.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong> Settings → Safari/Chrome → Camera → Allow.</p><p style="margin-top:8px"><strong>🤖 Android:</strong> Site settings → Camera → Allow.</p>'; }
-  m.style.display = 'flex';
-}
-
-function verifyGPS() {
-  if (staffRestrictionError) {
-    var msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '0';
-    setTimeout(() => { showError('staffMsg', staffRestrictionError); msgEl.style.opacity = '1'; clearTimeout(warningTimer); warningTimer = setTimeout(() => { msgEl.style.opacity = '0'; setTimeout(() => { if(document.getElementById('step2').classList.contains('activeStep')) showSuccess('staffMsg', 'Welcome ' + staffName); msgEl.style.opacity = '1'; }, 300); }, 3000); }, 300); return;
-  } doVerifyGPS(false);
+  const modal=document.getElementById('guideModal'), title=document.getElementById('guideTitle'), text=document.getElementById('guideText'), icon=document.getElementById('guideIcon');
+  if (type==='gps') { icon.textContent='📍'; title.textContent='Location Blocked'; title.style.color='var(--error-color)'; text.innerHTML='<p>We need your location to verify you are at the branch.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong><br>Settings → Privacy & Security → Location Services → Allow Safari/Chrome.</p><p style="margin-top:8px"><strong>🤖 Android:</strong><br>⋮ Menu → Settings → Site settings → Location → Allow.</p><p style="margin-top:12px; color:var(--error-color); font-weight:bold;">After allowing, please clear the browser from your recent apps and reopen.</p>'; } 
+  else if (type==='gps_signal') { icon.textContent='📡'; title.textContent='Weak GPS Signal'; title.style.color='var(--warning-text)'; text.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; } 
+  else if (type==='camera') { icon.textContent='📸'; title.textContent='Camera Access Denied'; title.style.color='var(--error-color)'; text.innerHTML='<p>Camera permission is required to capture your identity securely.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong> Settings → Safari/Chrome → Camera → Allow.</p><p style="margin-top:8px"><strong>🤖 Android:</strong> Site settings → Camera → Allow.</p><p style="margin-top:12px; color:var(--error-color); font-weight:bold;">After allowing, please clear the browser from your recent apps and reopen.</p>'; }
+  modal.style.display = 'flex';
 }
 
 function doVerifyGPS(isRetry) {
   document.getElementById('gpsMsg').innerText = 'Locating…'; document.getElementById('gpsMsg').className = 'msg';
-  if (!navigator.geolocation) return showError('gpsMsg','GPS not supported on this device.');
+  if (!navigator.geolocation) { showError('gpsMsg','GPS not supported on this device.'); return; }
   navigator.geolocation.getCurrentPosition(
-    function(pos) { coords = pos.coords; var b=branches.find(br => br[0] === document.getElementById('branch').value); if (!b) return showError('gpsMsg','Select branch first.'); var R=6371e3, dLat=(b[1]-coords.latitude)*Math.PI/180, dLon=(b[2]-coords.longitude)*Math.PI/180, a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(coords.latitude*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2), dist=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); var maxDist = isRetry ? 350 : 250;
-      if (dist > maxDist) { if (!isRetry && navigator.onLine) setTimeout(() => doVerifyGPS(true), 500); else showError('gpsMsg', dist>1000 ? 'Too far ('+(dist/1000).toFixed(1)+'km)' : 'Too far ('+Math.round(dist)+'m) — move closer'); } else { showSuccess('gpsMsg','Location Verified'); activateStep(4); } },
-    function(err) { if(err.code===1) showGuideModal('gps'); else if (!isRetry && navigator.onLine) setTimeout(() => doVerifyGPS(true), 500); else showGuideModal('gps_signal'); },
+    pos => {
+      coords = pos.coords; const b = branches.find(branch => branch[0] === document.getElementById('branch').value);
+      if (!b) { showError('gpsMsg','Select branch first.'); return; }
+      const R = 6371e3; const dLat = (b[1]-coords.latitude)*Math.PI/180; const dLon = (b[2]-coords.longitude)*Math.PI/180;
+      const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(coords.latitude*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+      const dist = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+      const maxDist = isRetry ? 350 : 250;
+      if (dist > maxDist) { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showError('gpsMsg', dist>1000 ? `Too far (${(dist/1000).toFixed(1)}km)` : `Too far (${Math.round(dist)}m) — move closer`); } } 
+      else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
+    },
+    err => { if(err.code===1) { showGuideModal('gps'); } else { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showGuideModal('gps_signal'); } } },
     {enableHighAccuracy:true, timeout:15000, maximumAge: isRetry ? 0 : 30000}
   );
 }
 
-function startCamera() {
-  var btn = document.getElementById('openCameraBtn');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return showGuideModal('camera');
-  btn.innerHTML = '<span class="btn-spinner"></span>Starting...'; clearMsg('cameraMsg');
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }).then(stream => {
-    videoStream = stream; var video = document.getElementById('cameraVideo'); video.srcObject = stream;
-    video.onloadedmetadata = () => { video.play().catch(()=>{}); document.getElementById('videoContainerWrapper').classList.add('expanded'); document.getElementById('cameraBackdrop').classList.add('show'); btn.innerText = 'Take Selfie'; };
-  }).catch(() => { btn.innerText = 'Take Selfie'; showGuideModal('camera'); });
+function verifyGPS() {
+  if (staffRestrictionError) {
+    const msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '0';
+    setTimeout(() => { showError('staffMsg', staffRestrictionError); msgEl.style.opacity = '1'; clearTimeout(warningTimer); warningTimer = setTimeout(() => { msgEl.style.opacity = '0'; setTimeout(() => { if(document.getElementById('step2').classList.contains('activeStep')) { showSuccess('staffMsg', `Welcome ${staffName}`); } msgEl.style.opacity = '1'; }, 300); }, 3000); }, 300); return;
+  }
+  doVerifyGPS(false);
 }
 
-function stopCamera() {
-  document.getElementById('videoContainerWrapper').classList.remove('expanded'); document.getElementById('cameraBackdrop').classList.remove('show');
-  var video = document.getElementById('cameraVideo');
-  var btn = document.getElementById('openCameraBtn'); if (btn && !btn.innerHTML.includes('Starting') && !btn.innerHTML.includes('Submitting')) btn.textContent = 'Take Selfie';
-  
-  // Wait for CSS transition to complete before totally killing the stream to prevent flickering
-  setTimeout(() => { if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; } video.srcObject = null; }, 400);
+function startCamera() {
+  if (!navigator.onLine) { showError('cameraMsg', 'You must have an internet connection to submit.'); return; }
+  const btn = document.getElementById('openCameraBtn');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showGuideModal('camera'); return; }
+
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Starting...</span>';
+  clearMsg('cameraMsg');
+
+  const constraints = { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+      videoStream = stream; const video = document.getElementById('cameraVideo'); video.srcObject = stream;
+      video.onloadedmetadata = () => { video.play().catch(()=>{}); document.getElementById('videoContainerWrapper').classList.add('expanded'); document.getElementById('cameraBackdrop').classList.add('show'); video.classList.add('live'); btn.classList.remove('loading'); btn.innerText = 'Take Selfie'; };
+    })
+    .catch(err => { console.warn('Camera failed:', err); btn.classList.remove('loading'); btn.innerText = 'Take Selfie'; showGuideModal('camera'); });
 }
 
 function capturePhoto() {
-  var video = document.getElementById('cameraVideo'); var vw = video.videoWidth || 1280, vh = video.videoHeight || 720, cw = document.getElementById('videoContainerWrapper').offsetWidth, ch = document.getElementById('videoContainerWrapper').offsetHeight;
-  var containerAspect = cw / ch, videoAspect = vw / vh, sWidth, sHeight, startX, startY;
-  if (videoAspect > containerAspect) { sHeight = vh; sWidth = vh * containerAspect; startX = (vw - sWidth) / 2; startY = 0; } else { sWidth = vw; sHeight = vw / containerAspect; startX = 0; startY = (vh - sHeight) / 2; }
-  var scale = (sWidth > 720 || sHeight > 720) ? (720 / Math.max(sWidth, sHeight)) : 1;
-  var canvas = document.createElement('canvas'); canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
-  var ctx = canvas.getContext('2d'); ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  const video = document.getElementById('cameraVideo'), wrapper = document.getElementById('videoContainerWrapper'); 
+  const vw = video.videoWidth || 1280, vh = video.videoHeight || 720, cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
+  const containerAspect = cw / ch, videoAspect = vw / vh;
+  let sWidth, sHeight, startX, startY;
+  
+  if (videoAspect > containerAspect) { sHeight = vh; sWidth = vh * containerAspect; startX = (vw - sWidth) / 2; startY = 0; } 
+  else { sWidth = vw; sHeight = vw / containerAspect; startX = 0; startY = (vh - sHeight) / 2; }
+  
+  const maxOutput = 720, scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
+  const canvas = document.createElement('canvas'); canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
+  const ctx = canvas.getContext('2d');
+  
+  ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+  
   photo = canvas.toDataURL('image/jpeg', 0.85); document.getElementById('successPhoto').src = photo;
-  stopCamera(); submitAttendance();
+  stopCamera(); submitAttendanceRealtime();
 }
 
-function submitAttendance() {
-  var branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
-  if (!branch||!staffID||!currentAction||!photo) return;
-  var btn = document.getElementById('openCameraBtn'); if (btn) { btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span>Submitting...'; }
-  showSuccess('cameraMsg', 'Submitting...');
-  var payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0 };
+function stopCamera() {
+  const wrapper = document.getElementById('videoContainerWrapper'), backdrop = document.getElementById('cameraBackdrop');
+  wrapper.classList.remove('expanded'); backdrop.classList.remove('show');
+  const video = document.getElementById('cameraVideo'); video.classList.remove('live');
+  const btn = document.getElementById('openCameraBtn'); if (btn && !btn.classList.contains('loading')) btn.textContent = 'Take Selfie';
+  
+  setTimeout(() => { if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; } video.srcObject = null; }, 300);
+}
 
-  fetch(SCRIPT_URL, { method:'POST', headers: { 'Content-Type': 'text/plain' }, body:JSON.stringify({action:'recordAttendance', data:payload, terminal:currentTerminal}) })
-    .then(r=>r.json()).then(j=>{
-       if (btn) { btn.disabled = false; btn.innerText = 'Take Selfie'; }
-       if (j.ok) {
-         Storage.set('last_staff_id_' + currentTerminal, staffID);
-         finishSubmission(currentAction);
-       } else { showError('cameraMsg', j.error || 'Server error. Try again.'); }
-    }).catch(e=>{ if (btn) { btn.disabled = false; btn.innerText = 'Take Selfie'; } showError('cameraMsg', 'Network error. Check internet and try again.'); });
+function submitAttendanceRealtime() {
+  const branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
+  if (!branch||!staffID||!currentAction||!photo) return;
+  if (!navigator.onLine) { showError('cameraMsg', 'No internet connection. Please connect to submit.'); return; }
+
+  Storage.set('last_staff_id_' + currentTerminal, staffID);
+  
+  const payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() };
+  
+  const btn = document.getElementById('openCameraBtn'); btn.classList.add('loading'); btn.disabled = true;
+  btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Submitting...</span>';
+  clearMsg('cameraMsg');
+
+  fetchFromServer('recordAttendance', payload).then(res => {
+    btn.classList.remove('loading'); btn.disabled = false; btn.innerText = 'Take Selfie'; finishSubmission(currentAction);
+  }).catch(err => { btn.classList.remove('loading'); btn.disabled = false; btn.innerText = 'Take Selfie'; showError('cameraMsg', 'Submission Failed: ' + err.message); });
 }
 
 function finishSubmission(action) {
-  var firstName = staffName.split(' ')[0] || staffName;
-  var hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0), msg='';
+  const firstName = staffName.split(' ')[0] || staffName;
+  const hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0);
+  let msg='';
+
   if (action === 'Clock In') {
-    if (timeVal < 6.5) msg="Fantastic start — you're early today! Keep it up."; else if (timeVal <= 7.66) msg="Great, you are on time for the morning shift."; else if (timeVal < 11.0) msg="Note: Late for morning shift."; else if (timeVal < 14.0) msg="Early for the second shift. Great job!"; else if (timeVal <= 14.66) msg="On time for the second shift. Have a productive afternoon!"; else msg="Note: Late for afternoon shift.";
-  } else { msg = hrs < 16 ? "Have a wonderful afternoon!" : "Have a restful night!"; if (hrs >= 18) msg += "<br><br><span style='display:block;'>And remember to place your order.</span>"; }
-  document.getElementById('successBadge').textContent = action.toUpperCase(); document.getElementById('successBadge').style.background = action === 'Clock In' ? 'var(--success-color)' : 'var(--error-color)';
-  document.getElementById('successName').textContent = firstName; document.getElementById('successMsg').innerHTML = msg;
-  document.getElementById('attMainContainer').style.overflow = 'visible'; document.getElementById('attMainForm').style.display = 'none'; document.getElementById('attSuccessScreen').style.display = 'flex';
-}
-
-function resetAttForm() {
-  document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('attMainForm').style.display='block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
-  var img = document.getElementById('successPhoto'); var backdrop = document.getElementById('photoBackdrop');
-  if(img.classList.contains('zoomed')) { img.classList.remove('zoomed'); backdrop.classList.remove('show'); }
-  
-  document.getElementById('staffID').value = ''; 
-  resetStepsFrom(3); 
-  handleBranchChange(true); 
-  initAppAtt();
-}
-
-function toggleZoom() {
-  var backdrop = document.getElementById('photoBackdrop');
-  var img = document.getElementById('successPhoto');
-  
-  if (img.classList.contains('zoomed')) {
-    img.classList.remove('zoomed');
-    backdrop.classList.remove('show');
+    if (timeVal < 6.5)        { msg="Fantastic start — you're early today! Keep it up."; }
+    else if (timeVal <= 7.66) { msg="Great, you are on time for the morning shift."; }
+    else if (timeVal < 11.0)  { msg="Note: Late for morning shift."; }
+    else if (timeVal < 14.0)  { msg="Early for the second shift. Great job!"; }
+    else if (timeVal <= 14.66){ msg="On time for the second shift. Have a productive afternoon!"; }
+    else                      { msg="Note: Late for afternoon shift."; }
   } else {
-    img.classList.add('zoomed');
-    backdrop.classList.add('show');
+    if (hrs < 16) { msg="Have a wonderful afternoon!"; } else { msg="Have a restful night!"; }
+    if (hrs >= 18) { msg += " And remember to place your order."; }
   }
+
+  document.getElementById('successBadge').textContent = action.toUpperCase();
+  document.getElementById('successName').textContent = firstName;
+  document.getElementById('successMsg').textContent = msg;
+  
+  document.getElementById('attMainContainer').style.overflow = 'visible';
+  document.getElementById('attMainForm').style.display = 'none';
+  document.getElementById('attSuccessScreen').style.display = 'flex';
 }
 </script>
 </body>
