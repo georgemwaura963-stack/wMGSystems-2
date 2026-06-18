@@ -205,7 +205,7 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 <body class="theme-hub">
 
 <script>
-// >>> ADD YOUR APP SCRIPT URL HERE <<<
+// >>> ADD YOUR APP SCRIPT DEPLOYMENT URL HERE <<<
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 
 var Storage = { 
@@ -214,13 +214,14 @@ var Storage = {
   remove:function(k){try{localStorage.removeItem(k)}catch(e){}} 
 };
 
-// PURGE CACHE DAILY (To prevent yesterday's Clock-In from locking you out)
+// PURGE CACHE DAILY
 function purgeCacheAtMidnight() {
   var today = new Date().toDateString(); // e.g., "Thu Jun 18 2026"
   if (Storage.get('cache_date') !== today) {
     Storage.remove('chandarana_portal_data');
     Storage.remove('carrefour_portal_data');
-    Storage.remove('order_staff');
+    Storage.remove('order_staff_chandarana');
+    Storage.remove('order_staff_carrefour');
     Storage.set('cache_date', today);
   }
 }
@@ -441,7 +442,8 @@ function updatePillSlider(containerId, sliderId) {
 // ==========================================
 // ORDER SYSTEM LOGIC
 // ==========================================
-let orderStaffCache = [], currentOrderStaffFullname = "";
+let orderStaffCache = { chandarana: [], carrefour: [] }; 
+let currentOrderStaffFullname = "";
 let orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } };
 
 function openOrder() {
@@ -460,33 +462,70 @@ function switchTerminalOrder(store) {
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider');
   renderDynamicOrderContent(); restoreOrderState();
   
-  let savedId = Storage.get('last_order_id'); if (savedId && !document.getElementById('o-id').value) document.getElementById('o-id').value = savedId;
+  // WIPE the ID so users don't accidentally order for the wrong store
+  document.getElementById('o-id').value = '';
+  
+  // Try to restore an ID specifically saved for this store earlier
+  let savedId = Storage.get('last_order_id_' + store); 
+  if (savedId) document.getElementById('o-id').value = savedId;
+  
   instantOrderStaffCheck(document.getElementById('o-id').value);
 }
 
 function loadOrderStaffBackground() {
   purgeCacheAtMidnight();
-  const cached = localStorage.getItem('order_staff'); if (cached) orderStaffCache = JSON.parse(cached);
-  fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff' }) }).then(r => r.json()).then(res => { if(res.ok) { orderStaffCache = res.data; localStorage.setItem('order_staff', JSON.stringify(res.data)); } }).catch(e => {});
+  const cachedChan = localStorage.getItem('order_staff_chandarana');
+  const cachedCarr = localStorage.getItem('order_staff_carrefour');
+  
+  if (cachedChan && cachedCarr) { 
+    orderStaffCache.chandarana = JSON.parse(cachedChan);
+    orderStaffCache.carrefour = JSON.parse(cachedCarr);
+  }
+  
+  fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff' }) })
+    .then(r => r.json())
+    .then(res => { 
+      if(res.ok) { 
+        orderStaffCache = res.data; 
+        localStorage.setItem('order_staff_chandarana', JSON.stringify(res.data.chandarana)); 
+        localStorage.setItem('order_staff_carrefour', JSON.stringify(res.data.carrefour)); 
+      } 
+    }).catch(e => {});
 }
 
 function instantOrderStaffCheck(val) {
-  val = val.trim(); const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-  if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').value = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); Storage.remove('last_order_id'); return; }
+  val = val.trim(); 
+  const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
   
-  const match = orderStaffCache.find(s => s.id === val);
+  if(val.length < 2) { 
+    msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').value = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); 
+    Storage.remove('last_order_id_' + activeStore); return; 
+  }
+  
+  // Look only in the currently active tab's list
+  const match = orderStaffCache[activeStore].find(s => s.id === val);
+  
   if(match) {
-    Storage.set('last_order_id', val); msgDiv.innerHTML = '<span class="dot"></span> ID Verified'; msgDiv.className = 'msg success'; currentOrderStaffFullname = match.name;
+    Storage.set('last_order_id_' + activeStore, val); 
+    msgDiv.innerHTML = '<span class="dot"></span> ID Verified'; msgDiv.className = 'msg success'; 
+    currentOrderStaffFullname = match.name;
     const parts = match.name.split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
     document.getElementById('o-branch').value = match.branch || ''; document.getElementById('o-phone').value = match.phone || '';
     nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
   } else { 
     msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg';
     nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+    
+    // Fallback checking live database
     fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val }) })
     .then(r => r.json())
     .then(res => {
-       if (res.found && document.getElementById('o-id').value.trim() === val) { orderStaffCache.push({id: val, name: res.name, phone: res.phone, branch: res.branch}); instantOrderStaffCheck(val); } else if (!res.found && document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
+       if (res.found && res.store === activeStore && document.getElementById('o-id').value.trim() === val) { 
+         orderStaffCache[activeStore].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); 
+         instantOrderStaffCheck(val); 
+       } else if ((!res.found || res.store !== activeStore) && document.getElementById('o-id').value.trim() === val) { 
+         msgDiv.innerHTML = 'Invalid ID for this Store'; msgDiv.className = 'msg error'; 
+       }
     }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
   }
 }
@@ -558,7 +597,8 @@ function downloadReceipt(btn) {
 async function confirmAndSendOrder() {
   const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span>Submitting...';
   try {
-    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveOrder', store: activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour', data: pendingOrderPayload }) })).json();
+    const targetSheet = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
+    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveOrder', store: targetSheet, data: pendingOrderPayload }) })).json();
     if (!res.ok) throw new Error(res.error);
     document.getElementById('orderConfirmModal').style.display = 'none'; document.getElementById('orderForm').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'none'; document.getElementById('orderSuccessScreen').style.display = 'flex';
     orderState[activeStore] = { juices: {}, fresh: [], bottles: [], haccp: [] };
@@ -729,7 +769,7 @@ function handleStaffInput() {
       }
     }
 
-    if (lastAction === 'Clock Out') { staffRestrictionError = 'You have already clocked in and out today.'; } 
+    if (lastAction === 'Clock Out') { staffRestrictionError = 'You have already clocked out today.'; } 
     else if (lastAction === 'Clock In') {
       if (lastTime && (Date.now() - lastTime) / (1000 * 60 * 60) < 3) { staffRestrictionError = 'Clock out at the end of your shift.'; }
       currentAction = 'Clock Out';
