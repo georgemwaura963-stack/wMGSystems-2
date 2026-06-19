@@ -160,7 +160,6 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); transform: translateY(-2px); }
 
 /* ATTENDANCE SPECIFIC */
-/* Added margin-bottom to physically raise the attendance block away from browser lower bars */
 .app-wrapper { position: relative; width: 100%; max-width: 420px; display: flex; flex-direction:column; align-items: center; justify-content: center; padding-top:20px; margin-bottom: 10vh; z-index: 1;}
 
 .hanging-sign-wrapper { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: -5px; perspective: 800px; z-index: 10; width: 240px; pointer-events: none; }
@@ -217,7 +216,7 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 
 /* SUCCESS SCREENS */
 #attSuccessScreen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; }
-.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: transform 0.3s ease; cursor: zoom-in; position: relative; z-index: 10; -webkit-tap-highlight-color: transparent; }
+.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--success-color); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transition: opacity 0.2s ease; cursor: zoom-in; position: relative; z-index: 10; -webkit-tap-highlight-color: transparent; }
 .success-badge{ background:var(--dynamic-primary);color:#fff;font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; margin-bottom:24px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; }
 .success-card{ background:var(--success-card-bg);border:1px solid var(--success-card-border); border-radius:20px;padding:24px 20px;width:100%;margin-bottom:20px; animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
@@ -230,6 +229,15 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .receipt-header { display:none; }
 .receipt-content { flex: 1; overflow-y: auto; text-align: left; padding: 16px; background: var(--bg-primary); border-radius: 12px; margin: 16px 0; border: 1px solid var(--border-color); color: var(--text-primary); font-size: 14px; line-height: 1.6; font-weight: 700; box-shadow: 0 4px 12px var(--shadow-color); }
 .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+
+/* DYNAMIC MORPHING OVERLAY */
+#zoomedImage { 
+  position: absolute; 
+  object-fit: cover; 
+  box-shadow: 0 0 0 1.5px var(--success-color), 0 25px 60px rgba(0,0,0,0.6);
+  z-index: 20001;
+  /* Transitions are injected dynamically via JS */
+}
 </style>
 </head>
 <body class="theme-hub">
@@ -401,9 +409,9 @@ function purgeCacheAtMidnight() {
   </div>
 </div>
 
-<!-- Flawless Dedicated Photo Zoom Overlay -->
-<div id="photoZoomOverlay" class="glass-overlay" style="display:none; justify-content:center; align-items:center; z-index:20000; cursor:zoom-out;" onclick="closeZoom()">
-  <img id="zoomedImage" src="" style="width:85%; max-width:400px; border-radius:50%; box-shadow: 0 0 0 1.5px var(--success-color), 0 25px 60px rgba(0,0,0,0.6); object-fit:cover; aspect-ratio:1/1; transform:scale(0.3); transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1), border-radius 0.4s cubic-bezier(0.25, 1, 0.4, 1);" />
+<!-- Flawless Geometric Morphing Zoom Overlay -->
+<div id="photoZoomOverlay" class="glass-overlay" onclick="closeZoom()">
+  <img id="zoomedImage" src="" />
 </div>
 
 <!-- Order Confirmation Modal -->
@@ -638,7 +646,8 @@ function processOrder(e) {
     let flavorKey = flavor; if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; } 
     let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0"; let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0"; let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0"); 
     
-    if(qty !== "0") { payload[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${flavorKey}]`] = qty; hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${qty} L</li>`; } 
+    // ADDED " Litres" SUFFIX TO PAYLOAD HERE
+    if(qty !== "0") { payload[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${flavorKey}]`] = qty + " Litres"; hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${qty} L</li>`; } 
   });
   juiceHtml += `</ul></div>`; if(hasJuices) html += juiceHtml;
 
@@ -811,6 +820,7 @@ function resetAttForm() {
   document.getElementById('attSuccessScreen').style.display='none';
   document.getElementById('attMainForm').style.display='block';
   document.getElementById('attMainContainer').style.overflow = 'hidden';
+  document.getElementById('successPhoto').style.opacity = '1';
   
   document.getElementById('staffID').value = ''; 
   resetStepsFrom(3); 
@@ -822,36 +832,63 @@ function showSuccess(id,txt){ const e=document.getElementById(id); e.innerHTML=`
 function showError(id,txt)  { const e=document.getElementById(id); e.innerText=txt; e.className='msg error'; }
 function clearMsg(id)       { const e=document.getElementById(id); e.innerText=''; e.className='msg'; }
 
-// SMOOTH MORPHING ZOOM LOGIC
+// PERFECT GEOMETRIC FLIP ANIMATION FOR PHOTO ZOOM
 function openZoom() {
   const overlay = document.getElementById('photoZoomOverlay');
   const overlayImg = document.getElementById('zoomedImage');
   const sourceImg = document.getElementById('successPhoto');
+
+  // Step 1: Get exact coordinates of the circle image on the screen
+  const rect = sourceImg.getBoundingClientRect();
   
-  // Set the image and start state (Circular and small)
   overlayImg.src = sourceImg.src;
+  
+  // Step 2: Set overlay image to perfectly mimic the small circle's state
+  overlayImg.style.transition = 'none'; 
+  overlayImg.style.left = rect.left + 'px';
+  overlayImg.style.top = rect.top + 'px';
+  overlayImg.style.width = rect.width + 'px';
+  overlayImg.style.height = rect.height + 'px';
   overlayImg.style.borderRadius = '50%';
-  overlayImg.style.transform = 'scale(0.3)';
   
-  overlay.style.display = 'flex';
-  void overlay.offsetWidth; // Force Reflow before applying transitions
+  overlay.style.display = 'block'; // Make overlay visible
+  void overlay.offsetWidth; // Force Reflow (crucial for transition to work)
   
-  // Morph into large square
-  overlay.classList.add('show');
-  overlayImg.style.transform = 'scale(1)';
+  sourceImg.style.opacity = '0'; // Hide original image
+  
+  // Step 3: Animate the overlay image into the large square center state
+  overlayImg.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.4, 1)';
+  
+  const targetW = Math.min(window.innerWidth * 0.85, 400); // 85% width or max 400px
+  overlayImg.style.left = ((window.innerWidth - targetW) / 2) + 'px';
+  overlayImg.style.top = ((window.innerHeight - targetW) / 2) + 'px';
+  overlayImg.style.width = targetW + 'px';
+  overlayImg.style.height = targetW + 'px';
   overlayImg.style.borderRadius = '24px';
+  
+  overlay.classList.add('show');
 }
 
 function closeZoom() {
   const overlay = document.getElementById('photoZoomOverlay');
   const overlayImg = document.getElementById('zoomedImage');
+  const sourceImg = document.getElementById('successPhoto');
   
-  // Morph back to small circle
-  overlay.classList.remove('show');
-  overlayImg.style.transform = 'scale(0.3)';
+  const rect = sourceImg.getBoundingClientRect();
+  
+  // Animate back to original circle position
+  overlayImg.style.left = rect.left + 'px';
+  overlayImg.style.top = rect.top + 'px';
+  overlayImg.style.width = rect.width + 'px';
+  overlayImg.style.height = rect.height + 'px';
   overlayImg.style.borderRadius = '50%';
   
-  setTimeout(() => { overlay.style.display = 'none'; }, 400);
+  overlay.classList.remove('show');
+  
+  setTimeout(() => { 
+    overlay.style.display = 'none'; 
+    sourceImg.style.opacity = '1'; // Unhide original
+  }, 400);
 }
 
 function handleBranchChange(isInit = false) {
