@@ -96,7 +96,7 @@ body.theme-carrefour {--dynamic-primary:var(--theme-carr);--success-color:#3b82f
 .back-pill:active { transform: scale(0.92); }
 
 /* HUB MENU */
-.menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; max-width: 340px; z-index: 2; }
+.menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; max-width: 340px; z-index: 2; margin-bottom: 15vh; }
 .hub-logo { font-size: 36px; font-weight: 900; color: #fff; text-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 6px; }
 .menu-subtitle { color: rgba(255,255,255,0.9); font-weight: 700; font-size: 16px; margin-bottom: 30px; }
 .menu-cards { width: 100%; display: flex; flex-direction: column; gap: 20px; }
@@ -231,20 +231,20 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--bg
 .modal-actions { display: flex; flex-direction: column; gap: 8px; }
 
 /* DYNAMIC MORPHING OVERLAY */
+#photoZoomContainer { display:none; position:fixed; inset:0; z-index:20000; pointer-events:none; }
+#photoZoomBg { position: absolute; inset:0; }
 #zoomedImage { 
   position: absolute; 
   object-fit: cover; 
   box-shadow: 0 0 0 1.5px var(--success-color), 0 25px 60px rgba(0,0,0,0.6);
   z-index: 20001;
   cursor: zoom-out;
-  /* Transitions injected dynamically via JS */
 }
 </style>
 </head>
 <body class="theme-hub">
 
 <script>
-// >>> ADD YOUR APP SCRIPT DEPLOYMENT URL HERE <<<
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 
 var Storage = { 
@@ -410,7 +410,7 @@ function purgeCacheAtMidnight() {
 </div>
 
 <!-- Flawless Decoupled Morphing Zoom Overlay -->
-<div id="photoZoomContainer" style="display:none; position:fixed; inset:0; z-index:20000; pointer-events:none;">
+<div id="photoZoomContainer">
   <!-- Only the background fades in/out -->
   <div id="photoZoomBg" class="glass-overlay" onclick="closeZoom()"></div>
   <!-- The image scales and morphs independently on top -->
@@ -823,6 +823,7 @@ function resetAttForm() {
   document.getElementById('attSuccessScreen').style.display='none';
   document.getElementById('attMainForm').style.display='block';
   document.getElementById('attMainContainer').style.overflow = 'hidden';
+  document.getElementById('successPhoto').style.opacity = '1';
   
   document.getElementById('staffID').value = ''; 
   resetStepsFrom(3); 
