@@ -8,6 +8,7 @@
 <meta name="theme-color" id="theme-color-meta" content="#ffffff">
 <title>Stentor Operations</title>
 
+<!-- OPTIMIZATION: Added 'defer' so this heavy script doesn't block the UI from loading instantly -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
 <script>
@@ -82,7 +83,11 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --dynamic-light: va
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
 
-body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 0) 12px env(safe-area-inset-bottom, 0); overflow-y:auto; -webkit-overflow-scrolling:touch; transition: background-color 0.4s ease, color 0.4s ease; }
+/* 
+  FIX: Body is completely locked to viewport coordinates to permanently
+  prevent the browser URL bar from continuously bouncing up and down.
+*/
+body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; position: fixed; inset: 0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px); overflow:hidden; transition: background-color 0.4s ease, color 0.4s ease; }
 input, textarea, select { -webkit-user-select: auto; user-select: auto; font-family: inherit;}
 .view-section, .btn-primary, .btn-secondary, .pill-btn, .hanging-sign, .chip-span, .order-group-title { -webkit-user-select: none; user-select: none; }
 
@@ -94,23 +99,25 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 .layer-chandarana { background: var(--bg-chan-grad); }
 .layer-carrefour { background: var(--bg-carr-grad); }
 
-.ui-input, .ui-select, .success-tick, .success-tick-circle, .success-tick-check, .chip-span, .section-card, .order-group, .solid-panel, .success-card, .success-badge, #o-id, .order-group-title::after, .chain::before, .network-indicator, .hanging-sign { transition: background-color 0.4s ease, border-left-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease, transform 0.4s ease; }
-.btn-primary, .btn-secondary, .inline-back { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease, opacity 0.2s ease; }
+/* Ensuring smooth UI Element transitions globally */
+.ui-input, .ui-select, .success-tick, .success-tick-circle, .success-tick-check, .chip-span, .section-card, .order-group, .solid-panel, .success-card, .success-badge, #o-id, .order-group-title::after, .chain::before, .network-indicator, .hanging-sign { transition: background-color 0.4s ease, border-left-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, opacity 0.3s ease, transform 0.3s ease; }
+.btn-primary, .btn-secondary, .inline-back { transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, transform 0.15s ease, opacity 0.2s ease; }
 
 .doodle-bg { position: fixed; inset: -50vh -50vw; z-index: -7; pointer-events: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><g stroke="%23000" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M 40 40 A 15 15 0 0 1 70 40 A 15 15 0 0 1 40 40 Z"/><path d="M 55 25 L 55 15 M 55 15 Q 65 15 70 20"/><circle cx="150" cy="60" r="20"/><path d="M 130 60 L 170 60 M 150 40 L 150 80"/><path d="M 50 150 Q 70 120 90 150 Q 70 180 50 150 Z"/><circle cx="160" cy="150" r="4" fill="%23000"/><circle cx="140" cy="160" r="3" fill="%23000"/></g></svg>'); background-size: 160px 160px; background-repeat: repeat; opacity: 0.15; }
 @media (prefers-color-scheme: dark) { .doodle-bg { filter: invert(1); opacity: 0.08; } }
 
-.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); z-index: 10; height: 100%; max-height: 100dvh; overflow: hidden; padding-bottom: env(safe-area-inset-bottom, 15px); }
-.view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+/* Speeded up View Sections */
+.view-section { display: none; width: 100%; height: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(8px); z-index: 10; }
+.view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.2s ease-out forwards; }
+@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
 
-.solid-panel { background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1.5px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 20; }
+.solid-panel { background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 20; }
 
-.welcome-section { display: none; width: 100%; max-width: 100% !important; height: 100vh; height: 100dvh; flex-direction: column; justify-content: space-between; padding: 10vh 20px 10vh 20px; box-sizing: border-box; position: absolute; inset: 0; z-index: 50; touch-action: none; overflow: hidden; cursor: pointer; }
-.welcome-section.active { display: flex; opacity: 1; }
-.welcome-top, .welcome-bottom { opacity: 0; transition: opacity 1.2s ease; }
+.welcome-section { display: none; width: 100%; max-width: 100% !important; height: 100%; flex-direction: column; justify-content: space-between; padding: 10vh 20px 10vh 20px; box-sizing: border-box; position: absolute; inset: 0; z-index: 50; touch-action: none; overflow: hidden; cursor: pointer; }
+.welcome-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.3s ease-out forwards; }
+.welcome-top, .welcome-bottom { opacity: 0; transition: opacity 0.6s ease; }
 .welcome-top.show, .welcome-bottom.show { opacity: 1; }
 .welcome-top { position: relative; z-index: 2; width: 100%; text-align: left; }
 .welcome-title { font-size: clamp(60px, 15vw, 90px); font-weight: 900; line-height: 0.95; color: var(--text-primary); margin: 0; letter-spacing: -2px; display: inline-block; transform-origin: left center;}
@@ -120,7 +127,7 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
     50% { transform: scale(1.02) translateY(-2px); opacity: 1; }
     100% { transform: scale(1) translateY(0); opacity: 1; }
 }
-.welcome-title.nudge-anim { animation: nudgeWelcomeTitle 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.welcome-title.nudge-anim { animation: nudgeWelcomeTitle 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
 .welcome-cycler { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 20px; z-index: 2;}
 #welcomeMessage { font-size: 32px; font-weight: 900; text-align: center; opacity: 0; line-height: 1.3; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -147,28 +154,28 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes floatSmallBubbles { 0% { transform: scale(0) translateY(0); opacity: 0; } 30% { transform: scale(1) translateY(0); opacity: 1; } 70% { transform: scale(1) translateY(-3px); opacity: 1; } 100% { transform: scale(0) translateY(-8px); opacity: 0; } }
 
 .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; padding: 0 16px; }
-.hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0; transform: translateY(40px); }
+.hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0; transform: translateY(20px); }
 .hub-card:active { transform: scale(0.95) !important; transition: 0.2s; }
 #view-menu.active .hub-card:nth-child(1) { animation: smoothUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: 0.05s; }
 #view-menu.active .hub-card:nth-child(2) { animation: smoothUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: 0.1s; }
-@keyframes smoothUp { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes smoothUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 .hc-icon-box { width: 76px; height: 76px; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
 .hc-alarm { background: linear-gradient(135deg, #10b981, #047857); }
 .hc-cart { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
 .hc-text { font-size: 17px; font-weight: 900; color: var(--text-primary); text-transform: uppercase; text-align: center;}
 
-.inline-back-wrapper { width: 100%; max-width: 440px; display: flex; justify-content: flex-start; padding: 0 16px; z-index: 20; flex-shrink: 0; }
+.inline-back-wrapper { width: 100%; max-width: 440px; display: flex; justify-content: flex-start; padding: 0 16px; z-index: 20; flex-shrink: 0;}
 .inline-back { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; color: var(--text-secondary); padding: 14px 26px; border-radius: 50px; cursor: pointer; -webkit-tap-highlight-color: transparent;}
 .inline-back:active { transform: scale(0.92); }
 
-.app-container { width: 100%; padding:24px 22px; display:flex; flex-direction:column; justify-content:flex-start; }
-.app-container.scrollable { overflow-y: auto; overflow-x: hidden; padding-bottom: 20px; flex: 1; min-height: 0;}
-.top-bar { display:flex; justify-content:center; margin-bottom:15px; width: 100%; position: relative; z-index: 5;}
+.app-container { width: 100%; padding:24px 22px; display:flex; flex-direction:column; justify-content:center; }
+.app-container.scrollable { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-bottom: 24px; justify-content:flex-start; -webkit-overflow-scrolling:touch; }
+.top-bar { display:flex; justify-content:center; width: 100%; position: relative; z-index: 5;}
 
-/* Shorter pill switcher */
-.terminal-pill-wrapper { position:relative; display:flex; width: 100%; background:var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border:1px solid var(--glass-border); border-radius:50px; padding:4px; height:40px; align-items:center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
-.pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:1; transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease; }
-.pill-btn { flex: 1; position:relative; z-index:2; background:transparent; border:none; padding:0 10px; height:100%; font-size:clamp(13px, 4vw, 15px); font-weight:800; color:var(--text-secondary); cursor:pointer; outline:none; white-space:nowrap; transition: color 0.3s ease; }
+/* Short Pill Switcher implementation */
+.terminal-pill-wrapper { position:relative; display:inline-flex; max-width: 100%; margin: 0 auto; background:var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border:1px solid var(--glass-border); border-radius:50px; padding:4px; height:48px; align-items:center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+.pill-slider { position:absolute; top:4px; bottom:4px; left:4px; border-radius:50px; background:var(--dynamic-primary); box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:1; transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.4s ease; }
+.pill-btn { flex: 0 1 auto; position:relative; z-index:2; background:transparent; border:none; padding:0 20px; height:100%; font-size:clamp(13px, 4vw, 15px); font-weight:800; color:var(--text-secondary); cursor:pointer; outline:none; white-space:nowrap; transition: color 0.3s ease; }
 .pill-btn.active { color:#fff; }
 
 .input-label { font-weight:700; font-size:12px; display:block; margin-bottom:8px; color:var(--label-text); text-transform:uppercase; letter-spacing:0.5px;}
@@ -185,15 +192,15 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 .btn-secondary:active { transform: scale(0.97); }
 .btn-spinner { border: 2px solid rgba(0,0,0,0.1); border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; width:16px; height:16px; margin-right:8px;}
 
-/* Polished Order Sections */
-.section-card, .order-group { background-color: var(--glass-bg) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 2px solid var(--border-color); border-left: 6px solid var(--dynamic-primary) !important; border-radius: 16px; margin-bottom: 15px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: border-left-color 0.4s ease, border-color 0.4s ease, background-color 0.4s ease; }
+/* Full border outlines for Order Elements */
+.section-card, .order-group { background-color: var(--glass-bg) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--dynamic-primary); border-left: 5px solid var(--dynamic-primary) !important; border-radius: 16px; margin-bottom: 15px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: border-left-color 0.4s ease, border-color 0.4s ease, background-color 0.4s ease; }
 .section-card::before, .order-group::before { display: none; }
-body:not(.theme-chandarana):not(.theme-carrefour) .section-card, body:not(.theme-chandarana):not(.theme-carrefour) .order-group { border-left-color: #0d9488 !important; }
+body:not(.theme-chandarana):not(.theme-carrefour) .section-card, body:not(.theme-chandarana):not(.theme-carrefour) .order-group { border-color: #0d9488; border-left-color: #0d9488 !important; }
 
 .section-card { padding: 14px; }
 #o-id { color: var(--dynamic-primary); font-weight: 900; font-size: 18px; }
 #o-id::placeholder { color: var(--text-tertiary); opacity: 0.8; font-weight: 700; }
-.locked-form { opacity: 0.4; pointer-events: none; transition: opacity 0.4s ease; }
+.locked-form { opacity: 0.4; pointer-events: none; transition: opacity 0.3s ease; }
 .locked-form.unlocked { opacity: 1; pointer-events: auto; }
 .order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: transparent; outline: none; list-style: none; }
 .order-group-title::-webkit-details-marker { display: none; }
@@ -211,7 +218,7 @@ th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--gl
 .chip-span { display: inline-flex; background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px 16px; border-radius: 50px; font-size: 13px; font-weight: 800; color: var(--text-secondary); }
 .chip-label input:checked + .chip-span { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); transform: translateY(-2px); }
 
-.app-wrapper { position: relative; width: 100%; max-width: 440px; display: flex; flex-direction:column; align-items: center; padding-top:20px; z-index: 10; flex: 1; min-height: 0;}
+.app-wrapper { position: relative; width: 100%; max-width: 440px; display: flex; flex-direction:column; align-items: center; justify-content: center; z-index: 10;}
 .hanging-sign-wrapper { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: -5px; perspective: 800px; z-index: 30; width: 240px; pointer-events: none; }
 .chain { position: absolute; top: -30px; width: 5px; height: 34px; background: linear-gradient(to right, #9ca3af, #f3f4f6, #9ca3af); border-radius: 3px; box-shadow: inset 0 0 3px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2); z-index: 1; pointer-events: none; }
 .chain::before { content: ''; position: absolute; top: -6px; left: -3.5px; width: 12px; height: 12px; border-radius: 50%; background-color: var(--dynamic-primary); border: 3.5px solid #d1d5db; box-shadow: 0 8px 12px rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.7); box-sizing: border-box; pointer-events: none; }
@@ -222,47 +229,52 @@ body:not(.theme-chandarana):not(.theme-carrefour) .hanging-sign { background: li
 @keyframes swing { 0% { transform: rotateX(0deg) rotateZ(0deg); } 20% { transform: rotateX(25deg) rotateZ(-3deg); } 40% { transform: rotateX(-15deg) rotateZ(2deg); } 60% { transform: rotateX(8deg) rotateZ(-1deg); } 80% { transform: rotateX(-3deg) rotateZ(0deg); } 100% { transform: rotateX(0deg) rotateZ(0deg); } }
 .hanging-sign.nudge { animation: swing 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
 
-.network-indicator{ position:absolute;top:12px;left:12px;width:8px;height:8px;border-radius:50%; background-color:var(--dynamic-primary);opacity:0.9; box-shadow: 0 0 6px var(--dynamic-primary); }
+/* Adjusted Network Indicator */
+.network-indicator{ position:absolute; top:10px; left:10px; width:10px; height:10px; border-radius:50%; background-color:var(--dynamic-primary); opacity:0.9; box-shadow: 0 0 6px var(--dynamic-primary); }
 body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { background-color: #0d9488; box-shadow: 0 0 6px #0d9488; }
 .network-indicator.offline{background-color:var(--text-tertiary);opacity:0.4; box-shadow:none;}
 
-.step-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 16px; position: relative; z-index: 5;}
-.step { opacity:0.3; pointer-events:none; transition: opacity 0.4s ease; position: relative; z-index: 10;}
-.step.activeStep { opacity:1; pointer-events:auto; animation:bounceIn 0.45s ease; }
+/* Centered content block for Attendance */
+.step-container { display:flex; flex-direction:column; gap:20px; position: relative; z-index: 5; width:100%;}
+.step { opacity:0.3; pointer-events:none; transition: opacity 0.3s ease; position: relative; z-index: 10; display:flex; flex-direction:column; align-items:center; text-align:center;}
+.step.activeStep { opacity:1; pointer-events:auto; animation:bounceIn 0.35s ease; }
 
-.msg{ font-size:13px;font-weight:600;margin-top:8px; min-height:42px; align-items:flex-start; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.3s ease, color 0.3s ease; opacity: 1; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.step .input-label { text-align: center; width: 100%; }
+.step .ui-input, .step .ui-select { text-align: center; text-align-last: center; }
+
+.msg{ font-size:13px;font-weight:600;margin-top:8px; min-height:42px; justify-content:center; align-items:center; text-align:center; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.2s ease, color 0.2s ease; opacity: 1; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); width:100%;}
 .msg.success{color:var(--dynamic-primary);font-size:14px} .msg.error{color:var(--error-color)}
-.msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--dynamic-primary);border-radius:50%; margin-right:8px;flex-shrink:0;position:relative; margin-top: 2px; }
+.msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--dynamic-primary);border-radius:50%; margin-right:8px;flex-shrink:0;position:relative; margin-top: 0; }
 .msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-.glass-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); margin: 0; padding: 0; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; transform: translateZ(0); }
+.glass-overlay { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; transform: translateZ(0); }
 .glass-overlay.show { opacity: 1; pointer-events: auto; }
-#videoContainerWrapper{ position:fixed; top: 50%; left: 50%; width: 85%; max-width: 380px; aspect-ratio: 3 / 4; border-radius: 28px; overflow: hidden; z-index: 10001; background-color: #000; box-shadow: 0 25px 60px rgba(0,0,0,0.6); transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: translate(-50%, -50%) scale(0.95); opacity: 0; pointer-events: none; -webkit-mask-image: -webkit-radial-gradient(white, black); }
+#videoContainerWrapper{ position:fixed; top: 50%; left: 50%; width: 85%; max-width: 380px; aspect-ratio: 3 / 4; border-radius: 28px; overflow: hidden; z-index: 10001; background-color: #000; box-shadow: 0 25px 60px rgba(0,0,0,0.6); transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.25, 1, 0.4, 1); transform: translate(-50%, -50%) scale(0.95); opacity: 0; pointer-events: none; -webkit-mask-image: -webkit-radial-gradient(white, black); }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: translate(-50%, -50%) scale(1); }
-#cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
+#cameraVideo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.3s ease; }
 #cameraVideo.live { opacity: 1; }
 .camera-flash { position: absolute; inset: 0; background: white; opacity: 0; pointer-events: none; z-index: 10; }
 .camera-flash.fire { animation: flashAnim 0.3s ease-out; }
 @keyframes flashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-.camera-ui { position:absolute; bottom:0; left:0; right:0; padding:30px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex; align-items:center; justify-content:center; z-index:15; opacity:0; pointer-events:none; transition:opacity 0.4s ease; }
+.camera-ui { position:absolute; bottom:0; left:0; right:0; padding:30px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex; align-items:center; justify-content:center; z-index:15; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
 #cameraVideo.live ~ .camera-ui { opacity: 1; pointer-events: auto; }
 .single-shutter-btn { width: 72px; height: 72px; border-radius: 50%; background: #fff; border: 5px solid rgba(255,255,255,0.35); background-clip: padding-box; box-shadow: 0 4px 20px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); -webkit-tap-highlight-color: transparent; }
 .single-shutter-btn:active { transform: scale(0.85); }
 .single-shutter-btn.loading { animation: pulseShutter 1s infinite; pointer-events: none; border: 5px solid var(--dynamic-primary); }
 @keyframes pulseShutter { 0% { transform: scale(1); } 50% { transform: scale(0.9); } 100% { transform: scale(1); } }
 
-#attSuccessScreen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; }
-.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--dynamic-primary); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; position: relative; z-index: 10; -webkit-tap-highlight-color: transparent; }
-.success-badge{ color:var(--text-primary);font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; display:inline-flex; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; margin-bottom: 24px; background: var(--bg-primary); }
-.success-card{ background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid var(--glass-border); border-radius:20px; padding:24px 20px; width:100%; margin-bottom:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
+#attSuccessScreen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; height: 100%; margin: auto 0; }
+.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--dynamic-primary); margin-bottom: 20px; animation: bounceIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; position: relative; z-index: 10; -webkit-tap-highlight-color: transparent; }
+.success-badge{ color:var(--text-primary);font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; display:inline-flex; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; margin-bottom: 24px; background: var(--bg-primary); }
+.success-card{ background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius:20px; padding:24px 20px; width:100%; margin-bottom:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); animation:bounceIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
 .success-msg {font-size:15px;font-weight:600;color:var(--text-secondary);line-height:1.5}
 .success-tick { width: 22px; height: 22px; display: block; margin-left: 10px; }
 .success-tick-circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 4; stroke-miterlimit: 10; fill: none; }
 .success-tick-check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; }
 .animate-circle { animation: strokeTick 0.5s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
-.animate-check { animation: strokeTick 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards; }
+.animate-check { animation: strokeTick 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards; }
 @keyframes strokeTick { 100% { stroke-dashoffset: 0; } }
 
 .modal-overlay { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:19999; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
@@ -282,12 +294,15 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 .profile-summary-item span { color: var(--text-primary); font-size: 14px; font-weight: 700; }
 .edit-icon { font-size: 14px; opacity: 0.6; }
 
+/* Custom Branch Picker UI for Profile */
+.custom-branch-picker::-webkit-scrollbar { display: none; }
+.branch-btn { background: var(--input-bg); border: 1.5px solid var(--input-border); border-radius: 8px; padding: 10px 4px; font-size: 12px; font-weight: 800; color: var(--text-secondary); cursor: pointer; text-align: center; transition: all 0.2s; user-select: none; -webkit-tap-highlight-color: transparent;}
+.branch-btn:active { transform: scale(0.95); }
+.branch-btn.selected { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); box-shadow: 0 4px 10px var(--dynamic-light);}
+
 #photoZoomContainer { display:none; position:fixed; inset:0; z-index:20000; pointer-events:none; }
 #photoZoomBg { position: absolute; inset:0; }
 #zoomedImage { position: absolute; object-fit: cover; box-shadow: 0 0 0 4px var(--dynamic-primary), 0 25px 60px rgba(0,0,0,0.6); z-index: 20001; cursor: zoom-out; }
-
-#attMainContainer { display: flex; flex-direction: column; justify-content: center; min-height: 340px; }
-#attMainFormInner { width: 100%; display: flex; flex-direction: column; justify-content: center; flex: 1; }
 </style>
 </head>
 <body class="theme-welcome">
@@ -324,7 +339,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 </div>
 
 <!-- VIEW 2: HUB MENU -->
-<div id="view-menu" class="view-section" style="justify-content: center;">
+<div id="view-menu" class="view-section">
   <div class="menu-container">
     <div class="thought-bubble-container" onclick="openProfile()">
       <div class="bubble-small"></div>
@@ -358,210 +373,217 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
     </div>
   </div>
   
-  <div class="inline-back-wrapper" style="margin-top: 30px; margin-bottom: 20px;">
+  <div class="inline-back-wrapper" style="margin-top: 30px; justify-content: center;">
     <div class="inline-back solid-panel" onclick="goToWelcome()">← Welcome</div>
   </div>
 </div>
 
 <!-- VIEW 3: PROFILE REGISTRATION -->
-<div id="view-profile" class="view-section">
-  <div class="app-wrapper">
-      <div class="app-container scrollable solid-panel">
-        <h2 style="font-weight:900; color:var(--text-primary); text-align:center; font-size: 18px; margin-bottom: 20px;">PROFILE REGISTRATION</h2>
+<div id="view-profile" class="view-section" style="padding-top: 10px;">
+  
+  <div class="app-container scrollable solid-panel" style="width: calc(100% - 20px); margin: 0 10px 15px; padding: 24px 16px;">
+    <h2 style="font-weight:900; color:var(--text-primary); text-align:center; font-size: 18px; margin-bottom: 20px;">PROFILE REGISTRATION</h2>
+    
+    <form id="profileForm" onsubmit="reviewProfile(event)">
+      <!-- STEP 1 -->
+      <div class="section-card" id="p-step1">
+        <label class="input-label" style="text-align: center;">ID Number <span class="req-star">*</span></label>
+        <input type="tel" id="p-id" class="ui-input" style="text-align: center;" placeholder="Enter ID to begin" required autocomplete="off" oninput="instantProfileStaffCheck(this.value)">
+        <div id="p-staffMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
         
-        <form id="profileForm" onsubmit="reviewProfile(event)">
-          <!-- STEP 1 -->
-          <div class="section-card" id="p-step1">
-            <label class="input-label">ID Number <span class="req-star">*</span></label>
-            <input type="tel" id="p-id" class="ui-input" placeholder="Enter ID to begin" required autocomplete="off" oninput="instantProfileStaffCheck(this.value)">
-            <div id="p-staffMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
-            
-            <div id="p-step1-fields" style="display:none; animation: sectionFadeIn 0.3s ease forwards;">
-              <label class="input-label" style="margin-top: 15px;">Full Name <span class="req-star">*</span></label>
-              <input type="text" id="p-name" class="ui-input" required>
-              
-              <label class="input-label" style="margin-top: 15px;">Phone Number <span class="req-star">*</span></label>
-              <input type="tel" id="p-phone" class="ui-input" required>
-              
-              <label class="input-label" style="margin-top: 15px;">Default Branch <span class="req-star">*</span></label>
-              <select id="p-branch" class="ui-select" required onchange="triggerProfileBranchChange()"><option value="">Select Branch</option></select>
-    
-              <button type="button" class="btn-primary solid" onclick="nextProfileStep(2)" style="margin-top:20px;">Next →</button>
-            </div>
+        <div id="p-step1-fields" style="display:none; animation: sectionFadeIn 0.3s ease forwards;">
+          <label class="input-label" style="margin-top: 15px;">Full Name <span class="req-star">*</span></label>
+          <input type="text" id="p-name" class="ui-input" required>
+          
+          <label class="input-label" style="margin-top: 15px;">Phone Number <span class="req-star">*</span></label>
+          <input type="tel" id="p-phone" class="ui-input" required>
+          
+          <label class="input-label" style="margin-top: 15px; text-align:center;">Select Default Branch <span class="req-star">*</span></label>
+          
+          <!-- Custom side-by-side branch picker UI -->
+          <div class="custom-branch-picker" style="display:flex; gap:10px; max-height:220px; border: 1.5px solid var(--input-border); border-radius:14px; background:var(--input-bg); padding:10px; overflow-y:auto; overflow-x:hidden;">
+             <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+                <div style="font-size:12px; font-weight:900; color:var(--theme-chan); text-align:center; position:sticky; top:0; background:var(--input-bg); padding:4px 0; z-index:2;">CHANDARANA</div>
+                <div id="chan-branch-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+             </div>
+             <div style="width:1.5px; background:var(--border-color); flex-shrink:0;"></div>
+             <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+                <div style="font-size:12px; font-weight:900; color:var(--theme-carr); text-align:center; position:sticky; top:0; background:var(--input-bg); padding:4px 0; z-index:2;">CARREFOUR</div>
+                <div id="carr-branch-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+             </div>
           </div>
-    
-          <!-- STEP 2 -->
-          <div class="section-card" id="p-step2" style="display:none;">
-            <label class="input-label">Email Address <span class="req-star">*</span></label><input type="email" id="p-email" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">Alternative Contact <span class="req-star">*</span></label><input type="tel" id="p-altContact" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">Physical Address (Area) <span class="req-star">*</span></label><input type="text" id="p-address" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">Next of Kin Name <span class="req-star">*</span></label><input type="text" id="p-nok" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">Next of Kin Contact <span class="req-star">*</span></label><input type="tel" id="p-nokContact" class="ui-input" required>
-            
-            <div style="display:flex; gap:10px; margin-top:20px;">
-              <button type="button" class="btn-secondary" onclick="prevProfileStep(1)" style="margin-top:0;">← Back</button>
-              <button type="button" class="btn-primary solid" onclick="nextProfileStep(3)" style="margin-top:0;">Next →</button>
-            </div>
-          </div>
-    
-          <!-- STEP 3 -->
-          <div class="section-card" id="p-step3" style="display:none;">
-            <label class="input-label">Bank Name <span class="req-star">*</span></label><input type="text" id="p-bank" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">Confirm Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc-confirm" class="ui-input" required>
-            <div id="p-accMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
-            <label class="input-label" style="margin-top: 15px;">SHA Number <span class="req-star">*</span></label><input type="text" id="p-sha" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">NSSF Number <span class="req-star">*</span></label><input type="text" id="p-nssf" class="ui-input" required>
-            <label class="input-label" style="margin-top: 15px;">KRA PIN <span class="req-star">*</span></label><input type="text" id="p-kra" class="ui-input" required style="text-transform:uppercase;">
-            <label class="input-label" style="margin-top: 15px;">Month & Year of Employment <span class="req-star">*</span></label><input type="month" id="p-emp" class="ui-input" required>
-    
-            <div style="display:flex; gap:10px; margin-top:20px;">
-              <button type="button" class="btn-secondary" onclick="prevProfileStep(2)" style="margin-top:0;">← Back</button>
-              <button type="submit" class="btn-primary solid" id="profileReviewBtn" style="margin-top:0;">Review Details</button>
-            </div>
-          </div>
-        </form>
-        
-        <div id="profileSuccess" style="display:none; text-align:center; padding: 30px 10px;">
-          <div style="width:80px;height:80px;background:#10b981;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">✓</div>
-          <h2 style="font-weight:900; color:var(--text-primary);" id="profileSuccessText">Profile Saved!</h2>
-          <button class="btn-secondary" style="margin-top:20px;" onclick="goToMenu()">Return to Menu</button>
+          <!-- Hidden input purely for validation -->
+          <input type="text" id="p-branch" required style="opacity:0; position:absolute; pointer-events:none; width:0; height:0;">
+
+          <button type="button" class="btn-primary solid" onclick="nextProfileStep(2)" style="margin-top:20px;">Next →</button>
         </div>
       </div>
+
+      <!-- STEP 2 -->
+      <div class="section-card" id="p-step2" style="display:none;">
+        <label class="input-label">Email Address <span class="req-star">*</span></label><input type="email" id="p-email" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">Alternative Contact <span class="req-star">*</span></label><input type="tel" id="p-altContact" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">Physical Address (Area) <span class="req-star">*</span></label><input type="text" id="p-address" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">Next of Kin Name <span class="req-star">*</span></label><input type="text" id="p-nok" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">Next of Kin Contact <span class="req-star">*</span></label><input type="tel" id="p-nokContact" class="ui-input" required>
+        
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="button" class="btn-secondary" onclick="prevProfileStep(1)" style="margin-top:0;">← Back</button>
+          <button type="button" class="btn-primary solid" onclick="nextProfileStep(3)" style="margin-top:0;">Next →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="section-card" id="p-step3" style="display:none;">
+        <label class="input-label">Bank Name <span class="req-star">*</span></label><input type="text" id="p-bank" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">Confirm Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc-confirm" class="ui-input" required>
+        <div id="p-accMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
+        <label class="input-label" style="margin-top: 15px;">SHA Number <span class="req-star">*</span></label><input type="text" id="p-sha" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">NSSF Number <span class="req-star">*</span></label><input type="text" id="p-nssf" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">KRA PIN <span class="req-star">*</span></label><input type="text" id="p-kra" class="ui-input" required style="text-transform:uppercase;">
+        <label class="input-label" style="margin-top: 15px;">Month & Year of Employment <span class="req-star">*</span></label><input type="month" id="p-emp" class="ui-input" required>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="button" class="btn-secondary" onclick="prevProfileStep(2)" style="margin-top:0;">← Back</button>
+          <button type="submit" class="btn-primary solid" id="profileReviewBtn" style="margin-top:0;">Review Details</button>
+        </div>
+      </div>
+    </form>
+    
+    <div id="profileSuccess" style="display:none; text-align:center; padding: 30px 10px;">
+      <div style="width:80px;height:80px;background:#10b981;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">✓</div>
+      <h2 style="font-weight:900; color:var(--text-primary);" id="profileSuccessText">Profile Saved!</h2>
+      <button class="btn-secondary" style="margin-top:20px;" onclick="goToMenu()">Return to Menu</button>
+    </div>
   </div>
   
-  <div class="inline-back-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
+  <div class="inline-back-wrapper" style="margin-bottom: 15px;">
     <div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div>
   </div>
 </div>
 
 <!-- VIEW 4: ORDERS -->
-<div id="view-orders" class="view-section">
+<div id="view-orders" class="view-section" style="padding-top: 15px;">
   
-  <div class="app-wrapper">
-    
-    <div class="top-bar" id="orderTopBar" style="width: 100%; max-width: 440px; padding: 0 10px; margin-bottom: 15px;">
-      <div class="terminal-pill-wrapper" id="o-terminal-wrapper">
-        <div class="pill-slider" id="o-pill-slider"></div>
-        <button class="pill-btn active" id="o-btn-chandarana" onclick="switchTerminalOrder('chandarana')">Chandarana</button>
-        <button class="pill-btn" id="o-btn-carrefour" onclick="switchTerminalOrder('carrefour')">Carrefour</button>
-      </div>
-    </div>
-
-    <!-- Main Form Content -->
-    <div class="app-container scrollable solid-panel" style="width: calc(100% - 20px); max-width: 440px; margin: 0 10px; padding: 24px 22px;">
-      
-      <div id="orderFormInner" style="display: none; width: 100%;">
-          <form id="orderForm" onsubmit="processOrder(event)">
-          <div class="section-card" style="display:flex; gap:12px; align-items:flex-end;">
-              <div style="flex:1;"><label class="input-label">Staff ID</label><input type="tel" id="o-id" class="ui-input" placeholder="Enter ID" required autocomplete="off" oninput="instantOrderStaffCheck(this.value)"></div>
-              <div id="o-name-container" style="opacity:0; flex:1;"><label class="input-label">Name</label><input type="text" id="o-name" class="ui-input" placeholder="Name" readonly></div>
-          </div>
-          <div id="o-staffMsg" class="msg" style="min-height:20px; margin-top:-5px; margin-bottom:10px; padding-left:14px;"></div>
-
-          <div id="o-expanded-fields" style="display:none;">
-              <div class="section-card" style="display:flex; gap:12px;">
-              <div style="flex:1; position:relative;">
-                  <label class="input-label">Branch <span id="o-branch-lock-icon" style="font-size:10px; opacity:0.6; font-weight:700; text-transform:none; float:right;">🔒 Hold</span></label>
-                  <select id="o-branch" class="ui-select" style="pointer-events:none; appearance:none;"></select>
-                  <div id="o-branch-overlay" style="position:absolute; top:20px; left:0; right:0; bottom:0; z-index:11;"
-                      ontouchstart="startBranchHold(event)" ontouchend="cancelBranchHold()" ontouchcancel="cancelBranchHold()"
-                      onmousedown="startBranchHold(event)" onmouseup="cancelBranchHold()" onmouseleave="cancelBranchHold()"></div>
-              </div>
-              <div style="flex:1;"><label class="input-label">Phone</label><input type="tel" id="o-phone" class="ui-input" readonly></div>
-              </div>
-          </div>
-
-          <div id="o-locked-section" class="locked-form">
-              <div id="dynamicOrderContent"></div>
-              <div class="section-card">
-              <label class="input-label">Notes</label>
-              <textarea id="o-notes" class="ui-input" style="height:auto; padding:12px;" rows="2" placeholder="Special instructions..."></textarea>
-              <button type="submit" class="btn-primary solid" id="orderSubmitBtn">Submit Order</button>
-              </div>
-          </div>
-          </form>
-      </div>
-
-      <div class="success-screen" id="orderSuccessScreen" style="display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top: 40px;">
-        <div style="width:80px;height:80px;background:var(--dynamic-primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">✓</div>
-        <h2 style="font-weight:900; margin-bottom:8px; color: var(--text-primary);">Order Sent!</h2>
-        <button class="btn-primary solid" style="max-width:200px; margin-top:20px;" onclick="resetOrderForm()">New Order</button>
-      </div>
-      
+  <div class="top-bar" id="orderTopBar" style="padding: 0 10px; margin-bottom: 12px; flex-shrink: 0;">
+    <div class="terminal-pill-wrapper" id="o-terminal-wrapper">
+      <div class="pill-slider" id="o-pill-slider"></div>
+      <button class="pill-btn active" id="o-btn-chandarana" onclick="switchTerminalOrder('chandarana')">Chandarana</button>
+      <button class="pill-btn" id="o-btn-carrefour" onclick="switchTerminalOrder('carrefour')">Carrefour</button>
     </div>
   </div>
+
+  <div class="app-container scrollable solid-panel" style="width: calc(100% - 20px); margin: 0 10px 15px; padding: 20px 16px;">
+    
+    <div id="orderFormInner" style="display: none; width: 100%;">
+        <form id="orderForm" onsubmit="processOrder(event)">
+        <div class="section-card" style="display:flex; gap:12px; align-items:flex-end;">
+            <div style="flex:1;"><label class="input-label" style="text-align: center;">Staff ID</label><input type="tel" id="o-id" class="ui-input" style="text-align: center;" placeholder="Enter ID" required autocomplete="off" oninput="instantOrderStaffCheck(this.value)"></div>
+            <div id="o-name-container" style="opacity:0; flex:1; transition: opacity 0.3s ease;"><label class="input-label" style="text-align: center;">Name</label><input type="text" id="o-name" class="ui-input" style="text-align: center;" placeholder="Name" readonly></div>
+        </div>
+        <div id="o-staffMsg" class="msg" style="min-height:20px; margin-top:-5px; margin-bottom:10px;"></div>
+
+        <div id="o-expanded-fields" style="display:none; animation: sectionFadeIn 0.3s ease forwards;">
+            <div class="section-card" style="display:flex; gap:12px;">
+            <div style="flex:1; position:relative;">
+                <label class="input-label" style="text-align: center;">Branch <span id="o-branch-lock-icon" style="font-size:10px; opacity:0.6; font-weight:700; text-transform:none; display:block;">🔒 Hold</span></label>
+                <select id="o-branch" class="ui-select" style="pointer-events:none; appearance:none; text-align-last: center;"></select>
+                <div id="o-branch-overlay" style="position:absolute; top:30px; left:0; right:0; bottom:0; z-index:11;"
+                    ontouchstart="startBranchHold(event)" ontouchend="cancelBranchHold()" ontouchcancel="cancelBranchHold()"
+                    onmousedown="startBranchHold(event)" onmouseup="cancelBranchHold()" onmouseleave="cancelBranchHold()"></div>
+            </div>
+            <div style="flex:1;"><label class="input-label" style="text-align: center;">Phone</label><input type="tel" id="o-phone" class="ui-input" style="text-align: center;" readonly></div>
+            </div>
+        </div>
+
+        <div id="o-locked-section" class="locked-form">
+            <div id="dynamicOrderContent"></div>
+            <div class="section-card">
+            <label class="input-label">Notes</label>
+            <textarea id="o-notes" class="ui-input" style="height:auto; padding:12px;" rows="2" placeholder="Special instructions..."></textarea>
+            <button type="submit" class="btn-primary solid" id="orderSubmitBtn">Submit Order</button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+    <div class="success-screen" id="orderSuccessScreen" style="display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; height: 100%; margin: auto 0;">
+      <div style="width:80px;height:80px;background:var(--dynamic-primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">✓</div>
+      <h2 style="font-weight:900; margin-bottom:8px; color: var(--text-primary);">Order Sent!</h2>
+      <button class="btn-primary solid" style="max-width:200px; margin-top:20px;" onclick="resetOrderForm()">New Order</button>
+    </div>
+    
+  </div>
   
-  <div class="inline-back-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
+  <div class="inline-back-wrapper" style="margin-bottom: 15px; flex-shrink: 0;">
     <div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div>
   </div>
 </div>
 
 <!-- VIEW 5: ATTENDANCE -->
-<div id="view-attendance" class="view-section">
-  <div class="app-wrapper">
-    <div class="hanging-sign-wrapper" id="signWrapper">
-      <div class="chain left-chain"></div><div class="chain right-chain"></div>
-      <div class="hanging-sign nudge" id="storeSign">SELECT SHOP</div>
+<div id="view-attendance" class="view-section" style="padding-top: 50px;">
+  <div class="hanging-sign-wrapper" id="signWrapper">
+    <div class="chain left-chain"></div><div class="chain right-chain"></div>
+    <div class="hanging-sign nudge" id="storeSign">SELECT SHOP</div>
+  </div>
+
+  <div class="top-bar" id="attTopBar" style="padding: 0 10px; margin-bottom: 12px; flex-shrink: 0;">
+    <div class="terminal-pill-wrapper" id="a-terminal-wrapper">
+      <div class="pill-slider" id="a-pill-slider"></div>
+      <button class="pill-btn active" id="a-btn-chandarana" onclick="switchTerminalAtt('chandarana')">Chandarana</button>
+      <button class="pill-btn" id="a-btn-carrefour" onclick="switchTerminalAtt('carrefour')">Carrefour</button>
+    </div>
+  </div>
+
+  <div class="app-container scrollable solid-panel" id="attMainContainer" style="width: calc(100% - 20px); margin: 0 10px 15px; padding: 24px 22px; position: relative;">
+    <div id="networkIndicator" class="network-indicator"></div>
+
+    <div id="attMainFormInner" style="display: none; width: 100%; height: 100%;">
+      <div class="step-container">
+        <div id="step1" class="step activeStep">
+          <label class="input-label">Branch</label>
+          <select id="branch" class="ui-select"><option value="">Loading...</option></select>
+          <div id="branchMsg" class="msg"></div>
+        </div>
+        <div id="step2" class="step">
+          <label class="input-label">Staff ID</label>
+          <input id="staffID" class="ui-input" type="tel" placeholder="Enter ID" autocomplete="off">
+          <div id="staffMsg" class="msg"></div>
+        </div>
+        <div id="step3" class="step">
+          <label class="input-label">GPS Location</label>
+          <button class="btn-primary" onclick="verifyGPS()">Verify</button>
+          <div id="gpsMsg" class="msg"></div>
+        </div>
+        <div id="step4" class="step">
+          <label class="input-label">Identity</label>
+          <button class="btn-primary" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
+          <div id="cameraMsg" class="msg"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="top-bar" id="attTopBar" style="width: 100%; max-width: 440px; padding: 0 10px; margin-top: 35px; margin-bottom: 15px;">
-      <div class="terminal-pill-wrapper" id="a-terminal-wrapper">
-        <div class="pill-slider" id="a-pill-slider"></div>
-        <button class="pill-btn active" id="a-btn-chandarana" onclick="switchTerminalAtt('chandarana')">Chandarana</button>
-        <button class="pill-btn" id="a-btn-carrefour" onclick="switchTerminalAtt('carrefour')">Carrefour</button>
-      </div>
-    </div>
-
-    <div class="app-container scrollable solid-panel" id="attMainContainer" style="width: calc(100% - 20px); max-width: 440px; margin: 0 10px; padding: 24px 22px; position: relative;">
-      <div id="networkIndicator" class="network-indicator"></div>
-
-      <div id="attMainFormInner" style="display: none;">
-        <div class="step-grid">
-          <div id="step1" class="step activeStep">
-            <label class="input-label">Branch</label>
-            <select id="branch" class="ui-select"><option value="">Loading...</option></select>
-            <div id="branchMsg" class="msg"></div>
-          </div>
-          <div id="step2" class="step">
-            <label class="input-label">Staff ID</label>
-            <input id="staffID" class="ui-input" type="tel" placeholder="Enter ID" autocomplete="off">
-            <div id="staffMsg" class="msg"></div>
-          </div>
-          <div id="step3" class="step">
-            <label class="input-label">GPS Location</label>
-            <button class="btn-primary" onclick="verifyGPS()">Verify</button>
-            <div id="gpsMsg" class="msg"></div>
-          </div>
-          <div id="step4" class="step">
-            <label class="input-label">Identity</label>
-            <button class="btn-primary" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
-            <div id="cameraMsg" class="msg"></div>
-          </div>
+    <div id="attSuccessScreen">
+      <img id="successPhoto" class="success-photo" src="" alt="Captured Selfie" onclick="openZoom()">
+      <div style="display:flex; align-items:center; justify-content:center; margin-bottom:24px;">
+        <div class="success-badge" id="successBadge">
+          <span id="successBadgeText">CLOCK IN</span>
+          <svg id="successSvg" class="success-tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle id="successTickCircle" class="success-tick-circle" cx="26" cy="26" r="25" />
+            <path id="successTickCheck" class="success-tick-check" fill="none" stroke-width="4" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
         </div>
       </div>
-
-      <div id="attSuccessScreen">
-        <img id="successPhoto" class="success-photo" src="" alt="Captured Selfie" onclick="openZoom()">
-        <div style="display:flex; align-items:center; justify-content:center; margin-bottom:24px;">
-          <div class="success-badge" id="successBadge">
-            <span id="successBadgeText">CLOCK IN</span>
-            <svg id="successSvg" class="success-tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle id="successTickCircle" class="success-tick-circle" cx="26" cy="26" r="25" />
-              <path id="successTickCheck" class="success-tick-check" fill="none" stroke-width="4" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-            </svg>
-          </div>
-        </div>
-        <div class="success-card">
-          <div class="success-name" id="successName"></div>
-          <div class="success-msg" id="successMsg"></div>
-        </div>
-        <button class="btn-primary solid" onclick="resetAttForm()">← Submit Another</button>
+      <div class="success-card">
+        <div class="success-name" id="successName"></div>
+        <div class="success-msg" id="successMsg"></div>
       </div>
+      <button class="btn-primary solid" onclick="resetAttForm()">← Submit Another</button>
     </div>
   </div>
   
-  <div class="inline-back-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
+  <div class="inline-back-wrapper" style="margin-bottom: 15px; flex-shrink: 0;">
     <div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div>
   </div>
 </div>
@@ -585,11 +607,11 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
   <div class="modal-box">
     <h3 id="modalShopName" style="margin:0 0 10px; font-size:24px; font-weight:900; text-transform:uppercase; color: var(--dynamic-primary);"></h3>
     
-    <!-- Red pill warning -->
-    <div style="background: var(--warning-bg); border: 1.5px solid var(--warning-border); border-radius: 50px; padding: 8px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center;">
-      <p style="font-size: 13px; color: var(--warning-text); font-weight: 800; line-height: 1.3; text-align: center; margin: 0;">⚠️ Please confirm your order details carefully.</p>
+    <!-- WRAPPED WARNING IN A PILL -->
+    <div style="background: var(--warning-bg); border: 1.5px solid var(--warning-border); border-radius: 50px; padding: 10px 15px; margin-bottom: 12px; width: 100%;">
+      <p style="font-size: 13px; color: var(--warning-text); margin: 0; font-weight: 900; line-height: 1.4; text-align: center;">⚠️ Please keenly confirm your order details before submitting.</p>
     </div>
-
+    
     <div id="orderSummaryDetails" class="receipt-content"></div>
     <div class="modal-actions-row">
       <button class="btn-modal btn-edit" onclick="closeConfirmModal()">Edit</button>
@@ -696,7 +718,7 @@ function startWelcomeCycler() {
       }
   });
 
-  centerEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease'; centerEl.style.opacity = '0'; centerEl.style.transform = 'translateY(15px) scale(0.95)';
+  centerEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease'; centerEl.style.opacity = '0'; centerEl.style.transform = 'translateY(15px) scale(0.95)';
 
   function nextIntro() {
       if (introSkipped) return;
@@ -709,7 +731,7 @@ function startWelcomeCycler() {
           
           void centerEl.offsetWidth; 
           
-          centerEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease';
+          centerEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease';
           centerEl.style.opacity = '1'; 
           centerEl.style.transform = 'translateY(0) scale(1)';
           
@@ -719,8 +741,8 @@ function startWelcomeCycler() {
               centerEl.style.opacity = '0'; 
               centerEl.style.transform = 'translateY(-15px) scale(0.95)'; 
               step++;
-              introTimeouts.push(setTimeout(nextIntro, 200));
-          }, 600));
+              introTimeouts.push(setTimeout(nextIntro, 150));
+          }, 600)); // Made introductory words noticeably faster
       } else { startNormalCycle(); }
   }
 
@@ -736,7 +758,7 @@ function startWelcomeCycler() {
       if (window.welcomeCyclerInterval) clearInterval(window.welcomeCyclerInterval);
       window.welcomeCyclerInterval = setInterval(() => {
           centerEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-          centerEl.style.opacity = '0'; centerEl.style.transform = 'translateY(-15px) scale(0.95)';
+          centerEl.style.opacity = '0'; centerEl.style.transform = 'translateY(-8px) scale(0.95)';
           
           setTimeout(() => { 
               i = (i + 1) % phrases.length; 
@@ -744,15 +766,15 @@ function startWelcomeCycler() {
               centerEl.style.color = normalColors[i]; 
               
               centerEl.style.transition = 'none';
-              centerEl.style.transform = 'translateY(15px) scale(0.95)';
+              centerEl.style.transform = 'translateY(8px) scale(0.95)';
               
               void centerEl.offsetWidth; 
               
               centerEl.style.transition = 'opacity 0.4s ease, color 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
               centerEl.style.transform = 'translateY(0) scale(1)'; 
               centerEl.style.opacity = '1'; 
-          }, 300); 
-      }, 2500);
+          }, 250); 
+      }, 2500); // Swapped every 2.5s instead of 3.5s
   }
   introTimeouts.push(setTimeout(nextIntro, 200));
 }
@@ -819,25 +841,30 @@ function fetchPortalDataSilent() {
 function openProfile() {
   switchView('view-profile'); document.body.className = ''; updateBGLayer('layerHub');
   document.getElementById('profileForm').reset(); document.getElementById('p-step1-fields').style.display = 'none'; document.getElementById('p-step1').style.display = 'block'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none'; document.getElementById('p-staffMsg').innerHTML = '';
+  document.getElementById('p-branch').value = '';
   
-  const branchSel = document.getElementById('p-branch'); let chanBranches = [], carrBranches = [];
+  let chanBranches = [], carrBranches = [];
   try { const pData = JSON.parse(Storage.get('chandarana_portal_data')); if (pData && pData.branches) chanBranches = pData.branches.map(b => b[0]); } catch(e) {}
   try { const pData = JSON.parse(Storage.get('carrefour_portal_data')); if (pData && pData.branches) carrBranches = pData.branches.map(b => b[0]); } catch(e) {}
   
-  let html = `<option value="">Select Branch</option>`;
-  html += `<optgroup label="Chandarana" style="color: var(--theme-chan);">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" style="color: #10b981; font-weight: 800;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-  html += `<optgroup label="Carrefour" style="color: var(--theme-carr);">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" style="color: #3b82f6; font-weight: 800;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-  branchSel.innerHTML = html;
+  const chanList = document.getElementById('chan-branch-list');
+  const carrList = document.getElementById('carr-branch-list');
+  chanList.innerHTML = chanBranches.map(b => `<div class="branch-btn" onclick="selectProfileBranch(this, '${escapeHTML(b)}', 'chandarana')">${escapeHTML(b)}</div>`).join('');
+  carrList.innerHTML = carrBranches.map(b => `<div class="branch-btn" onclick="selectProfileBranch(this, '${escapeHTML(b)}', 'carrefour')">${escapeHTML(b)}</div>`).join('');
   
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
 }
 
-function triggerProfileBranchChange() {
-  const sel = document.getElementById('p-branch');
-  if(!sel.value) { document.body.className = ''; updateBGLayer('layerHub'); return; }
-  const opt = sel.options[sel.selectedIndex], isChan = opt.parentNode.label === 'Chandarana';
-  document.body.className = isChan ? 'theme-chandarana' : 'theme-carrefour';
-  updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour');
+function selectProfileBranch(el, branchName, store) {
+    document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('p-branch').value = branchName;
+    document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
+    updateBGLayer(store === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
+    
+    // Clear staff msg error if they previously missed branch selection
+    const msgEl = document.getElementById('p-staffMsg');
+    if (msgEl.className.includes('error') && msgEl.innerText.includes('branch')) msgEl.innerHTML = '';
 }
 
 function prefillProfileFromLocal(id) {
@@ -855,27 +882,43 @@ function instantProfileStaffCheck(val) {
   val = val.trim(); const fieldsEl = document.getElementById('p-step1-fields'), msgEl = document.getElementById('p-staffMsg');
   if (val.length < 2) { fieldsEl.style.display = 'none'; msgEl.innerHTML = ''; return; }
   
-  let match = orderStaffCache.chandarana.find(s => s.id === val) || orderStaffCache.carrefour.find(s => s.id === val);
+  let matchStore = 'chandarana';
+  let match = orderStaffCache.chandarana.find(s => s.id === val);
+  if(!match) {
+      match = orderStaffCache.carrefour.find(s => s.id === val);
+      if(match) matchStore = 'carrefour';
+  }
+
   if (match) {
     fieldsEl.style.display = 'block'; document.getElementById('p-name').value = match.name; document.getElementById('p-phone').value = match.phone;
-    const branchSel = document.getElementById('p-branch'); let bMatch = Array.from(branchSel.options).find(o => o.value === match.branch); if(bMatch) branchSel.value = match.branch;
     msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; msgEl.className = 'msg success';
-    triggerProfileBranchChange(); prefillProfileFromLocal(val);
+    
+    // Find custom button and auto-select
+    if (match.branch) {
+      const targetBtn = Array.from(document.querySelectorAll('.branch-btn')).find(b => b.innerText === match.branch);
+      if (targetBtn) targetBtn.click();
+    }
+    prefillProfileFromLocal(val);
   } else {
     fieldsEl.style.display = 'none'; msgEl.innerHTML = 'Invalid ID'; msgEl.className = 'msg error';
   }
 }
 
 function showStepError(id) { const el = document.getElementById(id); el.style.borderColor = 'var(--error-color)'; setTimeout(() => { el.style.borderColor = ''; }, 2000); }
+function showPickerError() { const el = document.querySelector('.custom-branch-picker'); el.style.borderColor = 'var(--error-color)'; setTimeout(() => { el.style.borderColor = 'var(--input-border)'; }, 2000); }
 
 function validateProfileStep(step) {
-    if(step === 1) { const req = ['p-id', 'p-name', 'p-phone', 'p-branch']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
+    if(step === 1) { 
+        const req = ['p-id', 'p-name', 'p-phone']; 
+        for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } 
+        if(!document.getElementById('p-branch').value.trim()) { showPickerError(); document.getElementById('p-staffMsg').innerHTML='Select a branch below'; document.getElementById('p-staffMsg').className='msg error'; return false;}
+    }
     if(step === 2) { const req = ['p-email', 'p-altContact', 'p-address', 'p-nok', 'p-nokContact']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
     return true;
 }
 
-function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.getElementById('p-step' + (n-1)).style.display = 'none'; const nextStep = document.getElementById('p-step' + n); nextStep.style.display = 'block'; requestAnimationFrame(() => nextStep.style.animation = 'sectionFadeIn 0.25s ease forwards'); }
-function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const prevStep = document.getElementById('p-step' + n); prevStep.style.display = 'block'; requestAnimationFrame(() => prevStep.style.animation = 'sectionFadeIn 0.25s ease forwards'); }
+function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.getElementById('p-step' + (n-1)).style.display = 'none'; const nextStep = document.getElementById('p-step' + n); nextStep.style.display = 'block'; requestAnimationFrame(() => nextStep.style.animation = 'sectionFadeIn 0.3s ease forwards'); }
+function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const prevStep = document.getElementById('p-step' + n); prevStep.style.display = 'block'; requestAnimationFrame(() => prevStep.style.animation = 'sectionFadeIn 0.3s ease forwards'); }
 
 let pendingProfilePayload = null;
 
@@ -909,7 +952,7 @@ function reviewProfile(e) {
 function editProfileStep(targetStepNum) {
   document.getElementById('profileConfirmModal').style.display = 'none';
   document.getElementById('p-step1').style.display = 'none'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none';
-  const targetStep = document.getElementById('p-step' + targetStepNum); targetStep.style.display = 'block'; requestAnimationFrame(() => targetStep.style.animation = 'sectionFadeIn 0.25s ease forwards');
+  const targetStep = document.getElementById('p-step' + targetStepNum); targetStep.style.display = 'block'; requestAnimationFrame(() => targetStep.style.animation = 'sectionFadeIn 0.3s ease forwards');
 }
 
 async function confirmAndSendProfile() {
@@ -945,32 +988,23 @@ let orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } };
 
 function openOrder() {
   document.getElementById('orderTopBar').style.display = 'flex'; document.getElementById('orderSuccessScreen').style.display = 'none';
-  let savedTerminal = Storage.get('selected_terminal'); 
+  let savedTerminal = Storage.get('selected_terminal'); switchView('view-orders'); 
   
-  if (savedTerminal) { 
-      document.body.className = savedTerminal === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
-      updateBGLayer(savedTerminal === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
-      switchView('view-orders'); 
-      switchTerminalOrder(savedTerminal, false); 
-  } else {
-      activeStore = null; document.body.className = ''; updateBGLayer('layerHub'); 
-      switchView('view-orders'); 
-      document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('o-pill-slider').style.width = '0';
+  if (savedTerminal) { switchTerminalOrder(savedTerminal); } 
+  else {
+      activeStore = null; document.body.className = ''; updateBGLayer('layerHub'); document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('o-pill-slider').style.width = '0';
       document.getElementById('o-btn-chandarana').classList.remove('active'); document.getElementById('o-btn-carrefour').classList.remove('active');
   }
 }
 
-function switchTerminalOrder(store, preventIdReset = false) {
-  if (activeStore && activeStore !== store && !preventIdReset) { orderStoreState[activeStore].id = document.getElementById('o-id').value; saveOrderState(); }
+function switchTerminalOrder(store) {
+  if (activeStore) { orderStoreState[activeStore].id = document.getElementById('o-id').value; saveOrderState(); }
   activeStore = store; Storage.set('selected_terminal', store);
   document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour'; updateBGLayer(store === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
   document.getElementById('o-btn-chandarana').classList.toggle('active', store === 'chandarana'); document.getElementById('o-btn-carrefour').classList.toggle('active', store === 'carrefour');
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider'); document.getElementById('orderFormInner').style.display = 'block';
   renderDynamicOrderContent(); restoreOrderState();
-  
-  if (!preventIdReset) {
-      let savedId = orderStoreState[store].id || Storage.get('last_order_id_' + store) || ''; document.getElementById('o-id').value = savedId; instantOrderStaffCheck(savedId);
-  }
+  let savedId = orderStoreState[store].id || Storage.get('last_order_id_' + store) || ''; document.getElementById('o-id').value = savedId; instantOrderStaffCheck(savedId);
 }
 
 function loadOrderStaffBackground() {
@@ -988,12 +1022,12 @@ function cancelBranchHold() { clearTimeout(branchHoldTimer); }
 function lockBranchSelect(isAttendanceVerified) {
   const sel = document.getElementById('o-branch'), overlay = document.getElementById('o-branch-overlay'), icon = document.getElementById('o-branch-lock-icon');
   sel.style.pointerEvents = 'none'; sel.style.appearance = 'none'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900';
-  if (isAttendanceVerified) { icon.style.display = 'none'; overlay.style.display = 'none'; sel.style.background = 'transparent'; sel.style.borderColor = 'transparent'; } else { icon.style.display = 'inline'; icon.innerText = '🔒 Hold to edit'; overlay.style.display = 'block'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)'; }
+  if (isAttendanceVerified) { icon.style.display = 'none'; overlay.style.display = 'none'; sel.style.background = 'transparent'; sel.style.borderColor = 'transparent'; } else { icon.style.display = 'block'; icon.innerText = '🔒 Hold to edit'; overlay.style.display = 'block'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)'; }
 }
 
 function unlockBranchSelect() {
   const sel = document.getElementById('o-branch'), overlay = document.getElementById('o-branch-overlay'), icon = document.getElementById('o-branch-lock-icon');
-  sel.style.pointerEvents = 'auto'; sel.style.appearance = 'auto'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900'; overlay.style.display = 'none'; icon.style.display = 'inline'; icon.innerText = '🔓 Select below'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)';
+  sel.style.pointerEvents = 'auto'; sel.style.appearance = 'auto'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900'; overlay.style.display = 'none'; icon.style.display = 'block'; icon.innerText = '🔓 Select below'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)';
 }
 
 function populateOrderBranches() {
@@ -1001,8 +1035,8 @@ function populateOrderBranches() {
    try { const pData = JSON.parse(Storage.get('chandarana_portal_data')); if (pData && pData.branches) chanBranches = pData.branches.map(b => b[0]); } catch(e) {}
    try { const pData = JSON.parse(Storage.get('carrefour_portal_data')); if (pData && pData.branches) carrBranches = pData.branches.map(b => b[0]); } catch(e) {}
    
-   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: #10b981; font-weight: 800;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-   html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: #3b82f6; font-weight: 800;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+   html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
    sel.innerHTML = html;
 }
 
@@ -1025,7 +1059,7 @@ function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) 
   if (clockedInStore && clockedInBranch) { targetStore = clockedInStore; targetBranch = clockedInBranch; isAttendanceVerified = true; if (targetStore !== defaultStore || targetBranch !== match.branch) relievedMsg = ' (Auto-detected)'; }
   if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; relievedMsg = ''; }
 
-  if (targetStore !== activeStore) { switchTerminalOrder(targetStore, true); } // true avoids resetting the ID input
+  if (targetStore !== activeStore) { switchTerminalOrder(targetStore); }
 
   Storage.set('last_order_id_' + activeStore, val); 
   const msgDiv = document.getElementById('o-staffMsg'), nameInp = document.getElementById('o-name'), nameCont = document.getElementById('o-name-container'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
@@ -1039,23 +1073,27 @@ function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) 
   msgDiv.innerHTML = `<span class="dot"></span> ID Verified${relievedMsg}`; msgDiv.className = 'msg success'; 
 }
 
+let oCheckDebounce;
 function instantOrderStaffCheck(val, forcedStore = null, forcedBranch = null) {
-  val = val.trim(); 
-  const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-  if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').innerHTML = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); if(activeStore) Storage.remove('last_order_id_' + activeStore); return; }
+  clearTimeout(oCheckDebounce);
+  oCheckDebounce = setTimeout(() => {
+      val = val.trim(); 
+      const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
+      if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').innerHTML = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); if(activeStore) Storage.remove('last_order_id_' + activeStore); return; }
 
-  let match = orderStaffCache.chandarana.find(s => s.id === val); let defaultStore = match ? 'chandarana' : null;
-  if (!match) { match = orderStaffCache.carrefour.find(s => s.id === val); if (match) defaultStore = 'carrefour'; }
-  
-  if(match) { processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch); } 
-  else { 
-    msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
-    fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
-    .then(r => r.json()).then(res => {
-       if (document.getElementById('o-id').value.trim() !== val) return;
-       if (res.found) { orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); processStaffMatch(val, {name: res.name, phone: res.phone, branch: res.branch}, res.store, forcedStore, forcedBranch); } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
-    }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
-  }
+      let match = orderStaffCache.chandarana.find(s => s.id === val); let defaultStore = match ? 'chandarana' : null;
+      if (!match) { match = orderStaffCache.carrefour.find(s => s.id === val); if (match) defaultStore = 'carrefour'; }
+      
+      if(match) { processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch); } 
+      else { 
+        msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+        fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
+        .then(r => r.json()).then(res => {
+           if (document.getElementById('o-id').value.trim() !== val) return;
+           if (res.found) { orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); processStaffMatch(val, {name: res.name, phone: res.phone, branch: res.branch}, res.store, forcedStore, forcedBranch); } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
+        }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
+      }
+  }, 100);
 }
 
 const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
@@ -1173,16 +1211,8 @@ let staff = [], branches = [], coords = null, staffName = "", photo = null;
 let activeFetchId = 0, currentAction = "", videoStream = null, lastSelectedBranch = "", staffRestrictionError = null, warningTimer = null, lastValidatedId = ""; 
 
 function openAttendance() { 
-  let savedTerminal = Storage.get('selected_terminal');
-  if (savedTerminal) { 
-      document.body.className = savedTerminal === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour';
-      updateBGLayer(savedTerminal === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
-      switchView('view-attendance');
-      switchTerminalAtt(savedTerminal, true); 
-  } else { 
-      currentTerminal = null; document.body.className = ''; updateBGLayer('layerHub'); switchView('view-attendance');
-      document.getElementById('attMainFormInner').style.display = 'none'; document.getElementById('a-pill-slider').style.width = '0'; document.getElementById('a-btn-chandarana').classList.remove('active'); document.getElementById('a-btn-carrefour').classList.remove('active'); document.getElementById('storeSign').innerText = 'SELECT SHOP'; triggerSignAnimation(); 
-  }
+  switchView('view-attendance'); let savedTerminal = Storage.get('selected_terminal');
+  if (savedTerminal) { switchTerminalAtt(savedTerminal, true); } else { currentTerminal = null; document.body.className = ''; updateBGLayer('layerHub'); document.getElementById('attMainFormInner').style.display = 'none'; document.getElementById('a-pill-slider').style.width = '0'; document.getElementById('a-btn-chandarana').classList.remove('active'); document.getElementById('a-btn-carrefour').classList.remove('active'); document.getElementById('storeSign').innerText = 'SELECT SHOP'; triggerSignAnimation(); }
 }
 
 function triggerSignAnimation() { const sign = document.getElementById('storeSign'); if (sign) { sign.classList.remove('nudge'); void sign.offsetWidth; sign.classList.add('nudge'); } }
@@ -1190,7 +1220,7 @@ function triggerSignAnimation() { const sign = document.getElementById('storeSig
 function switchTerminalAtt(term, isInitialOpen = false) {
   if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { triggerSignAnimation(); return; }
   if (!isInitialOpen && currentTerminal) { Storage.set('last_staff_id_' + currentTerminal, document.getElementById('staffID').value); }
-  currentTerminal = term; Storage.set('selected_terminal', term); staff = []; branches = []; lastSelectedBranch = ""; lastValidatedId = ""; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>'; document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'flex'; document.getElementById('attMainContainer').style.overflow = 'hidden';
+  currentTerminal = term; Storage.set('selected_terminal', term); staff = []; branches = []; lastSelectedBranch = ""; lastValidatedId = ""; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>'; document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
   document.body.className = `theme-${currentTerminal}`; updateBGLayer(currentTerminal === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
   const title = document.getElementById('storeSign'); title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1); triggerSignAnimation();
   document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour'); updatePillSlider('a-terminal-wrapper', 'a-pill-slider'); resetStepsFrom(1); document.getElementById('step1').classList.add('activeStep'); document.getElementById('staffID').value = ''; initAppAtt();
@@ -1201,8 +1231,7 @@ function fetchFromServer(action, data) { return fetch(SCRIPT_URL, { method:'POST
 function populateBranches(list) {
   if (!Array.isArray(list)) return;
   const select = document.getElementById('branch'), currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
-  const branchColor = currentTerminal === 'chandarana' ? '#10b981' : '#3b82f6';
-  const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: ${branchColor}; font-weight: 800;">${escapeHTML(b[0])}</option>`).join('');
+  const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
   if (select.innerHTML !== options) { select.innerHTML = options; }
   if (currentVal) { select.value = currentVal; lastSelectedBranch = currentVal; showSuccess('branchMsg', 'Branch Selected'); } else { clearMsg('branchMsg'); }
 }
@@ -1229,7 +1258,7 @@ function resetStepsFrom(n) {
   if (n <= 4) { photo = null; stopCamera(); clearMsg('cameraMsg'); document.getElementById('successPhoto').src = ''; }
 }
 
-function resetAttForm() { document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('attMainFormInner').style.display='flex'; document.getElementById('attMainContainer').style.overflow = 'hidden'; document.getElementById('successPhoto').style.opacity = '1'; document.getElementById('staffID').value = ''; resetStepsFrom(3); handleBranchChange(true); initAppAtt(); }
+function resetAttForm() { document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('attMainFormInner').style.display='block'; document.getElementById('attMainContainer').style.overflow = 'hidden'; document.getElementById('successPhoto').style.opacity = '1'; document.getElementById('staffID').value = ''; resetStepsFrom(3); handleBranchChange(true); initAppAtt(); }
 
 function showSuccess(id,txt){ const e=document.getElementById(id); e.innerHTML=`<span class="dot"></span> ${txt}`; e.className='msg success'; }
 function showError(id,txt)  { const e=document.getElementById(id); e.innerText=txt; e.className='msg error'; }
