@@ -8,7 +8,7 @@
 <meta name="theme-color" id="theme-color-meta" content="#ffffff">
 <title>Stentor Operations</title>
 
-<!-- html2canvas deferred for fast initial load. Used for downloading receipt images. -->
+<!-- OPTIMIZATION: Added 'defer' so this heavy script doesn't block the UI from loading instantly -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
 <script>
@@ -83,7 +83,7 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --dynamic-light: va
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
 
-body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px); overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; transition: background-color 0.4s ease; }
+body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px); overflow-y:auto; -webkit-overflow-scrolling:touch; }
 input, textarea, select { -webkit-user-select: auto; user-select: auto; font-family: inherit;}
 .view-section, .btn-primary, .btn-secondary, .pill-btn, .hanging-sign, .chip-span, .order-group-title { -webkit-user-select: none; user-select: none; }
 
@@ -177,7 +177,7 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 .btn-spinner { border: 2px solid rgba(0,0,0,0.1); border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; width:16px; height:16px; margin-right:8px;}
 
 .section-card, .order-group { background-color: var(--glass-bg) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 15px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
-.section-card::before, .order-group::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4.5px; background-color: var(--dynamic-primary); z-index: 5; transition: background-color 0.4s ease; }
+.section-card::before, .order-group::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4.5px; background-color: var(--dynamic-primary); z-index: 5; transition: background-color 0.6s ease; }
 body:not(.theme-chandarana):not(.theme-carrefour) .section-card::before, body:not(.theme-chandarana):not(.theme-carrefour) .order-group::before { background: linear-gradient(to bottom, var(--theme-chan), var(--theme-carr)); }
 
 .section-card { padding: 14px; }
@@ -191,11 +191,11 @@ body:not(.theme-chandarana):not(.theme-carrefour) .section-card::before, body:no
 .order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
 .order-group-content { padding: 14px; border-top: 1px solid rgba(156, 163, 175, 0.15); }
 
-/* FIXED TABLE BORDERS */
+/* PERFECTED TABLE BORDERS */
 table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; border-left: 1px solid rgba(156, 163, 175, 0.15); border-top: 1px solid rgba(156, 163, 175, 0.15); border-radius: 8px; overflow: hidden; }
 th, td { padding: 8px 4px; border-bottom: 1px solid rgba(156, 163, 175, 0.15); border-right: 1px solid rgba(156, 163, 175, 0.15); }
 th { background: transparent; font-weight: 900; font-size: 12px; width: 35%; text-transform: uppercase;}
-th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--glass-bg); z-index: 10; text-align: left; padding-left: 8px; font-weight:800; font-size:11px; }
+th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--glass-bg); z-index: 10; text-align: left; padding-left: 8px; font-weight:800; font-size:11px; border-left: none;}
 
 .square-input { width: 50px; height: 34px; border-radius: 10px; margin: 0 auto; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-tertiary); font-weight: 900; display: flex; align-items: center; justify-content: center; }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
@@ -365,7 +365,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         <input type="tel" id="p-id" class="ui-input" placeholder="Enter ID to begin" required autocomplete="off" oninput="instantProfileStaffCheck(this.value)">
         <div id="p-staffMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
         
-        <div id="p-step1-fields" style="display:none; animation: sectionFadeIn 0.3s ease forwards;">
+        <div id="p-step1-fields" style="display:none; animation: sectionFadeIn 0.4s ease forwards;">
           <label class="input-label" style="margin-top: 15px;">Full Name <span class="req-star">*</span></label>
           <input type="text" id="p-name" class="ui-input" required>
           
@@ -554,7 +554,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
   <div class="camera-ui">
     <button class="single-shutter-btn" id="shutterBtn" onclick="capturePhotoNative()"></button>
   </div>
-  <!-- Low-End Phone Native Fallback -->
+  <!-- OPTIMIZATION: Low-End Phone Native Fallback -->
   <input type="file" id="fallbackCameraInput" accept="image/*" capture="user" style="display: none;" onchange="handleFallbackCamera(event)">
 </div>
 
@@ -598,13 +598,23 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 </div>
 
 <!-- =========================
-     JAVASCRIPT CORE 
-     (Zero-Trust Architecture)
+     JAVASCRIPT CORE
 ========================== -->
 <script>
-// 1. SECURE SESSION INJECTION
-const API_SECRET = "<?= typeof dynamicToken !== 'undefined' ? dynamicToken : 'STENTOR_SECURE_2024' ?>";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
+const API_SECRET = "STENTOR_SECURE_2024"; 
+
+// Utility to prevent malicious code injection (XSS)
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.toString().replace(/[&<>'"]/g, 
+    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
+  );
+}
+
+function getKbSize(base64Str) {
+  return (base64Str.length * (3/4)) / 1024;
+}
 
 var Storage = { 
   set:function(k,v){try{localStorage.setItem(k,v)}catch(e){ return false; }}, 
@@ -612,74 +622,44 @@ var Storage = {
   remove:function(k){try{localStorage.removeItem(k)}catch(e){}} 
 };
 
-// 2. UNIQUE DEVICE FINGERPRINTING
-function getDeviceId() {
-  let id = Storage.get('stentor_device_id');
-  if (!id) { id = 'DEV_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36); Storage.set('stentor_device_id', id); }
-  return id;
-}
-const DEVICE_ID = getDeviceId();
-
-// 3. SECURITY DATA PURGE: Destroy old vulnerable data left on the phone
+// CLEANS OUT THE VULNERABLE MASSIVE LISTS BUT LEAVES THE NEW SAFE CACHE
 function purgeLegacyData() {
-  try {
-    const keysToWipe = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      let k = localStorage.key(i);
-      if (k && (k.startsWith('profile_saved_') || k.includes('portal_data') || k.includes('order_staff_') || k.includes('attendance_queue'))) {
-        keysToWipe.push(k);
-      }
-    }
-    keysToWipe.forEach(k => localStorage.removeItem(k));
-  } catch(e){}
+  Storage.remove('chandarana_portal_data'); 
+  Storage.remove('carrefour_portal_data'); 
+  Storage.remove('order_staff_chandarana'); 
+  Storage.remove('order_staff_carrefour'); 
 }
-
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-}
-
-function getKbSize(base64Str) { return (base64Str.length * (3/4)) / 1024; }
 
 function updateThemeColorMeta() {
   var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   var meta = document.getElementById('theme-color-meta');
   if (!meta) return;
-  if (document.body.className === '' || document.body.className === 'theme-welcome') meta.setAttribute('content', isDark ? '#111827' : '#ffffff');
-  else if (document.body.className.includes('chandarana')) meta.setAttribute('content', isDark ? '#059669' : '#10b981');
-  else if (document.body.className.includes('carrefour')) meta.setAttribute('content', isDark ? '#2563eb' : '#3b82f6');
+  if (document.body.className === '' || document.body.className === 'theme-welcome') {
+      meta.setAttribute('content', isDark ? '#111827' : '#ffffff');
+  } else if (document.body.className.includes('chandarana')) {
+      meta.setAttribute('content', isDark ? '#059669' : '#10b981');
+  } else if (document.body.className.includes('carrefour')) {
+      meta.setAttribute('content', isDark ? '#2563eb' : '#3b82f6');
+  }
 }
 if (window.matchMedia) { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta); }
 
 let activeStore = null, currentTerminal = null;
-let allBranches = { chandarana: [], carrefour: [] };
+
+// RAM-ONLY MEMORY (Data completely destroyed when browser closes)
+let portalStaff = { chandarana: [], carrefour: [] };
+let orderStaffCache = { chandarana: [], carrefour: [] };
+let branchesCache = { chandarana: [], carrefour: [] };
 
 document.addEventListener('DOMContentLoaded', function() {
   updateTime(); setInterval(updateTime, 60000); 
   startWelcomeCycler();
   purgeLegacyData(); 
-  fetchPublicBranches(); 
+  loadOrderStaffBackground(); 
+  fetchPortalDataSilent(); 
   window.addEventListener('online', checkNetworkStatus); 
   window.addEventListener('offline', checkNetworkStatus);
 });
-
-// ZERO-TRUST SERVER COMMUNICATION
-async function fetchServer(action, payloadData = {}) {
-  const payload = { action, deviceId: DEVICE_ID, secret: API_SECRET, ...payloadData };
-  const res = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
-  const json = await res.json();
-  if (!json.ok) throw new Error(json.error || 'Server error');
-  return json.data;
-}
-
-function fetchPublicBranches() {
-  const cached = Storage.get('public_branches');
-  if (cached) { allBranches = JSON.parse(cached); }
-  fetchServer('getBranches').then(data => {
-    allBranches = data;
-    Storage.set('public_branches', JSON.stringify(data));
-  }).catch(()=>{});
-}
 
 function startWelcomeCycler() {
   const centerEl = document.getElementById('welcomeMessage'), topEl = document.getElementById('welcomeTop'), botEl = document.getElementById('welcomeBottom');
@@ -704,7 +684,7 @@ function startWelcomeCycler() {
           introTimeouts.push(setTimeout(() => {
               if (introSkipped) return;
               centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(1.4)'; step++;
-              introTimeouts.push(setTimeout(nextIntro, 200));
+              introTimeouts.push(setTimeout(nextIntro, 300));
           }, 600));
       } else { startNormalCycle(); }
   }
@@ -716,12 +696,10 @@ function startWelcomeCycler() {
       centerEl.style.transition = 'opacity 0.4s ease, color 0.4s ease, transform 0.4s ease'; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1';
       topEl.classList.add('show'); botEl.classList.add('show');
       if (window.welcomeCyclerInterval) clearInterval(window.welcomeCyclerInterval);
-      
-      // Fixed: Cycle every 1.8 seconds for a brisker feel
       window.welcomeCyclerInterval = setInterval(() => {
           centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(0.95)';
           setTimeout(() => { i = (i + 1) % phrases.length; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1'; }, 400); 
-      }, 1800);
+      }, 1800); // 1.8 seconds cycle
   }
   introTimeouts.push(setTimeout(nextIntro, 150));
 }
@@ -733,7 +711,6 @@ function updateTime() {
 
 function checkNetworkStatus() { const ind = document.getElementById('networkIndicator'); if (ind) navigator.onLine ? ind.classList.remove('offline') : ind.classList.add('offline'); }
 
-// Background layer crossfade handling
 function updateBGLayer(targetLayerId) {
   const layers = document.querySelectorAll('.bg-layer'), target = document.getElementById(targetLayerId);
   if (target.classList.contains('active')) return;
@@ -745,7 +722,6 @@ function updateBGLayer(targetLayerId) {
   updateThemeColorMeta();
 }
 
-// RESTORED ORIGINAL SWITCH VIEW LOGIC: Fixes the Overlap and Flicker perfectly
 function switchView(viewId) {
   const welcome = document.getElementById('view-welcome');
   if (viewId === 'view-welcome') { welcome.style.display = 'flex'; welcome.classList.add('active'); } 
@@ -768,22 +744,49 @@ function goToWelcome() { updateBGLayer('layerWelcome'); document.body.className 
 
 function updatePillSlider(containerId, sliderId) { setTimeout(() => { const ab = document.querySelector(`#${containerId} .pill-btn.active`); const sl = document.getElementById(sliderId); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }, 50); }
 
-// ==========================================
-// SECURE PROFILE SYSTEM (Direct Cloud Sync)
-// ==========================================
+// =====================================
+// DATA FETCHING (SAFE MEMORY)
+// =====================================
+function fetchPortalDataSilent() {
+  ['chandarana', 'carrefour'].forEach(term => {
+    fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:'getPortalData', terminal:term, secret: API_SECRET}) })
+    .then(r => r.json()).then(j => { 
+      if(j.ok) { 
+        portalStaff[term] = j.data.staff || [];
+        branchesCache[term] = j.data.branches || [];
+        Storage.set(term + '_branches', JSON.stringify(j.data.branches)); // Only save branches safely
+        if(currentTerminal === term && document.getElementById('view-attendance').classList.contains('active')) {
+          populateBranches(j.data.branches);
+        }
+      } 
+    }).catch(e=>{});
+  });
+}
+
+function loadOrderStaffBackground() {
+  fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff', secret: API_SECRET }) })
+    .then(r => r.json()).then(res => { 
+      if(res.ok) { 
+        orderStaffCache = res.data; 
+      } 
+    }).catch(e => {});
+}
+
+// PROFILE REGISTRATION LOGIC
 function openProfile() {
   switchView('view-profile'); document.body.className = ''; updateBGLayer('layerHub');
   document.getElementById('profileForm').reset(); document.getElementById('p-step1-fields').style.display = 'none'; document.getElementById('p-step1').style.display = 'block'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none'; document.getElementById('p-staffMsg').innerHTML = '';
   
-  const branchSel = document.getElementById('p-branch'); 
+  const branchSel = document.getElementById('p-branch'); let chanBranches = [], carrBranches = [];
+  try { chanBranches = JSON.parse(Storage.get('chandarana_branches') || '[]').map(b => b[0]); } catch(e) {}
+  try { carrBranches = JSON.parse(Storage.get('carrefour_branches') || '[]').map(b => b[0]); } catch(e) {}
+  
   let html = `<option value="">Select Branch</option>`;
-  if(allBranches.chandarana && allBranches.chandarana.length > 0) html += `<optgroup label="Chandarana">` + allBranches.chandarana.map(b => `<option value="${escapeHTML(b[0])}">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
-  if(allBranches.carrefour && allBranches.carrefour.length > 0) html += `<optgroup label="Carrefour">` + allBranches.carrefour.map(b => `<option value="${escapeHTML(b[0])}">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
+  html += `<optgroup label="Chandarana">` + chanBranches.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+  html += `<optgroup label="Carrefour">` + carrBranches.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
   branchSel.innerHTML = html;
   
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
-  
-  const myId = Storage.get('my_user_id'); if (myId) { document.getElementById('p-id').value = myId; instantProfileStaffCheck(myId); }
 }
 
 function triggerProfileBranchChange() {
@@ -801,25 +804,17 @@ function instantProfileStaffCheck(val) {
     val = val.trim(); const fieldsEl = document.getElementById('p-step1-fields'), msgEl = document.getElementById('p-staffMsg');
     if (val.length < 2) { fieldsEl.style.display = 'none'; msgEl.innerHTML = ''; return; }
     
-    msgEl.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Checking Cloud...'; msgEl.className = 'msg';
+    let match = orderStaffCache.chandarana?.find(s => s.id === val) || orderStaffCache.carrefour?.find(s => s.id === val);
     
-    // JIT Profile Fetch (No local HR data storage)
-    fetchServer('getUserData', { id: val, module: 'profile' }).then(res => {
-      fieldsEl.style.display = 'block';
-      Storage.set('my_user_id', val); // Safe to store ID
-      
-      if (res.found) {
-        msgEl.innerHTML = `<span class="dot"></span> Profile found. You can update it below.`; msgEl.className = 'msg success';
-        document.getElementById('p-name').value = res.name || ''; document.getElementById('p-phone').value = res.phone || ''; document.getElementById('p-branch').value = res.branch || ''; document.getElementById('p-email').value = res.email || ''; document.getElementById('p-altContact').value = res.altContact || ''; document.getElementById('p-address').value = res.address || ''; document.getElementById('p-nok').value = res.nok || ''; document.getElementById('p-nokContact').value = res.nokContact || ''; document.getElementById('p-bank').value = res.bank || ''; document.getElementById('p-acc').value = res.acc || ''; document.getElementById('p-acc-confirm').value = res.acc || ''; document.getElementById('p-sha').value = res.sha || ''; document.getElementById('p-nssf').value = res.nssf || ''; document.getElementById('p-kra').value = res.kra || ''; 
-        if (res.empDate) { try { document.getElementById('p-emp').value = new Date(res.empDate).toISOString().slice(0, 7); }catch(e){} }
-        triggerProfileBranchChange();
-      } else {
-        msgEl.innerHTML = `<span class="dot"></span> New Profile. Please register.`; msgEl.className = 'msg success';
-      }
-    }).catch(err => {
-      fieldsEl.style.display = 'none'; msgEl.innerHTML = 'Network Error. Are you online?'; msgEl.className = 'msg error';
-    });
-  }, 600);
+    if (match) {
+      fieldsEl.style.display = 'block'; document.getElementById('p-name').value = match.name; document.getElementById('p-phone').value = match.phone;
+      const branchSel = document.getElementById('p-branch'); let bMatch = Array.from(branchSel.options).find(o => o.value === match.branch); if(bMatch) branchSel.value = match.branch;
+      msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; msgEl.className = 'msg success';
+      triggerProfileBranchChange(); 
+    } else {
+      fieldsEl.style.display = 'none'; msgEl.innerHTML = 'Invalid ID'; msgEl.className = 'msg error';
+    }
+  }, 400);
 }
 
 function showStepError(id) { const el = document.getElementById(id); el.style.borderColor = 'var(--error-color)'; setTimeout(() => { el.style.borderColor = ''; }, 2000); }
@@ -834,6 +829,7 @@ function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.get
 function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const prevStep = document.getElementById('p-step' + n); prevStep.style.display = 'block'; requestAnimationFrame(() => prevStep.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'); }
 
 let pendingProfilePayload = null;
+
 function reviewProfile(e) {
   e.preventDefault();
   const acc = document.getElementById('p-acc').value, accConfirm = document.getElementById('p-acc-confirm').value;
@@ -872,19 +868,20 @@ async function confirmAndSendProfile() {
   btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span> Saving...';
   
   const payloadToSend = { ...pendingProfilePayload };
-  ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => { if (payloadToSend[k]) payloadToSend[k] = "'" + payloadToSend[k]; });
+  ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => {
+    if (payloadToSend[k]) payloadToSend[k] = "'" + payloadToSend[k];
+  });
 
   try {
-    await fetchServer('saveProfile', { data: payloadToSend });
+    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveProfile', data: payloadToSend, secret: API_SECRET }) })).json();
+    if (!res.ok) throw new Error(res.error);
+    
     document.getElementById('profileConfirmModal').style.display = 'none'; document.getElementById('profileForm').style.display = 'none'; document.getElementById('profileSuccess').style.display = 'block'; document.getElementById('profileSuccessText').innerText = "Profile Saved!";
-  } catch(err) { alert("Error saving profile: \n" + err.message); }
-  
+  } catch(err) { alert("Error saving profile: " + err.message); }
   btn.disabled = false; btn.innerText = 'Submit';
 }
 
-// ==========================================
-// SECURE ORDER SYSTEM (JIT Checking)
-// ==========================================
+// ORDER SYSTEM LOGIC
 let currentOrderStaffFullname = "";
 let orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } };
 let orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
@@ -908,7 +905,8 @@ function switchTerminalOrder(store) {
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider'); document.getElementById('orderFormInner').style.display = 'block';
   renderDynamicOrderContent(); restoreOrderState();
   
-  let savedId = orderStoreState[store].id || Storage.get('my_user_id') || ''; 
+  let savedUser = JSON.parse(Storage.get('my_order_user') || 'null');
+  let savedId = orderStoreState[store].id || (savedUser ? savedUser.id : '') || ''; 
   document.getElementById('o-id').value = savedId; 
   instantOrderStaffCheck(savedId);
 }
@@ -929,10 +927,12 @@ function unlockBranchSelect() {
 }
 
 function populateOrderBranches() {
-   const sel = document.getElementById('o-branch');
-   let html = '';
-   if(allBranches.chandarana && allBranches.chandarana.length > 0) html += `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + allBranches.chandarana.map(b => `<option value="${escapeHTML(b[0])}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
-   if(allBranches.carrefour && allBranches.carrefour.length > 0) html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + allBranches.carrefour.map(b => `<option value="${escapeHTML(b[0])}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
+   const sel = document.getElementById('o-branch'); let chanBranches = [], carrBranches = [];
+   try { chanBranches = JSON.parse(Storage.get('chandarana_branches') || '[]').map(b => b[0]); } catch(e) {}
+   try { carrBranches = JSON.parse(Storage.get('carrefour_branches') || '[]').map(b => b[0]); } catch(e) {}
+   
+   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+   html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
    sel.innerHTML = html;
 }
 
@@ -941,55 +941,65 @@ document.getElementById('o-branch').addEventListener('change', function(e) {
   if (selectedStore && selectedStore !== activeStore) instantOrderStaffCheck(currentId, selectedStore, selectedBranch);
 });
 
+function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) {
+  let isAttendanceVerified = false, targetStore = defaultStore, targetBranch = match.branch, relievedMsg = '';
+  let latestClockInTime = 0, clockedInStore = null, clockedInBranch = null;
+
+  ['chandarana', 'carrefour'].forEach(store => {
+    try {
+      const s = portalStaff[store]?.find(x => x.id === val);
+      if (s && s.lastTime) { const d = new Date(s.lastTime), now = new Date(); if (d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) { if (s.lastTime > latestClockInTime) { latestClockInTime = s.lastTime; clockedInStore = store; clockedInBranch = s.branch; } } }
+    } catch(e) {}
+  });
+
+  if (clockedInStore && clockedInBranch) { targetStore = clockedInStore; targetBranch = clockedInBranch; isAttendanceVerified = true; if (targetStore !== defaultStore || targetBranch !== match.branch) relievedMsg = ' (Auto-detected)'; }
+  if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; relievedMsg = ''; }
+
+  if (targetStore !== activeStore) { switchTerminalOrder(targetStore); }
+
+  const msgDiv = document.getElementById('o-staffMsg'), nameInp = document.getElementById('o-name'), nameCont = document.getElementById('o-name-container'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
+  
+  currentOrderStaffFullname = match.name; const parts = match.name.trim().split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
+  populateOrderBranches(); const sel = document.getElementById('o-branch'); sel.value = targetBranch;
+  if (sel.value !== targetBranch) { const opt = document.createElement('option'); opt.value = targetBranch; opt.textContent = targetBranch; opt.setAttribute('data-store', targetStore); sel.appendChild(opt); sel.value = targetBranch; }
+
+  lockBranchSelect(isAttendanceVerified); document.getElementById('o-phone').value = match.phone || '';
+  nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
+  msgDiv.innerHTML = `<span class="dot"></span> ID Verified${relievedMsg}`; msgDiv.className = 'msg success'; 
+}
+
 let orderStaffCheckTimer;
 function instantOrderStaffCheck(val, forcedStore = null, forcedBranch = null) {
   clearTimeout(orderStaffCheckTimer);
   orderStaffCheckTimer = setTimeout(() => {
       val = val.trim(); 
       const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-      
       if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').innerHTML = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); return; }
 
-      msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+      let match = orderStaffCache.chandarana?.find(s => s.id === val); let defaultStore = match ? 'chandarana' : null;
+      if (!match) { match = orderStaffCache.carrefour?.find(s => s.id === val); if (match) defaultStore = 'carrefour'; }
       
-      // JIT Fetch
-      fetchServer('getUserData', { id: val, module: 'order' })
-      .then(res => {
-         if (document.getElementById('o-id').value.trim() !== val) return;
-         if (res.found) { 
-            Storage.set('my_user_id', val);
-            currentOrderStaffFullname = res.name;
-            const parts = res.name.trim().split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
-            populateOrderBranches(); 
-            
-            let isAttendanceVerified = false;
-            let targetBranch = forcedBranch || res.branch || res.lastBranch; 
-            let targetStore = forcedStore || res.store;
-            
-            // Check if they clocked in today
-            if (res.lastAction && res.lastBranch) {
-                const todayNow = new Date();
-                const clockTime = new Date(res.lastTime);
-                if (todayNow.getDate() === clockTime.getDate() && todayNow.getMonth() === clockTime.getMonth()) {
-                    isAttendanceVerified = true;
-                    targetBranch = res.lastBranch;
-                    targetStore = res.store;
-                }
-            }
-            if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; }
-
-            const sel = document.getElementById('o-branch');
-            sel.value = targetBranch;
-            if (sel.value !== targetBranch && targetBranch) { const opt = document.createElement('option'); opt.value = targetBranch; opt.textContent = targetBranch; opt.setAttribute('data-store', targetStore); sel.appendChild(opt); sel.value = targetBranch; }
-
-            if (targetStore !== activeStore && targetStore) switchTerminalOrder(targetStore);
-            lockBranchSelect(isAttendanceVerified);
-
-            document.getElementById('o-phone').value = res.phone || '';
-            nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
-            msgDiv.innerHTML = `<span class="dot"></span> ID Verified ${isAttendanceVerified ? '(Auto-Detected)' : ''}`; msgDiv.className = 'msg success'; 
-         } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
-      }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
+      // Memory fallback for instantly verified user
+      if (!match) {
+         const myUser = JSON.parse(Storage.get('my_order_user') || 'null');
+         if (myUser && myUser.id === val) { match = myUser; defaultStore = myUser.store; }
+      }
+      
+      if(match) { 
+        Storage.set('my_order_user', JSON.stringify({id: match.id, name: match.name, phone: match.phone, branch: match.branch, store: defaultStore}));
+        processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch); 
+      } else { 
+        msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+        fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
+        .then(r => r.json()).then(res => {
+           if (document.getElementById('o-id').value.trim() !== val) return;
+           if (res.found) { 
+             Storage.set('my_order_user', JSON.stringify({id: val, name: res.name, phone: res.phone, branch: res.branch, store: res.store}));
+             if(orderStaffCache[res.store]) orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); 
+             processStaffMatch(val, {name: res.name, phone: res.phone, branch: res.branch}, res.store, forcedStore, forcedBranch); 
+           } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
+        }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
+      }
   }, 400);
 }
 
@@ -1070,7 +1080,6 @@ function processOrder(e) {
 
 function closeConfirmModal() { document.getElementById('orderConfirmModal').style.display = 'none'; }
 
-// Kept functionality for downloading image locally
 function downloadReceipt(btn) {
   const oldText = btn.innerHTML; btn.innerHTML = 'Wait...'; btn.disabled = true; const content = document.getElementById('orderSummaryDetails');
   if (window.html2canvas) {
@@ -1088,14 +1097,17 @@ function downloadReceipt(btn) {
 }
 
 async function confirmAndSendOrder() {
-  const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = 'Sending via Cloud...';
+  const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = 'Sending...';
   try {
     const targetSheet = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
+
     const payloadToSend = { ...pendingOrderPayload };
     if (payloadToSend["ID NO."]) payloadToSend["ID NO."] = "'" + payloadToSend["ID NO."];
     if (payloadToSend["PHONE NO."]) payloadToSend["PHONE NO."] = "'" + payloadToSend["PHONE NO."];
 
-    await fetchServer('saveOrder', { store: targetSheet, data: payloadToSend });
+    const res = await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveOrder', store: targetSheet, data: payloadToSend, secret: API_SECRET }) });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error);
     
     document.getElementById('orderConfirmModal').style.display = 'none'; document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'none'; document.getElementById('orderSuccessScreen').style.display = 'flex';
     orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } }; orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
@@ -1103,10 +1115,8 @@ async function confirmAndSendOrder() {
   btn.disabled = false; btn.innerText = 'Confirm';
 }
 
-// ==========================================
-// SECURE ATTENDANCE SYSTEM (JIT Status & Smart GPS)
-// ==========================================
-let staffName = "", photo = null, coords = null, currentAction = "", lastValidatedId = "";
+// ATTENDANCE SYSTEM LOGIC
+let staffName = "", photo = null, coords = null, currentAction = "", lastValidatedId = ""; 
 
 function openAttendance() { 
   switchView('view-attendance'); let savedTerminal = Storage.get('selected_terminal');
@@ -1123,7 +1133,8 @@ function switchTerminalAtt(term, isInitialOpen = false) {
   document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour'); updatePillSlider('a-terminal-wrapper', 'a-pill-slider'); resetStepsFrom(1); document.getElementById('step1').classList.add('activeStep'); document.getElementById('staffID').value = ''; initAppAtt();
 }
 
-function populateBranchesAtt(list) {
+function populateBranches(list) {
+  if (!Array.isArray(list)) return;
   const select = document.getElementById('branch'), currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
   const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
   if (select.innerHTML !== options) { select.innerHTML = options; }
@@ -1132,14 +1143,17 @@ function populateBranchesAtt(list) {
 
 function initAppAtt() {
   if (!currentTerminal) return;
-  const bList = allBranches[currentTerminal] || [];
-  populateBranchesAtt(bList);
+  let bList = [];
+  try { bList = JSON.parse(Storage.get(currentTerminal + '_branches') || '[]'); } catch(e){}
   
+  if (branchesCache[currentTerminal] && branchesCache[currentTerminal].length > 0) { bList = branchesCache[currentTerminal]; }
+  if (bList.length > 0) populateBranches(bList);
+
   const savedBranch = Storage.get('last_branch_' + currentTerminal);
   if (savedBranch) { document.getElementById('branch').value = savedBranch; handleBranchChange(true); }
   
-  const myId = Storage.get('my_user_id'); 
-  if (myId) { document.getElementById('staffID').value = myId; handleStaffInput(); }
+  let savedUser = JSON.parse(Storage.get('my_att_user') || 'null');
+  if (savedUser) { document.getElementById('staffID').value = savedUser.id; handleStaffInput(); }
 }
 
 function activateStep(n) { document.getElementById('step'+n).classList.add('activeStep'); }
@@ -1162,43 +1176,36 @@ function closeZoom() { const container = document.getElementById('photoZoomConta
 function handleBranchChange(isInit = false) { const val = document.getElementById('branch').value; if (!val) { resetStepsFrom(2); clearMsg('branchMsg'); return; } Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected'); if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); } const staffEl = document.getElementById('staffID'); if (staffEl.value.length >= 2) { handleStaffInput(); } }
 document.getElementById('branch').addEventListener('change', () => handleBranchChange(false));
 
-let attCheckTimer;
 function handleStaffInput() {
   const val = document.getElementById('staffID').value.trim(); 
   if (val.length < 2) { lastValidatedId = ""; resetStepsFrom(3); clearMsg('staffMsg'); return; }
+  
+  let match = portalStaff[currentTerminal]?.find(s => s.id === val);
+  
+  // Memory check if offline / slow sync
+  if (!match) {
+     const myUser = JSON.parse(Storage.get('my_att_user') || 'null');
+     if (myUser && myUser.id === val) match = myUser;
+  }
 
-  clearTimeout(attCheckTimer);
-  attCheckTimer = setTimeout(() => {
-    const msgEl = document.getElementById('staffMsg');
-    msgEl.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Syncing...'; msgEl.className = 'msg';
+  if (match) {
+    Storage.set('my_att_user', JSON.stringify({id: match.id, name: match.name, status: match.status, lastTime: match.lastTime, branch: match.branch}));
     
-    // JIT Status Fetch
-    fetchServer('getUserData', { id: val, module: 'attendance', terminal: currentTerminal }).then(res => {
-      if (!res.found) { lastValidatedId = ""; resetStepsFrom(3); showError('staffMsg','Invalid Staff ID.'); return; }
-      
-      Storage.set('my_user_id', val);
-      staffName = res.name;
-      let lastAction = res.lastAction;
-      let lastTime = res.lastTime;
-      
-      // Override with local state if local is newer (in case they just clocked in seconds ago)
-      try { const localState = JSON.parse(Storage.get('local_att_state')) || {}; const myLocal = localState[val]; const todayStr = new Date().toDateString(); if (myLocal && myLocal.date === todayStr) { if (!lastTime || myLocal.ts > lastTime) { lastAction = myLocal.action; lastTime = myLocal.ts; } } } catch(e) {}
-
-      // Smart Logic for Today's Shifts
-      if (lastTime) { const d = new Date(lastTime), now = new Date(); if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) { lastAction = null; } }
-      
-      if (lastAction === 'Clock Out') { showError('staffMsg', 'You have already clocked out today.'); return; } 
-      else if (lastAction === 'Clock In') { 
-        const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60); const currentHour = new Date().getHours(); 
-        if (hoursSince < 6 && currentHour < 19) { showError('staffMsg', 'You already clocked in. Clock out at shift end.'); return; } 
-      }
-      
-      currentAction = (lastAction === 'Clock In') ? 'Clock Out' : 'Clock In';
-      lastValidatedId = val;
-      showSuccess('staffMsg', `Welcome ${escapeHTML(staffName)}`);
-      activateStep(3);
-    }).catch(e => { showError('staffMsg', 'Network offline. Try again.'); });
-  }, 500);
+    lastValidatedId = val; staffName = match.name; let lastAction = match.status; let lastTime = match.lastTime;
+    try { const localState = JSON.parse(Storage.get('local_att_state')) || {}; const myLocal = localState[val]; const todayStr = new Date().toDateString(); if (myLocal && myLocal.date === todayStr) { if (!lastTime || myLocal.ts > lastTime) { lastAction = myLocal.action; lastTime = myLocal.ts; } } } catch(e) {}
+    
+    if (lastTime) { const d = new Date(lastTime), now = new Date(); if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) { lastAction = null; } }
+    
+    if (lastAction === 'Clock Out') { showError('staffMsg', 'You have already clocked out today.'); resetStepsFrom(3); return; } 
+    else if (lastAction === 'Clock In') { const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60); const currentHour = new Date().getHours(); if (hoursSince < 6 && currentHour < 19) { showError('staffMsg', 'You already clocked in, clock out at the end of your shift.'); resetStepsFrom(3); return; } }
+    
+    currentAction = (lastAction === 'Clock In') ? 'Clock Out' : 'Clock In';
+    showSuccess('staffMsg', `Welcome ${escapeHTML(staffName)}`);
+    activateStep(3);
+  } else { 
+    lastValidatedId = ""; resetStepsFrom(3); 
+    showError('staffMsg','Invalid ID. If the app just loaded, please wait a second.'); 
+  }
 }
 document.getElementById('staffID').oninput = handleStaffInput;
 
@@ -1211,13 +1218,14 @@ function showGuideModal(type) {
 }
 
 function doVerifyGPS(isRetry) {
-  document.getElementById('gpsMsg').innerText = 'Locating via Satellites…'; document.getElementById('gpsMsg').className = 'msg';
+  document.getElementById('gpsMsg').innerText = 'Locating…'; document.getElementById('gpsMsg').className = 'msg';
   if (!navigator.geolocation) { showError('gpsMsg','GPS not supported on this device.'); return; }
-  
   navigator.geolocation.getCurrentPosition(
     pos => {
       coords = pos.coords; 
-      const bList = allBranches[currentTerminal] || [];
+      let bList = branchesCache[currentTerminal] || [];
+      if(bList.length === 0) try { bList = JSON.parse(Storage.get(currentTerminal + '_branches') || '[]'); } catch(e){}
+      
       const b = bList.find(branch => branch[0] === document.getElementById('branch').value);
       if (!b) { showError('gpsMsg','Select branch first.'); return; }
       
@@ -1226,7 +1234,6 @@ function doVerifyGPS(isRetry) {
       const dist = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
       
       if (dist > (isRetry ? 350 : 250)) { 
-        // CLOCK OUT SMART CHECK (Indoors = Bad Accuracy)
         if (currentAction === 'Clock Out' && coords.accuracy > 70) {
            showError('gpsMsg', 'Indoor GPS signal is weak. Please turn on Wi-Fi for an accurate location and tap Verify again.');
         } else if (!isRetry && navigator.onLine) { 
@@ -1236,23 +1243,16 @@ function doVerifyGPS(isRetry) {
         } 
       } else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
     },
-    err => { 
-      if(err.code===1) { showGuideModal('gps'); showError('gpsMsg', 'Location Denied.'); } 
-      else { showGuideModal('gps_signal'); showError('gpsMsg', 'Weak Signal. Turn on Wi-Fi and retry.'); } 
-    },
-    {enableHighAccuracy:true, timeout:20000, maximumAge: 0}
+    err => { if(err.code===1) { showGuideModal('gps'); showError('gpsMsg', 'Location Denied.'); } else { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showGuideModal('gps_signal'); showError('gpsMsg', 'Weak Signal. Tap Verify again.'); } } },
+    {enableHighAccuracy:true, timeout:20000, maximumAge: isRetry ? 0 : 30000}
   );
 }
 
 function verifyGPS() { doVerifyGPS(false); }
 
-// Camera Logic
-let videoStream = null;
 function startCamera() {
   const btn = document.getElementById('openCameraBtn');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { 
-    document.getElementById('fallbackCameraInput').click(); return; 
-  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { document.getElementById('fallbackCameraInput').click(); return; }
   
   btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Starting...</span>'; 
   clearMsg('cameraMsg');
@@ -1268,16 +1268,12 @@ function startCamera() {
         document.getElementById('shutterBtn').classList.remove('loading');
       }; 
     })
-    .catch(err => { 
-      btn.innerText = 'Take Selfie'; 
-      document.getElementById('fallbackCameraInput').click();
-    });
+    .catch(err => { btn.innerText = 'Take Selfie'; document.getElementById('fallbackCameraInput').click(); });
 }
 
 function handleFallbackCamera(event) {
   const file = event.target.files[0];
   if (!file) return;
-  
   const btn = document.getElementById('openCameraBtn');
   btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Processing...';
   
@@ -1285,21 +1281,16 @@ function handleFallbackCamera(event) {
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const maxW = 480;
-      const scale = img.width > maxW ? (maxW / img.width) : 1;
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
+      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+      const maxW = 480; const scale = img.width > maxW ? (maxW / img.width) : 1;
+      canvas.width = img.width * scale; canvas.height = img.height * scale;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
       photo = canvas.toDataURL('image/jpeg', 0.6); 
       document.getElementById('successPhoto').src = photo;
-      
       canvas.width = 0; canvas.height = 0; img.src = ''; 
+      
       btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Submitting...';
-      btn.disabled = true;
-      submitAttendanceRealtime();
+      btn.disabled = true; submitAttendanceRealtime();
     };
     img.src = e.target.result;
   };
@@ -1309,18 +1300,14 @@ function handleFallbackCamera(event) {
 function capturePhotoNative() {
   const flash = document.getElementById('cameraFlash'); flash.classList.remove('fire'); void flash.offsetWidth; flash.classList.add('fire');
   const shutterBtn = document.getElementById('shutterBtn'); shutterBtn.classList.add('loading');
-  
   const video = document.getElementById('cameraVideo'), wrapper = document.getElementById('videoContainerWrapper'); 
   const vw = video.videoWidth || 640, vh = video.videoHeight || 480, cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
   const containerAspect = cw / ch, videoAspect = vw / vh; let sWidth, sHeight, startX, startY;
   
   if (videoAspect > containerAspect) { sHeight = vh; sWidth = vh * containerAspect; startX = (vw - sWidth) / 2; startY = 0; } else { sWidth = vw; sHeight = vw / containerAspect; startX = 0; startY = (vh - sHeight) / 2; }
   
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  
-  let maxOutput = 720;
-  let scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
+  const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+  let maxOutput = 720; let scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
   canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
   
   ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; 
@@ -1329,16 +1316,14 @@ function capturePhotoNative() {
   photo = canvas.toDataURL('image/jpeg', 0.80);
   if (getKbSize(photo) > 150) { photo = canvas.toDataURL('image/jpeg', 0.60); }
   if (getKbSize(photo) > 150) {
-      maxOutput = 480;
-      scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
+      maxOutput = 480; scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
       canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
       ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
       ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
       photo = canvas.toDataURL('image/jpeg', 0.50);
   }
   
-  canvas.width = 0; canvas.height = 0; 
-  video.pause();
+  canvas.width = 0; canvas.height = 0; video.pause();
   
   setTimeout(() => {
     document.getElementById('successPhoto').src = photo; stopCamera(); 
@@ -1364,15 +1349,19 @@ async function submitAttendanceRealtime() {
   const btn = document.getElementById('openCameraBtn'); 
 
   try {
-    await fetchServer('recordAttendance', { data: payload, terminal: currentTerminal });
-    
-    let localState = {}; try { localState = JSON.parse(Storage.get('local_att_state')) || {}; } catch(e){} 
-    localState[staffID] = { action: currentAction, ts: Date.now(), date: new Date().toDateString() }; 
-    Storage.set('local_att_state', JSON.stringify(localState));
-    
-    clearMsg('cameraMsg'); finishSubmission(currentAction); 
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'recordAttendance', data: payload, terminal: currentTerminal, secret: API_SECRET }) });
+    const j = await res.json();
+    if (j.ok) {
+        let localState = {}; try { localState = JSON.parse(Storage.get('local_att_state')) || {}; } catch(e){} 
+        localState[staffID] = { action: currentAction, ts: Date.now(), date: new Date().toDateString() }; 
+        Storage.set('local_att_state', JSON.stringify(localState));
+        
+        clearMsg('cameraMsg'); finishSubmission(currentAction);
+    } else {
+        showError('cameraMsg', j.error || 'Server error.');
+    }
   } catch(err) { 
-    showError('cameraMsg', 'Connection failed. Please submit again.');
+    showError('cameraMsg', 'Connection failed. Please connect to internet and submit again.');
   } finally {
     btn.disabled = false; btn.textContent = 'Take Selfie';
   }
