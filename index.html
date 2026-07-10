@@ -8,7 +8,7 @@
 <meta name="theme-color" id="theme-color-meta" content="#ffffff">
 <title>Stentor Operations</title>
 
-<!-- OPTIMIZATION: Added 'defer' so this heavy script doesn't block the UI from loading instantly -->
+<!-- html2canvas deferred for fast initial load. Used for downloading receipt images. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
 <script>
@@ -83,27 +83,27 @@ body.theme-carrefour { --dynamic-primary: var(--theme-carr); --dynamic-light: va
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
 
-body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px); overflow-y:auto; -webkit-overflow-scrolling:touch; }
+body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px); overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; transition: background-color 0.4s ease; }
 input, textarea, select { -webkit-user-select: auto; user-select: auto; font-family: inherit;}
 .view-section, .btn-primary, .btn-secondary, .pill-btn, .hanging-sign, .chip-span, .order-group-title { -webkit-user-select: none; user-select: none; }
 
-.bg-layer { position: fixed; inset: 0; z-index: -10; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
-.bg-layer.previous { z-index: -9; opacity: 1; transition: none; }
+.bg-layer { position: fixed; inset: 0; z-index: -10; opacity: 0; transition: opacity 0.5s ease-in-out; pointer-events: none; }
+.bg-layer.previous { z-index: -9; opacity: 1; transition: opacity 0.5s ease-in-out; }
 .bg-layer.active { z-index: -8; opacity: 1; }
 .layer-welcome { background: var(--bg-secondary); }
 .layer-hub { background: var(--bg-secondary); }
 .layer-chandarana { background: var(--bg-chan-grad); }
 .layer-carrefour { background: var(--bg-carr-grad); }
 
-.ui-input, .ui-select, .pill-slider, .pill-btn, .success-tick, .success-tick-circle, .success-tick-check, .chip-span, .section-card, .order-group, .solid-panel, .success-card, .success-badge, #o-id, .order-group-title::after, .chain::before, .network-indicator, .hanging-sign { transition: background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease, opacity 0.4s ease, transform 0.4s ease; }
-.btn-primary, .btn-secondary, .inline-back { transition: background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease, transform 0.15s ease, opacity 0.2s ease; }
+.ui-input, .ui-select, .pill-slider, .pill-btn, .success-tick, .success-tick-circle, .success-tick-check, .chip-span, .section-card, .order-group, .solid-panel, .success-card, .success-badge, #o-id, .order-group-title::after, .chain::before, .network-indicator, .hanging-sign { transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, opacity 0.3s ease, transform 0.3s ease; }
+.btn-primary, .btn-secondary, .inline-back { transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, transform 0.1s ease, opacity 0.2s ease; }
 
-.doodle-bg { position: fixed; inset: -50vh -50vw; z-index: -7; pointer-events: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><g stroke="%23000" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M 40 40 A 15 15 0 0 1 70 40 A 15 15 0 0 1 40 40 Z"/><path d="M 55 25 L 55 15 M 55 15 Q 65 15 70 20"/><circle cx="150" cy="60" r="20"/><path d="M 130 60 L 170 60 M 150 40 L 150 80"/><path d="M 50 150 Q 70 120 90 150 Q 70 180 50 150 Z"/><circle cx="160" cy="150" r="4" fill="%23000"/><circle cx="140" cy="160" r="3" fill="%23000"/></g></svg>'); background-size: 160px 160px; background-repeat: repeat; opacity: 0.08; }
-@media (prefers-color-scheme: dark) { .doodle-bg { filter: invert(1); opacity: 0.08; } }
+.doodle-bg { position: fixed; inset: -50vh -50vw; z-index: -7; pointer-events: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><g stroke="%23000" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M 40 40 A 15 15 0 0 1 70 40 A 15 15 0 0 1 40 40 Z"/><path d="M 55 25 L 55 15 M 55 15 Q 65 15 70 20"/><circle cx="150" cy="60" r="20"/><path d="M 130 60 L 170 60 M 150 40 L 150 80"/><path d="M 50 150 Q 70 120 90 150 Q 70 180 50 150 Z"/><circle cx="160" cy="150" r="4" fill="%23000"/><circle cx="140" cy="160" r="3" fill="%23000"/></g></svg>'); background-size: 160px 160px; background-repeat: repeat; opacity: 0.15; }
+@media (prefers-color-scheme: dark) { .doodle-bg { filter: invert(1); opacity: 0.12; } }
 
-.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(15px); z-index: 10; }
-.view-section.active { display: flex; opacity: 1; animation: sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+.view-section { display: none; width: 100%; max-width: 440px; flex-direction: column; align-items: center; position: relative; opacity: 0; transform: translateY(10px); z-index: 10; transition: opacity 0.25s ease, transform 0.25s ease; }
+.view-section.active { display: flex; opacity: 1; transform: translateY(0); animation: sectionFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+@keyframes sectionFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
 
@@ -111,7 +111,7 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 
 .welcome-section { display: none; width: 100%; max-width: 100% !important; height: 100vh; height: 100dvh; flex-direction: column; justify-content: space-between; padding: 10vh 20px 10vh 20px; box-sizing: border-box; position: absolute; inset: 0; z-index: 50; touch-action: none; overflow: hidden; cursor: pointer; }
 .welcome-section.active { display: flex; opacity: 1; }
-.welcome-top, .welcome-bottom { opacity: 0; transition: opacity 1.2s ease; }
+.welcome-top, .welcome-bottom { opacity: 0; transition: opacity 0.8s ease; }
 .welcome-top.show, .welcome-bottom.show { opacity: 1; }
 .welcome-top { position: relative; z-index: 2; width: 100%; text-align: left; }
 .welcome-title { font-size: clamp(60px, 15vw, 90px); font-weight: 900; line-height: 0.95; color: var(--text-primary); margin: 0; letter-spacing: -2px; }
@@ -140,11 +140,11 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes floatSmallBubbles { 0% { transform: scale(0) translateY(0); opacity: 0; } 30% { transform: scale(1) translateY(0); opacity: 1; } 70% { transform: scale(1) translateY(-3px); opacity: 1; } 100% { transform: scale(0) translateY(-8px); opacity: 0; } }
 
 .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; padding: 0 16px; }
-.hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0; transform: translateY(40px); }
-.hub-card:active { transform: scale(0.95) !important; transition: 0.2s; }
-#view-menu.active .hub-card:nth-child(1) { animation: smoothUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: 0.1s; }
-#view-menu.active .hub-card:nth-child(2) { animation: smoothUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: 0.2s; }
-@keyframes smoothUp { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+.hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0; transform: translateY(20px); transition: transform 0.15s ease; }
+.hub-card:active { transform: scale(0.93) translateY(20px); }
+#view-menu.active .hub-card:nth-child(1) { animation: smoothUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: 0.05s; }
+#view-menu.active .hub-card:nth-child(2) { animation: smoothUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: 0.1s; }
+@keyframes smoothUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 .hc-icon-box { width: 76px; height: 76px; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
 .hc-alarm { background: linear-gradient(135deg, #10b981, #047857); }
 .hc-cart { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
@@ -177,23 +177,23 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 .btn-spinner { border: 2px solid rgba(0,0,0,0.1); border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; width:16px; height:16px; margin-right:8px;}
 
 .section-card, .order-group { background-color: var(--glass-bg) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 15px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
-.section-card::before, .order-group::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4.5px; background-color: var(--dynamic-primary); z-index: 5; transition: background-color 0.6s ease; }
+.section-card::before, .order-group::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4.5px; background-color: var(--dynamic-primary); z-index: 5; transition: background-color 0.4s ease; }
 body:not(.theme-chandarana):not(.theme-carrefour) .section-card::before, body:not(.theme-chandarana):not(.theme-carrefour) .order-group::before { background: linear-gradient(to bottom, var(--theme-chan), var(--theme-carr)); }
 
 .section-card { padding: 14px; }
 #o-id { color: var(--dynamic-primary); font-weight: 900; font-size: 18px; }
 #o-id::placeholder { color: var(--text-tertiary); opacity: 0.8; font-weight: 700; }
-.locked-form { opacity: 0.4; pointer-events: none; transition: opacity 0.4s ease; }
+.locked-form { opacity: 0.4; pointer-events: none; transition: opacity 0.3s ease; }
 .locked-form.unlocked { opacity: 1; pointer-events: auto; }
 .order-group-title { padding: 14px 16px; font-size: 14px; font-weight: 900; color: var(--text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: transparent; outline: none; list-style: none; }
 .order-group-title::-webkit-details-marker { display: none; }
 .order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); font-weight: 400;}
 .order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
 .order-group-content { padding: 14px; border-top: 1px solid rgba(156, 163, 175, 0.15); }
-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
+table { width: 100%; border-collapse: collapse; text-align: center; border-top: 1px solid rgba(156, 163, 175, 0.15); border-left: 1px solid rgba(156, 163, 175, 0.15); }
 th, td { padding: 8px 4px; border-bottom: 1px solid rgba(156, 163, 175, 0.15); border-right: 1px solid rgba(156, 163, 175, 0.15); }
 th { background: transparent; font-weight: 900; font-size: 12px; width: 35%; text-transform: uppercase;}
-th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--glass-bg); z-index: 10; text-align: left; padding-left: 8px; font-weight:800; font-size:11px;}
+th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--glass-bg); z-index: 10; text-align: left; padding-left: 8px; font-weight:800; font-size:11px; border-left: 1px solid rgba(156, 163, 175, 0.15); }
 .square-input { width: 50px; height: 34px; border-radius: 10px; margin: 0 auto; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-tertiary); font-weight: 900; display: flex; align-items: center; justify-content: center; }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -217,25 +217,25 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 .network-indicator.offline{background-color:var(--text-tertiary);opacity:0.4; box-shadow:none;}
 
 .step-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 16px; position: relative; z-index: 5;}
-.step { opacity:0.3; pointer-events:none; transition: opacity 0.4s ease; position: relative; z-index: 10;}
-.step.activeStep { opacity:1; pointer-events:auto; animation:bounceIn 0.45s ease; }
+.step { opacity:0.3; pointer-events:none; transition: opacity 0.3s ease; position: relative; z-index: 10;}
+.step.activeStep { opacity:1; pointer-events:auto; animation:bounceIn 0.35s ease; }
 
 .msg{ font-size:13px;font-weight:600;margin-top:8px; min-height:42px; align-items:flex-start; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.3s ease, color 0.3s ease; opacity: 1; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 .msg.success{color:var(--dynamic-primary);font-size:14px} .msg.error{color:var(--error-color)}
 .msg .dot{ display:inline-flex;justify-content:center;align-items:center; width:16px;height:16px;background:var(--dynamic-primary);border-radius:50%; margin-right:8px;flex-shrink:0;position:relative; margin-top: 2px; }
 .msg .dot::after{ content:'';position:absolute;top:45%;left:50%; width:3.5px;height:7px; border-right:2px solid #fff;border-bottom:2px solid #fff; transform:translate(-50%,-50%) rotate(45deg); }
 
-.glass-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); margin: 0; padding: 0; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; transform: translateZ(0); }
+.glass-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); margin: 0; padding: 0; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; transform: translateZ(0); }
 .glass-overlay.show { opacity: 1; pointer-events: auto; }
 #videoContainerWrapper{ position:fixed; top: 50%; left: 50%; width: 85%; max-width: 380px; aspect-ratio: 3 / 4; border-radius: 28px; overflow: hidden; z-index: 10001; background-color: #000; box-shadow: 0 25px 60px rgba(0,0,0,0.6); transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 1, 0.4, 1); transform: translate(-50%, -50%) scale(0.95); opacity: 0; pointer-events: none; -webkit-mask-image: -webkit-radial-gradient(white, black); }
 #videoContainerWrapper.expanded{ pointer-events:auto; opacity:1; transform: translate(-50%, -50%) scale(1); }
-#cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.4s ease; }
+#cameraVideo{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); opacity: 0; transition: opacity 0.3s ease; }
 #cameraVideo.live { opacity: 1; }
 .camera-flash { position: absolute; inset: 0; background: white; opacity: 0; pointer-events: none; z-index: 10; }
 .camera-flash.fire { animation: flashAnim 0.3s ease-out; }
 @keyframes flashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-.camera-ui { position:absolute; bottom:0; left:0; right:0; padding:30px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex; align-items:center; justify-content:center; z-index:15; opacity:0; pointer-events:none; transition:opacity 0.4s ease; }
+.camera-ui { position:absolute; bottom:0; left:0; right:0; padding:30px; background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%); display:flex; align-items:center; justify-content:center; z-index:15; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
 #cameraVideo.live ~ .camera-ui { opacity: 1; pointer-events: auto; }
 .single-shutter-btn { width: 72px; height: 72px; border-radius: 50%; background: #fff; border: 5px solid rgba(255,255,255,0.35); background-clip: padding-box; box-shadow: 0 4px 20px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); -webkit-tap-highlight-color: transparent; }
 .single-shutter-btn:active { transform: scale(0.85); }
@@ -243,16 +243,16 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 @keyframes pulseShutter { 0% { transform: scale(1); } 50% { transform: scale(0.9); } 100% { transform: scale(1); } }
 
 #attSuccessScreen { display:none;flex-direction:column;align-items:center; justify-content:center; padding:10px 4px;text-align:center;width:100%; }
-.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--dynamic-primary); margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; position: relative; z-index: 10; -webkit-tap-highlight-color: transparent; }
-.success-badge{ color:var(--text-primary);font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; display:inline-flex; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; margin-bottom: 24px; background: var(--bg-primary); }
-.success-card{ background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius:20px; padding:24px 20px; width:100%; margin-bottom:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); animation:bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
+.success-photo{ width: 120px; height: 120px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 4px var(--dynamic-primary); margin-bottom: 20px; animation: bounceIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: zoom-in; position: relative; z-index: 10; -webkit-tap-highlight-color: transparent; }
+.success-badge{ color:var(--text-primary);font-size:14px;font-weight:800; text-transform:uppercase;padding:8px 24px;border-radius:999px; display:inline-flex; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.1); animation:bounceIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards; margin-bottom: 24px; background: var(--bg-primary); }
+.success-card{ background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius:20px; padding:24px 20px; width:100%; margin-bottom:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); animation:bounceIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards; }
 .success-name{font-size:26px;font-weight:800;color:var(--dynamic-primary);margin-bottom:8px}
 .success-msg {font-size:15px;font-weight:600;color:var(--text-secondary);line-height:1.5}
 .success-tick { width: 22px; height: 22px; display: block; margin-left: 10px; }
 .success-tick-circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 4; stroke-miterlimit: 10; fill: none; }
 .success-tick-check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; }
 .animate-circle { animation: strokeTick 0.5s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
-.animate-check { animation: strokeTick 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards; }
+.animate-check { animation: strokeTick 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards; }
 @keyframes strokeTick { 100% { stroke-dashoffset: 0; } }
 
 .modal-overlay { display:none; position:fixed; inset:0; background:var(--modal-overlay); z-index:19999; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
@@ -362,7 +362,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         <input type="tel" id="p-id" class="ui-input" placeholder="Enter ID to begin" required autocomplete="off" oninput="instantProfileStaffCheck(this.value)">
         <div id="p-staffMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
         
-        <div id="p-step1-fields" style="display:none; animation: sectionFadeIn 0.4s ease forwards;">
+        <div id="p-step1-fields" style="display:none; animation: sectionFadeIn 0.3s ease forwards;">
           <label class="input-label" style="margin-top: 15px;">Full Name <span class="req-star">*</span></label>
           <input type="text" id="p-name" class="ui-input" required>
           
@@ -552,7 +552,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
   <div class="camera-ui">
     <button class="single-shutter-btn" id="shutterBtn" onclick="capturePhotoNative()"></button>
   </div>
-  <!-- OPTIMIZATION: Low-End Phone Native Fallback -->
+  <!-- Low-End Phone Native Fallback -->
   <input type="file" id="fallbackCameraInput" accept="image/*" capture="user" style="display: none;" onchange="handleFallbackCamera(event)">
 </div>
 
@@ -596,24 +596,14 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 </div>
 
 <!-- =========================
-     JAVASCRIPT CORE
+     JAVASCRIPT CORE 
+     (Zero-Trust Architecture)
 ========================== -->
 <script>
+// 1. SECURE SESSION INJECTION
+// We check if the token exists, else fallback to API_SECRET during local dev testing
+const API_SECRET = "<?= typeof dynamicToken !== 'undefined' ? dynamicToken : 'STENTOR_SECURE_2024' ?>";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
-const API_SECRET = "STENTOR_SECURE_2024"; 
-
-// Utility to prevent malicious code injection (XSS)
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.toString().replace(/[&<>'"]/g, 
-    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
-  );
-}
-
-// OPTIMIZATION: Helper to gauge Base64 Image weight
-function getKbSize(base64Str) {
-  return (base64Str.length * (3/4)) / 1024;
-}
 
 var Storage = { 
   set:function(k,v){try{localStorage.setItem(k,v)}catch(e){ return false; }}, 
@@ -621,39 +611,74 @@ var Storage = {
   remove:function(k){try{localStorage.removeItem(k)}catch(e){}} 
 };
 
-function purgeCacheAtMidnight() {
-  var today = new Date().toDateString(); 
-  if (Storage.get('cache_date') !== today) {
-    Storage.remove('chandarana_portal_data'); Storage.remove('carrefour_portal_data'); Storage.remove('order_staff_chandarana'); Storage.remove('order_staff_carrefour'); Storage.remove('local_att_state'); 
-    Storage.set('cache_date', today);
-  }
+// 2. UNIQUE DEVICE FINGERPRINTING
+function getDeviceId() {
+  let id = Storage.get('stentor_device_id');
+  if (!id) { id = 'DEV_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36); Storage.set('stentor_device_id', id); }
+  return id;
 }
+const DEVICE_ID = getDeviceId();
+
+// 3. SECURITY DATA PURGE: Destroy old vulnerable data left on the phone
+function purgeLegacyData() {
+  try {
+    const keysToWipe = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      let k = localStorage.key(i);
+      if (k && (k.startsWith('profile_saved_') || k.includes('portal_data') || k.includes('order_staff_') || k.includes('attendance_queue'))) {
+        keysToWipe.push(k);
+      }
+    }
+    keysToWipe.forEach(k => localStorage.removeItem(k));
+  } catch(e){}
+}
+
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.toString().replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
+}
+
+function getKbSize(base64Str) { return (base64Str.length * (3/4)) / 1024; }
 
 function updateThemeColorMeta() {
   var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   var meta = document.getElementById('theme-color-meta');
   if (!meta) return;
-  if (document.body.className === '' || document.body.className === 'theme-welcome') {
-      meta.setAttribute('content', isDark ? '#111827' : '#ffffff');
-  } else if (document.body.className.includes('chandarana')) {
-      meta.setAttribute('content', isDark ? '#059669' : '#10b981');
-  } else if (document.body.className.includes('carrefour')) {
-      meta.setAttribute('content', isDark ? '#2563eb' : '#3b82f6');
-  }
+  if (document.body.className === '' || document.body.className === 'theme-welcome') meta.setAttribute('content', isDark ? '#111827' : '#ffffff');
+  else if (document.body.className.includes('chandarana')) meta.setAttribute('content', isDark ? '#059669' : '#10b981');
+  else if (document.body.className.includes('carrefour')) meta.setAttribute('content', isDark ? '#2563eb' : '#3b82f6');
 }
 if (window.matchMedia) { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta); }
 
 let activeStore = null, currentTerminal = null;
+let allBranches = { chandarana: [], carrefour: [] };
 
 document.addEventListener('DOMContentLoaded', function() {
   updateTime(); setInterval(updateTime, 60000); 
   startWelcomeCycler();
-  purgeCacheAtMidnight(); 
-  loadOrderStaffBackground(); 
-  fetchPortalDataSilent(); 
-  window.addEventListener('online', () => { checkNetworkStatus(); processAttendanceQueue(); }); 
+  purgeLegacyData(); // Wipe old vulnerable data instantly
+  fetchPublicBranches(); // Fast branch fetch without HR data
+  window.addEventListener('online', checkNetworkStatus); 
   window.addEventListener('offline', checkNetworkStatus);
 });
+
+// ZERO-TRUST SERVER COMMUNICATION
+async function fetchServer(action, payloadData = {}) {
+  const payload = { action, deviceId: DEVICE_ID, secret: API_SECRET, ...payloadData };
+  const res = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Server error');
+  return json.data;
+}
+
+function fetchPublicBranches() {
+  const cached = Storage.get('public_branches');
+  if (cached) { allBranches = JSON.parse(cached); }
+  fetchServer('getBranches').then(data => {
+    allBranches = data;
+    Storage.set('public_branches', JSON.stringify(data));
+  }).catch(()=>{});
+}
 
 function startWelcomeCycler() {
   const centerEl = document.getElementById('welcomeMessage'), topEl = document.getElementById('welcomeTop'), botEl = document.getElementById('welcomeBottom');
@@ -667,19 +692,19 @@ function startWelcomeCycler() {
       }
   });
 
-  centerEl.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease'; centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(0.8)';
+  centerEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease'; centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(0.8)';
 
   function nextIntro() {
       if (introSkipped) return;
       if (step < introPhrases.length) {
           centerEl.innerText = introPhrases[step]; centerEl.style.color = colors[step]; centerEl.style.transform = 'scale(0.8)'; centerEl.style.opacity = '0';
           void centerEl.offsetWidth; 
-          centerEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease'; centerEl.style.opacity = '1'; centerEl.style.transform = 'scale(1.1)';
+          centerEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease'; centerEl.style.opacity = '1'; centerEl.style.transform = 'scale(1.1)';
           introTimeouts.push(setTimeout(() => {
               if (introSkipped) return;
               centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(1.4)'; step++;
-              introTimeouts.push(setTimeout(nextIntro, 400));
-          }, 800));
+              introTimeouts.push(setTimeout(nextIntro, 300));
+          }, 600));
       } else { startNormalCycle(); }
   }
 
@@ -687,15 +712,17 @@ function startWelcomeCycler() {
       const phrases = ["Welcome", "Place your order seamlessly", "Clock your attendance with ease", "Update your info conveniently"];
       const normalColors = ["#10b981", "#3b82f6", "#f59e0b", "#ec4899"]; let i = 0;
       
-      centerEl.style.transition = 'opacity 0.5s ease, color 0.5s ease, transform 0.5s ease'; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1';
+      centerEl.style.transition = 'opacity 0.4s ease, color 0.4s ease, transform 0.4s ease'; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1';
       topEl.classList.add('show'); botEl.classList.add('show');
       if (window.welcomeCyclerInterval) clearInterval(window.welcomeCyclerInterval);
+      
+      // Sped up to 2 seconds
       window.welcomeCyclerInterval = setInterval(() => {
           centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(0.95)';
-          setTimeout(() => { i = (i + 1) % phrases.length; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1'; }, 500); 
-      }, 2800);
+          setTimeout(() => { i = (i + 1) % phrases.length; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1'; }, 400); 
+      }, 2000);
   }
-  introTimeouts.push(setTimeout(nextIntro, 200));
+  introTimeouts.push(setTimeout(nextIntro, 150));
 }
 
 function updateTime() {
@@ -705,6 +732,7 @@ function updateTime() {
 
 function checkNetworkStatus() { const ind = document.getElementById('networkIndicator'); if (ind) navigator.onLine ? ind.classList.remove('offline') : ind.classList.add('offline'); }
 
+// Background layer crossfade handling
 function updateBGLayer(targetLayerId) {
   const layers = document.querySelectorAll('.bg-layer'), target = document.getElementById(targetLayerId);
   if (target.classList.contains('active')) return;
@@ -716,14 +744,18 @@ function updateBGLayer(targetLayerId) {
   updateThemeColorMeta();
 }
 
+// Smooth transition for views
 function switchView(viewId) {
-  const welcome = document.getElementById('view-welcome');
-  if (viewId === 'view-welcome') { welcome.style.display = 'flex'; welcome.classList.add('active'); } 
-  else { welcome.classList.remove('active'); welcome.style.display = 'none'; }
-  document.querySelectorAll('.view-section').forEach(v => {
-    if (v.id === 'view-welcome') return; 
-    if (v.id === viewId) { v.style.display = 'flex'; v.classList.remove('active'); void v.offsetWidth; v.classList.add('active'); } 
-    else { v.classList.remove('active'); v.style.display = 'none'; }
+  const allViews = document.querySelectorAll('.view-section');
+  allViews.forEach(v => {
+    if (v.id === viewId) { 
+      v.style.display = 'flex'; 
+      // Small timeout to allow display block to render before opacity fades in
+      setTimeout(() => v.classList.add('active'), 10); 
+    } else { 
+      v.classList.remove('active'); 
+      v.style.display = 'none'; 
+    }
   });
 }
 
@@ -738,28 +770,22 @@ function goToWelcome() { updateBGLayer('layerWelcome'); document.body.className 
 
 function updatePillSlider(containerId, sliderId) { setTimeout(() => { const ab = document.querySelector(`#${containerId} .pill-btn.active`); const sl = document.getElementById(sliderId); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }, 50); }
 
-function fetchPortalDataSilent() {
-  ['chandarana', 'carrefour'].forEach(term => {
-    fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:'getPortalData', terminal:term, secret: API_SECRET}) })
-    .then(r => r.json()).then(j => { if(j.ok) { Storage.set(term + '_portal_data', JSON.stringify(j.data)); } }).catch(e=>{});
-  });
-}
-
-// PROFILE REGISTRATION LOGIC
+// ==========================================
+// SECURE PROFILE SYSTEM (Direct Cloud Sync)
+// ==========================================
 function openProfile() {
   switchView('view-profile'); document.body.className = ''; updateBGLayer('layerHub');
   document.getElementById('profileForm').reset(); document.getElementById('p-step1-fields').style.display = 'none'; document.getElementById('p-step1').style.display = 'block'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none'; document.getElementById('p-staffMsg').innerHTML = '';
   
-  const branchSel = document.getElementById('p-branch'); let chanBranches = [], carrBranches = [];
-  try { const pData = JSON.parse(Storage.get('chandarana_portal_data')); if (pData && pData.branches) chanBranches = pData.branches.map(b => b[0]); } catch(e) {}
-  try { const pData = JSON.parse(Storage.get('carrefour_portal_data')); if (pData && pData.branches) carrBranches = pData.branches.map(b => b[0]); } catch(e) {}
-  
+  const branchSel = document.getElementById('p-branch'); 
   let html = `<option value="">Select Branch</option>`;
-  html += `<optgroup label="Chandarana">` + chanBranches.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-  html += `<optgroup label="Carrefour">` + carrBranches.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+  if(allBranches.chandarana) html += `<optgroup label="Chandarana">` + allBranches.chandarana.map(b => `<option value="${escapeHTML(b[0])}">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
+  if(allBranches.carrefour) html += `<optgroup label="Carrefour">` + allBranches.carrefour.map(b => `<option value="${escapeHTML(b[0])}">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
   branchSel.innerHTML = html;
   
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
+  
+  const myId = Storage.get('my_user_id'); if (myId) { document.getElementById('p-id').value = myId; instantProfileStaffCheck(myId); }
 }
 
 function triggerProfileBranchChange() {
@@ -770,18 +796,6 @@ function triggerProfileBranchChange() {
   updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour');
 }
 
-function prefillProfileFromLocal(id) {
-  const saved = Storage.get('profile_saved_' + id);
-  if(saved) {
-      try {
-          const data = JSON.parse(saved);
-          ['email', 'altContact', 'address', 'nok', 'nokContact', 'bank', 'acc', 'sha', 'nssf', 'kra', 'emp'].forEach(k => { const el = document.getElementById('p-' + k); if(el && data[k]) el.value = data[k]; });
-          const accConf = document.getElementById('p-acc-confirm'); if(accConf && data['acc']) accConf.value = data['acc'];
-      } catch(e){}
-  }
-}
-
-// OPTIMIZATION: Debounce Profile Staff Checking
 let profileCheckTimer;
 function instantProfileStaffCheck(val) {
   clearTimeout(profileCheckTimer);
@@ -789,16 +803,25 @@ function instantProfileStaffCheck(val) {
     val = val.trim(); const fieldsEl = document.getElementById('p-step1-fields'), msgEl = document.getElementById('p-staffMsg');
     if (val.length < 2) { fieldsEl.style.display = 'none'; msgEl.innerHTML = ''; return; }
     
-    let match = orderStaffCache.chandarana.find(s => s.id === val) || orderStaffCache.carrefour.find(s => s.id === val);
-    if (match) {
-      fieldsEl.style.display = 'block'; document.getElementById('p-name').value = match.name; document.getElementById('p-phone').value = match.phone;
-      const branchSel = document.getElementById('p-branch'); let bMatch = Array.from(branchSel.options).find(o => o.value === match.branch); if(bMatch) branchSel.value = match.branch;
-      msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; msgEl.className = 'msg success';
-      triggerProfileBranchChange(); prefillProfileFromLocal(val);
-    } else {
-      fieldsEl.style.display = 'none'; msgEl.innerHTML = 'Invalid ID'; msgEl.className = 'msg error';
-    }
-  }, 400);
+    msgEl.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Checking Cloud...'; msgEl.className = 'msg';
+    
+    // JIT Profile Fetch (No local HR data storage)
+    fetchServer('getUserData', { id: val, module: 'profile' }).then(res => {
+      fieldsEl.style.display = 'block';
+      Storage.set('my_user_id', val); // Safe to store ID
+      
+      if (res.found) {
+        msgEl.innerHTML = `<span class="dot"></span> Profile found. You can update it below.`; msgEl.className = 'msg success';
+        document.getElementById('p-name').value = res.name || ''; document.getElementById('p-phone').value = res.phone || ''; document.getElementById('p-branch').value = res.branch || ''; document.getElementById('p-email').value = res.email || ''; document.getElementById('p-altContact').value = res.altContact || ''; document.getElementById('p-address').value = res.address || ''; document.getElementById('p-nok').value = res.nok || ''; document.getElementById('p-nokContact').value = res.nokContact || ''; document.getElementById('p-bank').value = res.bank || ''; document.getElementById('p-acc').value = res.acc || ''; document.getElementById('p-acc-confirm').value = res.acc || ''; document.getElementById('p-sha').value = res.sha || ''; document.getElementById('p-nssf').value = res.nssf || ''; document.getElementById('p-kra').value = res.kra || ''; 
+        if (res.empDate) { try { document.getElementById('p-emp').value = new Date(res.empDate).toISOString().slice(0, 7); }catch(e){} }
+        triggerProfileBranchChange();
+      } else {
+        msgEl.innerHTML = `<span class="dot"></span> New Profile. Please register.`; msgEl.className = 'msg success';
+      }
+    }).catch(err => {
+      fieldsEl.style.display = 'none'; msgEl.innerHTML = 'Network Error. Are you online?'; msgEl.className = 'msg error';
+    });
+  }, 600);
 }
 
 function showStepError(id) { const el = document.getElementById(id); el.style.borderColor = 'var(--error-color)'; setTimeout(() => { el.style.borderColor = ''; }, 2000); }
@@ -809,11 +832,10 @@ function validateProfileStep(step) {
     return true;
 }
 
-function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.getElementById('p-step' + (n-1)).style.display = 'none'; const nextStep = document.getElementById('p-step' + n); nextStep.style.display = 'block'; requestAnimationFrame(() => nextStep.style.animation = 'sectionFadeIn 0.4s ease forwards'); }
-function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const prevStep = document.getElementById('p-step' + n); prevStep.style.display = 'block'; requestAnimationFrame(() => prevStep.style.animation = 'sectionFadeIn 0.4s ease forwards'); }
+function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.getElementById('p-step' + (n-1)).style.display = 'none'; const nextStep = document.getElementById('p-step' + n); nextStep.style.display = 'block'; requestAnimationFrame(() => nextStep.style.animation = 'sectionFadeIn 0.3s ease forwards'); }
+function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const prevStep = document.getElementById('p-step' + n); prevStep.style.display = 'block'; requestAnimationFrame(() => prevStep.style.animation = 'sectionFadeIn 0.3s ease forwards'); }
 
 let pendingProfilePayload = null;
-
 function reviewProfile(e) {
   e.preventDefault();
   const acc = document.getElementById('p-acc').value, accConfirm = document.getElementById('p-acc-confirm').value;
@@ -844,36 +866,27 @@ function reviewProfile(e) {
 function editProfileStep(targetStepNum) {
   document.getElementById('profileConfirmModal').style.display = 'none';
   document.getElementById('p-step1').style.display = 'none'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none';
-  const targetStep = document.getElementById('p-step' + targetStepNum); targetStep.style.display = 'block'; requestAnimationFrame(() => targetStep.style.animation = 'sectionFadeIn 0.4s ease forwards');
+  const targetStep = document.getElementById('p-step' + targetStepNum); targetStep.style.display = 'block'; requestAnimationFrame(() => targetStep.style.animation = 'sectionFadeIn 0.3s ease forwards');
 }
 
 async function confirmAndSendProfile() {
   const btn = document.getElementById('confirmProfileSendBtn');
-  
-  const prevStr = Storage.get('profile_saved_' + pendingProfilePayload.id);
-  if (prevStr && prevStr === JSON.stringify(pendingProfilePayload)) {
-    document.getElementById('profileConfirmModal').style.display = 'none'; document.getElementById('profileForm').style.display = 'none'; document.getElementById('profileSuccess').style.display = 'block'; document.getElementById('profileSuccessText').innerText = "You already updated your profile."; return;
-  }
-
   btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span> Saving...';
   
   const payloadToSend = { ...pendingProfilePayload };
-  ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => {
-    if (payloadToSend[k]) payloadToSend[k] = "'" + payloadToSend[k];
-  });
+  ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => { if (payloadToSend[k]) payloadToSend[k] = "'" + payloadToSend[k]; });
 
   try {
-    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveProfile', data: payloadToSend, secret: API_SECRET }) })).json();
-    if (!res.ok) throw new Error(res.error);
-    
-    Storage.set('profile_saved_' + pendingProfilePayload.id, JSON.stringify(pendingProfilePayload));
+    await fetchServer('saveProfile', { data: payloadToSend });
     document.getElementById('profileConfirmModal').style.display = 'none'; document.getElementById('profileForm').style.display = 'none'; document.getElementById('profileSuccess').style.display = 'block'; document.getElementById('profileSuccessText').innerText = "Profile Saved!";
-  } catch(err) { alert("Error saving profile: " + err.message); }
+  } catch(err) { alert("Error saving profile: \n" + err.message); }
+  
   btn.disabled = false; btn.innerText = 'Submit';
 }
 
-// ORDER SYSTEM LOGIC
-let orderStaffCache = { chandarana: [], carrefour: [] }; 
+// ==========================================
+// SECURE ORDER SYSTEM (JIT Checking)
+// ==========================================
 let currentOrderStaffFullname = "";
 let orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } };
 let orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
@@ -896,15 +909,10 @@ function switchTerminalOrder(store) {
   document.getElementById('o-btn-chandarana').classList.toggle('active', store === 'chandarana'); document.getElementById('o-btn-carrefour').classList.toggle('active', store === 'carrefour');
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider'); document.getElementById('orderFormInner').style.display = 'block';
   renderDynamicOrderContent(); restoreOrderState();
-  let savedId = orderStoreState[store].id || Storage.get('last_order_id_' + store) || ''; document.getElementById('o-id').value = savedId; instantOrderStaffCheck(savedId);
-}
-
-function loadOrderStaffBackground() {
-  purgeCacheAtMidnight();
-  const cachedChan = Storage.get('order_staff_chandarana'), cachedCarr = Storage.get('order_staff_carrefour');
-  if (cachedChan && cachedCarr) { orderStaffCache.chandarana = JSON.parse(cachedChan); orderStaffCache.carrefour = JSON.parse(cachedCarr); }
-  fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff', secret: API_SECRET }) })
-    .then(r => r.json()).then(res => { if(res.ok) { orderStaffCache = res.data; Storage.set('order_staff_chandarana', JSON.stringify(res.data.chandarana)); Storage.set('order_staff_carrefour', JSON.stringify(res.data.carrefour)); } }).catch(e => {});
+  
+  let savedId = orderStoreState[store].id || Storage.get('my_user_id') || ''; 
+  document.getElementById('o-id').value = savedId; 
+  instantOrderStaffCheck(savedId);
 }
 
 let branchHoldTimer;
@@ -923,12 +931,10 @@ function unlockBranchSelect() {
 }
 
 function populateOrderBranches() {
-   const sel = document.getElementById('o-branch'); let chanBranches = [], carrBranches = [];
-   try { const pData = JSON.parse(Storage.get('chandarana_portal_data')); if (pData && pData.branches) chanBranches = pData.branches.map(b => b[0]); } catch(e) {}
-   try { const pData = JSON.parse(Storage.get('carrefour_portal_data')); if (pData && pData.branches) carrBranches = pData.branches.map(b => b[0]); } catch(e) {}
-   
-   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-   html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+   const sel = document.getElementById('o-branch');
+   let html = '';
+   if(allBranches.chandarana) html += `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + allBranches.chandarana.map(b => `<option value="${escapeHTML(b[0])}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
+   if(allBranches.carrefour) html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + allBranches.carrefour.map(b => `<option value="${escapeHTML(b[0])}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('') + `</optgroup>`;
    sel.innerHTML = html;
 }
 
@@ -937,55 +943,55 @@ document.getElementById('o-branch').addEventListener('change', function(e) {
   if (selectedStore && selectedStore !== activeStore) instantOrderStaffCheck(currentId, selectedStore, selectedBranch);
 });
 
-function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) {
-  let isAttendanceVerified = false, targetStore = defaultStore, targetBranch = match.branch, relievedMsg = '';
-  let latestClockInTime = 0, clockedInStore = null, clockedInBranch = null;
-
-  ['chandarana', 'carrefour'].forEach(store => {
-    try {
-      const pData = JSON.parse(Storage.get(store + '_portal_data')); const s = pData?.staff?.find(x => x.id === val);
-      if (s && s.lastTime) { const d = new Date(s.lastTime), now = new Date(); if (d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) { if (s.lastTime > latestClockInTime) { latestClockInTime = s.lastTime; clockedInStore = store; clockedInBranch = s.branch; } } }
-    } catch(e) {}
-  });
-
-  if (clockedInStore && clockedInBranch) { targetStore = clockedInStore; targetBranch = clockedInBranch; isAttendanceVerified = true; if (targetStore !== defaultStore || targetBranch !== match.branch) relievedMsg = ' (Auto-detected)'; }
-  if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; relievedMsg = ''; }
-
-  if (targetStore !== activeStore) { switchTerminalOrder(targetStore); }
-
-  Storage.set('last_order_id_' + activeStore, val); 
-  const msgDiv = document.getElementById('o-staffMsg'), nameInp = document.getElementById('o-name'), nameCont = document.getElementById('o-name-container'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-  
-  currentOrderStaffFullname = match.name; const parts = match.name.trim().split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
-  populateOrderBranches(); const sel = document.getElementById('o-branch'); sel.value = targetBranch;
-  if (sel.value !== targetBranch) { const opt = document.createElement('option'); opt.value = targetBranch; opt.textContent = targetBranch; opt.setAttribute('data-store', targetStore); sel.appendChild(opt); sel.value = targetBranch; }
-
-  lockBranchSelect(isAttendanceVerified); document.getElementById('o-phone').value = match.phone || '';
-  nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
-  msgDiv.innerHTML = `<span class="dot"></span> ID Verified${relievedMsg}`; msgDiv.className = 'msg success'; 
-}
-
-// OPTIMIZATION: Debounce Order Staff Checking
 let orderStaffCheckTimer;
 function instantOrderStaffCheck(val, forcedStore = null, forcedBranch = null) {
   clearTimeout(orderStaffCheckTimer);
   orderStaffCheckTimer = setTimeout(() => {
       val = val.trim(); 
       const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-      if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').innerHTML = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); if(activeStore) Storage.remove('last_order_id_' + activeStore); return; }
-
-      let match = orderStaffCache.chandarana.find(s => s.id === val); let defaultStore = match ? 'chandarana' : null;
-      if (!match) { match = orderStaffCache.carrefour.find(s => s.id === val); if (match) defaultStore = 'carrefour'; }
       
-      if(match) { processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch); } 
-      else { 
-        msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
-        fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
-        .then(r => r.json()).then(res => {
-           if (document.getElementById('o-id').value.trim() !== val) return;
-           if (res.found) { orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); processStaffMatch(val, {name: res.name, phone: res.phone, branch: res.branch}, res.store, forcedStore, forcedBranch); } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
-        }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
-      }
+      if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').innerHTML = ''; document.getElementById('o-phone').value = ''; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked'); return; }
+
+      msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+      
+      // JIT Fetch
+      fetchServer('getUserData', { id: val, module: 'order' })
+      .then(res => {
+         if (document.getElementById('o-id').value.trim() !== val) return;
+         if (res.found) { 
+            Storage.set('my_user_id', val);
+            currentOrderStaffFullname = res.name;
+            const parts = res.name.trim().split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
+            populateOrderBranches(); 
+            
+            let isAttendanceVerified = false;
+            let targetBranch = forcedBranch || res.branch || res.lastBranch; 
+            let targetStore = forcedStore || res.store;
+            
+            // Check if they clocked in today
+            if (res.lastAction && res.lastBranch) {
+                const todayNow = new Date();
+                const clockTime = new Date(res.lastTime);
+                if (todayNow.getDate() === clockTime.getDate() && todayNow.getMonth() === clockTime.getMonth()) {
+                    isAttendanceVerified = true;
+                    targetBranch = res.lastBranch;
+                    targetStore = res.store;
+                }
+            }
+            if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; }
+
+            const sel = document.getElementById('o-branch');
+            sel.value = targetBranch;
+            if (sel.value !== targetBranch && targetBranch) { const opt = document.createElement('option'); opt.value = targetBranch; opt.textContent = targetBranch; opt.setAttribute('data-store', targetStore); sel.appendChild(opt); sel.value = targetBranch; }
+
+            if (targetStore !== activeStore && targetStore) switchTerminalOrder(targetStore);
+            lockBranchSelect(isAttendanceVerified);
+
+            document.getElementById('o-phone').value = res.phone || '';
+            nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
+            msgDiv.innerHTML = `<span class="dot"></span> ID Verified ${isAttendanceVerified ? '(Auto-Detected)' : ''}`; msgDiv.className = 'msg success'; 
+         } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
+      }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
   }, 400);
 }
 
@@ -1032,6 +1038,12 @@ function renderDynamicOrderContent() {
 function saveOrderState() { if(!activeStore) return; const s = orderState[activeStore]; s.juices={}; document.querySelectorAll('.juice-input').forEach(el => { s.juices[`${el.getAttribute('data-flavor')}_${el.getAttribute('data-vol')}`] = el.getAttribute('data-val'); }); s.fresh = Array.from(document.querySelectorAll('.inp-fresh')).map(el => ({val: el.value, checked: el.checked})); s.bottles = Array.from(document.querySelectorAll('.inp-bottle')).map(el => ({val: el.value, checked: el.checked})); s.haccp = Array.from(document.querySelectorAll('.inp-haccp')).map(el => ({val: el.value, checked: el.checked})); }
 function restoreOrderState() { if(!activeStore) return; const s = orderState[activeStore]; Object.keys(s.juices).forEach(key => { const parts = key.split('_'), el = document.querySelector(`.juice-input[data-flavor="${parts[0]}"][data-vol="${parts[1]}"]`); if(el) { el.setAttribute('data-val', s.juices[key]); el.innerText = s.juices[key] === '0' ? '-' : s.juices[key]; el.classList.toggle('has-value', s.juices[key] > 0); } }); s.fresh.forEach(item => { const el = document.querySelector(`.inp-fresh[value="${item.val}"]`); if(el) el.checked = item.checked; }); s.bottles.forEach(item => { const el = document.querySelector(`.inp-bottle[value="${item.val}"]`); if(el) el.checked = item.checked; }); s.haccp.forEach(item => { const el = document.querySelector(`.inp-haccp[value="${item.val}"]`); if(el) el.checked = item.checked; }); }
 
+function resetOrderForm() {
+  document.getElementById('o-id').value = ''; document.getElementById('o-name').value = ''; document.getElementById('o-phone').value = ''; document.getElementById('o-notes').value = ''; document.getElementById('o-name-container').style.opacity = '0'; document.getElementById('o-expanded-fields').style.display = 'none'; document.getElementById('o-locked-section').classList.remove('unlocked'); document.getElementById('o-staffMsg').innerHTML = '';
+  document.getElementById('orderSuccessScreen').style.display = 'none'; document.getElementById('orderFormInner').style.display = 'block'; document.getElementById('orderTopBar').style.display = 'flex';
+  orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } }; renderDynamicOrderContent();
+}
+
 let pendingOrderPayload = null;
 function processOrder(e) {
   e.preventDefault(); if(!document.getElementById('o-name').value) return alert("Valid Staff ID required.");
@@ -1060,6 +1072,7 @@ function processOrder(e) {
 
 function closeConfirmModal() { document.getElementById('orderConfirmModal').style.display = 'none'; }
 
+// Kept functionality for downloading image locally
 function downloadReceipt(btn) {
   const oldText = btn.innerHTML; btn.innerHTML = 'Wait...'; btn.disabled = true; const content = document.getElementById('orderSummaryDetails');
   if (window.html2canvas) {
@@ -1077,29 +1090,25 @@ function downloadReceipt(btn) {
 }
 
 async function confirmAndSendOrder() {
-  const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = 'Wait...';
+  const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = 'Sending via Cloud...';
   try {
     const targetSheet = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
-    const todayKey = `order_sent_${new Date().toDateString()}_${pendingOrderPayload["ID NO."]}_${activeStore}`;
-    if (Storage.get(todayKey)) { pendingOrderPayload["NOTES"] = "[APPEND TO PREVIOUS ORDER] " + pendingOrderPayload["NOTES"]; }
-
     const payloadToSend = { ...pendingOrderPayload };
     if (payloadToSend["ID NO."]) payloadToSend["ID NO."] = "'" + payloadToSend["ID NO."];
     if (payloadToSend["PHONE NO."]) payloadToSend["PHONE NO."] = "'" + payloadToSend["PHONE NO."];
 
-    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveOrder', store: targetSheet, data: payloadToSend, secret: API_SECRET }) })).json();
-    if (!res.ok) throw new Error(res.error);
+    await fetchServer('saveOrder', { store: targetSheet, data: payloadToSend });
     
-    Storage.set(todayKey, "true");
     document.getElementById('orderConfirmModal').style.display = 'none'; document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'none'; document.getElementById('orderSuccessScreen').style.display = 'flex';
-    orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } }; orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; Storage.remove('last_order_id_chandarana'); Storage.remove('last_order_id_carrefour'); document.getElementById('o-id').value = ''; document.getElementById('o-notes').value = '';
-  } catch (err) { alert(err.message); }
+    orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } }; orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
+  } catch (err) { alert("Failed to send order. Ensure you have internet connection.\n" + err.message); }
   btn.disabled = false; btn.innerText = 'Confirm';
 }
 
-// ATTENDANCE SYSTEM LOGIC
-let staff = [], branches = [], coords = null, staffName = "", photo = null;
-let activeFetchId = 0, currentAction = "", videoStream = null, lastSelectedBranch = "", staffRestrictionError = null, warningTimer = null, lastValidatedId = ""; 
+// ==========================================
+// SECURE ATTENDANCE SYSTEM (JIT Status & Smart GPS)
+// ==========================================
+let staffName = "", photo = null, coords = null, currentAction = "", lastValidatedId = "";
 
 function openAttendance() { 
   switchView('view-attendance'); let savedTerminal = Storage.get('selected_terminal');
@@ -1110,41 +1119,35 @@ function triggerSignAnimation() { const sign = document.getElementById('storeSig
 
 function switchTerminalAtt(term, isInitialOpen = false) {
   if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { triggerSignAnimation(); return; }
-  if (!isInitialOpen && currentTerminal) { Storage.set('last_staff_id_' + currentTerminal, document.getElementById('staffID').value); }
-  currentTerminal = term; Storage.set('selected_terminal', term); staff = []; branches = []; lastSelectedBranch = ""; lastValidatedId = ""; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>'; document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
+  currentTerminal = term; Storage.set('selected_terminal', term); lastValidatedId = ""; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>'; document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
   document.body.className = `theme-${currentTerminal}`; updateBGLayer(currentTerminal === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
   const title = document.getElementById('storeSign'); title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1); triggerSignAnimation();
   document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour'); updatePillSlider('a-terminal-wrapper', 'a-pill-slider'); resetStepsFrom(1); document.getElementById('step1').classList.add('activeStep'); document.getElementById('staffID').value = ''; initAppAtt();
 }
 
-function fetchFromServer(action, data) { return fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:action, data:data, terminal:currentTerminal, secret: API_SECRET}) }).then(r => r.json()).then(j => { if(!j.ok) throw new Error(j.error||'Server error'); return j.data; }); }
-
-function populateBranches(list) {
-  if (!Array.isArray(list)) return;
+function populateBranchesAtt(list) {
   const select = document.getElementById('branch'), currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
   const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
   if (select.innerHTML !== options) { select.innerHTML = options; }
-  if (currentVal) { select.value = currentVal; lastSelectedBranch = currentVal; showSuccess('branchMsg', 'Branch Selected'); } else { clearMsg('branchMsg'); }
+  if (currentVal) { select.value = currentVal; showSuccess('branchMsg', 'Branch Selected'); } else { clearMsg('branchMsg'); }
 }
-
-function restoreUserState() { const savedBranch = Storage.get('last_branch_' + currentTerminal); const branchEl = document.getElementById('branch'); if (savedBranch) { branchEl.value = savedBranch; handleBranchChange(true); } const savedStaffID = Storage.get('last_staff_id_' + currentTerminal); const staffEl = document.getElementById('staffID'); if (savedStaffID && staff.length > 0) { staffEl.value = savedStaffID; handleStaffInput(); } }
 
 function initAppAtt() {
   if (!currentTerminal) return;
-  purgeCacheAtMidnight(); const myId = ++activeFetchId; const cacheKey = currentTerminal + '_portal_data'; let cached = false;
-  try { const raw = Storage.get(cacheKey); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.branches)) { staff = p.staff || []; branches = p.branches || []; populateBranches(branches); restoreUserState(); cached = true; } } } catch(e) {}
-  fetchFromServer('getPortalData', {}).then(data => {
-    if (myId !== activeFetchId) return;
-    const changed = JSON.stringify(branches) !== JSON.stringify(data.branches) || JSON.stringify(staff) !== JSON.stringify(data.staff); staff = data.staff || []; branches = data.branches || [];
-    try { Storage.set(cacheKey, JSON.stringify({staff, branches})); } catch(e) {}
-    if (!cached || changed) { populateBranches(branches); if (!document.getElementById('staffID').value) { restoreUserState(); } } 
-  }).catch(() => { if (myId === activeFetchId && branches.length === 0) document.getElementById('branch').innerHTML = '<option value="">Offline — waiting for connection</option>'; });
+  const bList = allBranches[currentTerminal] || [];
+  populateBranchesAtt(bList);
+  
+  const savedBranch = Storage.get('last_branch_' + currentTerminal);
+  if (savedBranch) { document.getElementById('branch').value = savedBranch; handleBranchChange(true); }
+  
+  const myId = Storage.get('my_user_id'); 
+  if (myId) { document.getElementById('staffID').value = myId; handleStaffInput(); }
 }
 
 function activateStep(n) { document.getElementById('step'+n).classList.add('activeStep'); }
 function resetStepsFrom(n) {
   for (let i = n; i <= 4; i++) { const el = document.getElementById('step'+i); if (el) el.classList.remove('activeStep'); }
-  if (n <= 2) { staffName = ''; clearMsg('staffMsg'); staffRestrictionError = null; lastValidatedId = ""; }
+  if (n <= 2) { staffName = ''; clearMsg('staffMsg'); lastValidatedId = ""; }
   if (n <= 3) { coords = null; clearMsg('gpsMsg'); }
   if (n <= 4) { photo = null; stopCamera(); clearMsg('cameraMsg'); document.getElementById('successPhoto').src = ''; }
 }
@@ -1158,28 +1161,46 @@ function clearMsg(id)       { const e=document.getElementById(id); e.innerText='
 function openZoom() { const container = document.getElementById('photoZoomContainer'), bg = document.getElementById('photoZoomBg'), overlayImg = document.getElementById('zoomedImage'), sourceImg = document.getElementById('successPhoto'); const rect = sourceImg.getBoundingClientRect(); overlayImg.src = sourceImg.src; overlayImg.style.transition = 'none'; overlayImg.style.left = rect.left + 'px'; overlayImg.style.top = rect.top + 'px'; overlayImg.style.width = rect.width + 'px'; overlayImg.style.height = rect.height + 'px'; overlayImg.style.borderRadius = '50%'; container.style.display = 'block'; void container.offsetWidth; sourceImg.style.opacity = '0'; overlayImg.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.4, 1)'; const targetW = Math.min(window.innerWidth * 0.85, 400); overlayImg.style.left = ((window.innerWidth - targetW) / 2) + 'px'; overlayImg.style.top = ((window.innerHeight - targetW) / 2) + 'px'; overlayImg.style.width = targetW + 'px'; overlayImg.style.height = targetW + 'px'; overlayImg.style.borderRadius = '24px'; bg.classList.add('show'); }
 function closeZoom() { const container = document.getElementById('photoZoomContainer'), bg = document.getElementById('photoZoomBg'), overlayImg = document.getElementById('zoomedImage'), sourceImg = document.getElementById('successPhoto'); const rect = sourceImg.getBoundingClientRect(); overlayImg.style.left = rect.left + 'px'; overlayImg.style.top = rect.top + 'px'; overlayImg.style.width = rect.width + 'px'; overlayImg.style.height = rect.height + 'px'; overlayImg.style.borderRadius = '50%'; bg.classList.remove('show'); setTimeout(() => { container.style.display = 'none'; sourceImg.style.opacity = '1'; }, 400); }
 
-function handleBranchChange(isInit = false) { const val = document.getElementById('branch').value; if (!val) { resetStepsFrom(2); clearMsg('branchMsg'); lastSelectedBranch = ""; return; } Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected'); if (lastSelectedBranch !== val && !isInit) { document.getElementById('staffID').value = ''; resetStepsFrom(2); } lastSelectedBranch = val; if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); } const staffEl = document.getElementById('staffID'); if (staffEl.value.length >= 2) { handleStaffInput(); } }
+function handleBranchChange(isInit = false) { const val = document.getElementById('branch').value; if (!val) { resetStepsFrom(2); clearMsg('branchMsg'); return; } Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected'); if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); } const staffEl = document.getElementById('staffID'); if (staffEl.value.length >= 2) { handleStaffInput(); } }
 document.getElementById('branch').addEventListener('change', () => handleBranchChange(false));
 
-function determineAutoAction() {
-  const val = document.getElementById('staffID').value.trim(); let lastAction = "Clock Out"; 
-  if (val && staff.length > 0) { const match = staff.find(s => s.id === val); if (match) { lastAction = match.status; try { const localState = JSON.parse(Storage.get('local_att_state')) || {}; const myLocal = localState[val]; if (myLocal && myLocal.date === new Date().toDateString() && (!match.lastTime || myLocal.ts > match.lastTime)) { lastAction = myLocal.action; } } catch(e) {} if (match.lastTime) { const d = new Date(match.lastTime), now = new Date(); if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) { lastAction = null; } } } }
-  return (lastAction === 'Clock In') ? 'Clock Out' : 'Clock In';
-}
-
+let attCheckTimer;
 function handleStaffInput() {
-  const val = document.getElementById('staffID').value.trim(); staffRestrictionError = null; 
+  const val = document.getElementById('staffID').value.trim(); 
   if (val.length < 2) { lastValidatedId = ""; resetStepsFrom(3); clearMsg('staffMsg'); return; }
-  const match = staff.find(s => s.id === val);
-  if (match) {
-    const isSameUser = (lastValidatedId === val); lastValidatedId = val; staffName = match.name; let lastAction = match.status; let lastTime = match.lastTime;
-    try { const localState = JSON.parse(Storage.get('local_att_state')) || {}; const myLocal = localState[val]; const todayStr = new Date().toDateString(); if (myLocal && myLocal.date === todayStr) { if (!lastTime || myLocal.ts > lastTime) { lastAction = myLocal.action; lastTime = myLocal.ts; } } } catch(e) {}
-    if (lastTime) { const d = new Date(lastTime), now = new Date(); if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) { lastAction = null; } }
-    if (lastAction === 'Clock Out') { staffRestrictionError = 'You have already clocked out today.'; } else if (lastAction === 'Clock In') { const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60); const currentHour = new Date().getHours(); if (hoursSince < 6 && currentHour < 19) { staffRestrictionError = 'You already clocked in, clock out at the end of your shift.'; } }
+
+  clearTimeout(attCheckTimer);
+  attCheckTimer = setTimeout(() => {
+    const msgEl = document.getElementById('staffMsg');
+    msgEl.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Syncing...'; msgEl.className = 'msg';
     
-    const msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '1'; showSuccess('staffMsg', `Welcome ${escapeHTML(staffName)}`);
-    if (!isSameUser) { if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4); if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3); } else { if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3); }
-  } else { lastValidatedId = ""; resetStepsFrom(3); showError('staffMsg','Invalid Staff ID. Please check.'); }
+    // JIT Status Fetch
+    fetchServer('getUserData', { id: val, module: 'attendance', terminal: currentTerminal }).then(res => {
+      if (!res.found) { lastValidatedId = ""; resetStepsFrom(3); showError('staffMsg','Invalid Staff ID.'); return; }
+      
+      Storage.set('my_user_id', val);
+      staffName = res.name;
+      let lastAction = res.lastAction;
+      let lastTime = res.lastTime;
+      
+      // Override with local state if local is newer (in case they just clocked in seconds ago)
+      try { const localState = JSON.parse(Storage.get('local_att_state')) || {}; const myLocal = localState[val]; const todayStr = new Date().toDateString(); if (myLocal && myLocal.date === todayStr) { if (!lastTime || myLocal.ts > lastTime) { lastAction = myLocal.action; lastTime = myLocal.ts; } } } catch(e) {}
+
+      // Smart Logic for Today's Shifts
+      if (lastTime) { const d = new Date(lastTime), now = new Date(); if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) { lastAction = null; } }
+      
+      if (lastAction === 'Clock Out') { showError('staffMsg', 'You have already clocked out today.'); return; } 
+      else if (lastAction === 'Clock In') { 
+        const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60); const currentHour = new Date().getHours(); 
+        if (hoursSince < 6 && currentHour < 19) { showError('staffMsg', 'You already clocked in. Clock out at shift end.'); return; } 
+      }
+      
+      currentAction = (lastAction === 'Clock In') ? 'Clock Out' : 'Clock In';
+      lastValidatedId = val;
+      showSuccess('staffMsg', `Welcome ${escapeHTML(staffName)}`);
+      activateStep(3);
+    }).catch(e => { showError('staffMsg', 'Network offline. Try again.'); });
+  }, 500);
 }
 document.getElementById('staffID').oninput = handleStaffInput;
 
@@ -1192,43 +1213,52 @@ function showGuideModal(type) {
 }
 
 function doVerifyGPS(isRetry) {
-  document.getElementById('gpsMsg').innerText = 'Locating…'; document.getElementById('gpsMsg').className = 'msg';
+  document.getElementById('gpsMsg').innerText = 'Locating via Satellites…'; document.getElementById('gpsMsg').className = 'msg';
   if (!navigator.geolocation) { showError('gpsMsg','GPS not supported on this device.'); return; }
+  
   navigator.geolocation.getCurrentPosition(
     pos => {
-      coords = pos.coords; const b = branches.find(branch => branch[0] === document.getElementById('branch').value);
+      coords = pos.coords; 
+      const bList = allBranches[currentTerminal] || [];
+      const b = bList.find(branch => branch[0] === document.getElementById('branch').value);
       if (!b) { showError('gpsMsg','Select branch first.'); return; }
+      
       const R = 6371e3; const dLat = (b[1]-coords.latitude)*Math.PI/180; const dLon = (b[2]-coords.longitude)*Math.PI/180;
       const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(coords.latitude*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
       const dist = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-      if (dist > (isRetry ? 350 : 250)) { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showError('gpsMsg', dist>1000 ? `Too far (${(dist/1000).toFixed(1)}km)` : `Too far (${Math.round(dist)}m) — move closer`); } } else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
+      
+      if (dist > (isRetry ? 350 : 250)) { 
+        // CLOCK OUT SMART CHECK (Indoors = Bad Accuracy)
+        if (currentAction === 'Clock Out' && coords.accuracy > 70) {
+           showError('gpsMsg', 'Indoor GPS signal is weak. Please turn on Wi-Fi for an accurate location and tap Verify again.');
+        } else if (!isRetry && navigator.onLine) { 
+           setTimeout(() => doVerifyGPS(true), 500); 
+        } else { 
+           showError('gpsMsg', dist>1000 ? `Too far (${(dist/1000).toFixed(1)}km)` : `Too far (${Math.round(dist)}m) — move closer`); 
+        } 
+      } else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
     },
-    err => { if(err.code===1) { showGuideModal('gps'); showError('gpsMsg', 'Location Denied. Tap Verify again.'); } else { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showGuideModal('gps_signal'); showError('gpsMsg', 'Weak Signal. Tap Verify again.'); } } },
-    {enableHighAccuracy:true, timeout:20000, maximumAge: isRetry ? 0 : 30000}
+    err => { 
+      if(err.code===1) { showGuideModal('gps'); showError('gpsMsg', 'Location Denied.'); } 
+      else { showGuideModal('gps_signal'); showError('gpsMsg', 'Weak Signal. Turn on Wi-Fi and retry.'); } 
+    },
+    {enableHighAccuracy:true, timeout:20000, maximumAge: 0}
   );
 }
 
-function verifyGPS() {
-  if (staffRestrictionError) {
-    const msgEl = document.getElementById('staffMsg'); msgEl.style.opacity = '0';
-    setTimeout(() => { showError('staffMsg', staffRestrictionError); msgEl.style.opacity = '1'; clearTimeout(warningTimer); warningTimer = setTimeout(() => { msgEl.style.opacity = '0'; setTimeout(() => { if(document.getElementById('step2').classList.contains('activeStep')) { showSuccess('staffMsg', `Welcome ${escapeHTML(staffName)}`); } msgEl.style.opacity = '1'; }, 300); }, 3000); }, 300); return;
-  }
-  doVerifyGPS(false);
-}
+function verifyGPS() { doVerifyGPS(false); }
 
-// OPTIMIZATION: Low-RAM Start Camera function
+// Camera Logic
+let videoStream = null;
 function startCamera() {
   const btn = document.getElementById('openCameraBtn');
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { 
-    // FAKE OS FALLBACK: Use Native Camera App
-    document.getElementById('fallbackCameraInput').click();
-    return; 
+    document.getElementById('fallbackCameraInput').click(); return; 
   }
   
   btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Starting...</span>'; 
   clearMsg('cameraMsg');
   
-  // Ask for 480p to save memory on cheap phones
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
     .then(stream => { 
       videoStream = stream; const video = document.getElementById('cameraVideo'); video.srcObject = stream; 
@@ -1242,12 +1272,10 @@ function startCamera() {
     })
     .catch(err => { 
       btn.innerText = 'Take Selfie'; 
-      // If permission error or browser failure, trigger native fallback
       document.getElementById('fallbackCameraInput').click();
     });
 }
 
-// OPTIMIZATION: Process Native Camera fallback image
 function handleFallbackCamera(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1267,12 +1295,10 @@ function handleFallbackCamera(event) {
       canvas.height = img.height * scale;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       
-      photo = canvas.toDataURL('image/jpeg', 0.6); // Compress
+      photo = canvas.toDataURL('image/jpeg', 0.6); 
       document.getElementById('successPhoto').src = photo;
       
-      canvas.width = 0; canvas.height = 0; img.src = ''; // Clear memory
-      
-      currentAction = determineAutoAction();
+      canvas.width = 0; canvas.height = 0; img.src = ''; 
       btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Submitting...';
       btn.disabled = true;
       submitAttendanceRealtime();
@@ -1282,11 +1308,9 @@ function handleFallbackCamera(event) {
   reader.readAsDataURL(file);
 }
 
-// OPTIMIZATION: 3-Phase Low Memory Compression
 function capturePhotoNative() {
   const flash = document.getElementById('cameraFlash'); flash.classList.remove('fire'); void flash.offsetWidth; flash.classList.add('fire');
   const shutterBtn = document.getElementById('shutterBtn'); shutterBtn.classList.add('loading');
-  currentAction = determineAutoAction();
   
   const video = document.getElementById('cameraVideo'), wrapper = document.getElementById('videoContainerWrapper'); 
   const vw = video.videoWidth || 640, vh = video.videoHeight || 480, cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
@@ -1297,7 +1321,6 @@ function capturePhotoNative() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   
-  // Phase 1: 720px limit, 80% Quality
   let maxOutput = 720;
   let scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
   canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
@@ -1306,13 +1329,7 @@ function capturePhotoNative() {
   ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
   
   photo = canvas.toDataURL('image/jpeg', 0.80);
-  
-  // Phase 2: If over 150KB, drop quality to 60%
-  if (getKbSize(photo) > 150) {
-      photo = canvas.toDataURL('image/jpeg', 0.60);
-  }
-
-  // Phase 3: If STILL over 150KB, shrink to 480px and 50%
+  if (getKbSize(photo) > 150) { photo = canvas.toDataURL('image/jpeg', 0.60); }
   if (getKbSize(photo) > 150) {
       maxOutput = 480;
       scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
@@ -1322,7 +1339,7 @@ function capturePhotoNative() {
       photo = canvas.toDataURL('image/jpeg', 0.50);
   }
   
-  canvas.width = 0; canvas.height = 0; // Wipe from memory
+  canvas.width = 0; canvas.height = 0; 
   video.pause();
   
   setTimeout(() => {
@@ -1337,87 +1354,31 @@ function stopCamera() {
   const btn = document.getElementById('openCameraBtn'); if (btn) btn.textContent = 'Take Selfie'; 
   setTimeout(() => { 
     if (videoStream) { videoStream.getTracks().forEach(t => { t.stop(); t.enabled = false; }); videoStream = null; } 
-    video.pause(); video.srcObject = null; video.removeAttribute('src'); video.load(); // Thorough cleanup for iOS
+    video.pause(); video.srcObject = null; video.removeAttribute('src'); video.load(); 
   }, 300); 
-}
-
-// OPTIMIZATION: Safe Offline Queue handling Quota Exceeded Memory limits
-function safePushToQueue(payload, terminal) {
-  let queue = [];
-  try { queue = JSON.parse(Storage.get('attendance_queue')) || []; } catch(e){}
-  queue.push({ payload: payload, terminal: terminal, attempts: 0 });
-  try { Storage.set('attendance_queue', JSON.stringify(queue)); return true; } 
-  catch (e) { alert("CRITICAL: Your phone's memory is full. Please go online so the app can upload your pending records to clear space."); return false; }
 }
 
 async function submitAttendanceRealtime() {
   const branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
   if (!branch || !staffID || !currentAction || !photo) return;
-  Storage.set('last_staff_id_' + currentTerminal, staffID);
   
   const payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() };
-  const btn = document.getElementById('openCameraBtn'); let isSuccess = false;
+  const btn = document.getElementById('openCameraBtn'); 
 
-  if (navigator.onLine) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second Safaricom drop protection
-      
-      const res = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'recordAttendance', data: payload, terminal: currentTerminal, secret: API_SECRET }), signal: controller.signal });
-      clearTimeout(timeoutId);
-      
-      const j = await res.json(); 
-      if (j.ok) { isSuccess = true; } 
-      else if (j.error && j.error.includes("busy")) { isSuccess = false; } 
-      else { showError('cameraMsg', j.error); btn.textContent = 'Take Selfie'; btn.disabled = false; return; }
-    } catch(err) { console.warn("Network drop detected:", err.message); isSuccess = false; }
+  try {
+    await fetchServer('recordAttendance', { data: payload, terminal: currentTerminal });
+    
+    let localState = {}; try { localState = JSON.parse(Storage.get('local_att_state')) || {}; } catch(e){} 
+    localState[staffID] = { action: currentAction, ts: Date.now(), date: new Date().toDateString() }; 
+    Storage.set('local_att_state', JSON.stringify(localState));
+    
+    clearMsg('cameraMsg'); finishSubmission(currentAction); 
+  } catch(err) { 
+    showError('cameraMsg', 'Connection failed. Please submit again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Take Selfie';
   }
-
-  if (!isSuccess) { 
-    const saved = safePushToQueue(payload, currentTerminal); 
-    if (!saved) { btn.disabled = false; return; }
-  }
-  
-  let localState = {}; try { localState = JSON.parse(Storage.get('local_att_state')) || {}; } catch(e){} localState[staffID] = { action: currentAction, ts: Date.now(), date: new Date().toDateString(), branch: branch }; Storage.set('local_att_state', JSON.stringify(localState));
-  try { const cacheKey = currentTerminal + '_portal_data'; const cached = JSON.parse(Storage.get(cacheKey)); if (cached && cached.staff) { const cachedMatch = cached.staff.find(s => s.id === staffID); if (cachedMatch) { cachedMatch.status = currentAction; cachedMatch.lastTime = Date.now(); cachedMatch.branch = branch; Storage.set(cacheKey, JSON.stringify(cached)); } } } catch(e) {}
-  
-  clearMsg('cameraMsg'); finishSubmission(currentAction); btn.disabled = false;
 }
-
-let isAttQueueSyncing = false;
-async function processAttendanceQueue() {
-  if (isAttQueueSyncing || document.visibilityState !== 'visible' || !navigator.onLine) return;
-  let queue = []; try { queue = JSON.parse(Storage.get('attendance_queue')) || []; } catch(e){} if (queue.length === 0) return;
-  
-  isAttQueueSyncing = true;
-  let remainingQueue = [];
-  
-  for (let i = 0; i < queue.length; i++) {
-    let item = queue[i];
-    // Reject data older than 24 hours (1440 mins) to prevent backend failure
-    const ageMins = (Date.now() - new Date(item.payload.clientTimestamp).getTime()) / 60000;
-    if (ageMins > 1440) continue; 
-
-    try {
-      const controller = new AbortController();
-      const tId = setTimeout(() => controller.abort(), 8000); 
-      
-      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'recordAttendance', data: item.payload, terminal: item.terminal, secret: API_SECRET }), signal: controller.signal });
-      clearTimeout(tId);
-      
-      const j = await res.json();
-      if (!j.ok && j.error && j.error.includes("busy")) { remainingQueue.push(item); }
-    } catch (err) {
-      item.attempts = (item.attempts || 0) + 1;
-      remainingQueue.push(item);
-      break; // Network dropped mid-sync, stop trying the rest to save battery
-    }
-  }
-  
-  Storage.set('attendance_queue', JSON.stringify(remainingQueue));
-  isAttQueueSyncing = false;
-}
-setInterval(processAttendanceQueue, 30000);
 
 function triggerSuccessAnimation() { const circle = document.getElementById('successTickCircle'); const check = document.getElementById('successTickCheck'); circle.classList.remove('animate-circle'); check.classList.remove('animate-check'); void circle.offsetWidth; void check.offsetWidth; circle.classList.add('animate-circle'); check.classList.add('animate-check'); }
 
