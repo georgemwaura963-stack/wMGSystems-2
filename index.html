@@ -106,8 +106,8 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
-@keyframes welcomeNudgeAnim { 0% { transform: scale(1); } 25% { transform: scale(1.015) rotate(0.8deg); } 50% { transform: scale(1.015) rotate(-0.8deg); } 75% { transform: scale(1.01) rotate(0.4deg); } 100% { transform: scale(1); } }
-.welcome-title.nudge { animation: welcomeNudgeAnim 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+@keyframes welcomeNudgeAnim { 0% { transform: scale(1); } 30% { transform: scale(1.01) rotate(0.5deg); } 60% { transform: scale(1.005) rotate(-0.5deg); } 100% { transform: scale(1); } }
+.welcome-title.nudge { animation: welcomeNudgeAnim 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
 .solid-panel { background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 20; }
 
@@ -130,7 +130,7 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 
 .menu-container { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 440px; z-index: 10; margin-top: -5vh; position:relative; }
 .hub-logo { font-size: 36px; font-weight: 900; color: var(--text-primary); margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.menu-subtitle { color: var(--text-secondary); font-weight: 700; font-size: 16px; margin-bottom: 40px; }
+.menu-subtitle { color: var(--text-secondary); font-weight: 700; font-size: 16px; margin-bottom: 24px; }
 
 .thought-bubble-container { position: absolute; top: -60px; left: 16px; cursor: pointer; z-index: 100; -webkit-tap-highlight-color: transparent; animation: floatContainer 3.5s ease-in-out infinite; }
 .thought-bubble-container:active .bubble-large { transform: scale(0.92) translateY(-4px); transition: 0.1s; }
@@ -280,6 +280,8 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 #photoZoomContainer { display:none; position:fixed; inset:0; z-index:20000; pointer-events:none; }
 #photoZoomBg { position: absolute; inset:0; }
 #zoomedImage { position: absolute; object-fit: cover; box-shadow: 0 0 0 4px var(--dynamic-primary), 0 25px 60px rgba(0,0,0,0.6); z-index: 20001; cursor: zoom-out; }
+
+.profile-reminder-banner { display:none; width:100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 24px; text-align: left; box-shadow: 0 6px 15px rgba(245, 158, 11, 0.25); position: relative; animation: bounceIn 0.5s ease; }
 </style>
 </head>
 <body class="theme-welcome">
@@ -333,6 +335,15 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
     <div class="hub-logo">STENTOR OPS</div>
     <div class="menu-subtitle">Select a module</div>
     
+    <div id="profileReminderBanner" class="profile-reminder-banner">
+      <div style="font-weight: 900; font-size: 15px; margin-bottom: 4px;">Update Your Profile</div>
+      <div style="font-size: 13px; font-weight: 700; opacity: 0.95; line-height: 1.4;">Please ensure your details are up to date for this month.</div>
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+         <button onclick="openProfile(); dismissProfileReminder();" style="flex:1; background: rgba(255,255,255,0.25); border: none; color: white; padding: 8px 0; border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer;">Update Now</button>
+         <button onclick="dismissProfileReminder()" style="flex:1; background: transparent; border: 1.5px solid rgba(255,255,255,0.4); color: white; padding: 8px 0; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer;">Not Now</button>
+      </div>
+    </div>
+
     <div class="hub-grid">
       <div class="hub-card solid-panel" onclick="openAttendance()">
         <div class="hc-icon-box hc-alarm">
@@ -502,7 +513,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         <div class="step-grid">
           <div id="step1" class="step activeStep">
             <label class="input-label">Branch</label>
-            <select id="branch" class="ui-select"><option value="">Loading...</option></select>
+            <select id="branch" class="ui-select"><option value="">Choose Branch</option></select>
             <div id="branchMsg" class="msg"></div>
           </div>
           <div id="step2" class="step">
@@ -652,7 +663,7 @@ function updateThemeColorMeta() {
 if (window.matchMedia) { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta); }
 
 let activeStore = null, currentTerminal = null;
-let lastRenderedAttBranches = "", lastRenderedOrderBranches = "";
+let lastRenderedOrderBranches = "";
 
 // RAM-ONLY MEMORY (Data completely destroyed when browser closes)
 let portalStaff = { chandarana: [], carrefour: [] };
@@ -759,10 +770,49 @@ function switchView(viewId) {
   });
 }
 
+function checkProfileReminder() {
+    const lastUpdate = Storage.get('profile_last_updated');
+    let reminders = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}');
+    const currentMonth = new Date().getFullYear() + '-' + new Date().getMonth();
+
+    if (reminders.month !== currentMonth) {
+        reminders = { month: currentMonth, count: 0 };
+    }
+
+    let updatedThisMonth = false;
+    if (lastUpdate) {
+        const d = new Date(parseInt(lastUpdate));
+        if (d.getFullYear() + '-' + d.getMonth() === currentMonth) {
+            updatedThisMonth = true;
+        }
+    }
+
+    if (!updatedThisMonth && reminders.count < 2) {
+        document.getElementById('profileReminderBanner').style.display = 'block';
+    } else {
+        document.getElementById('profileReminderBanner').style.display = 'none';
+    }
+}
+
+function dismissProfileReminder() {
+    document.getElementById('profileReminderBanner').style.display = 'none';
+    let reminders = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}');
+    const currentMonth = new Date().getFullYear() + '-' + new Date().getMonth();
+    
+    if (reminders.month !== currentMonth) {
+        reminders = { month: currentMonth, count: 1 };
+    } else {
+        reminders.count += 1;
+    }
+    Storage.set('profile_reminders', JSON.stringify(reminders));
+}
+
 function goToMenu(e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   if (document.getElementById('view-orders').classList.contains('active') && activeStore) saveOrderState();
   if (document.getElementById('view-attendance').classList.contains('active')) stopCamera();
+  
+  checkProfileReminder(); // Show banner occasionally
   updateBGLayer('layerHub'); document.body.className = ''; switchView('view-menu'); 
 }
 
@@ -923,6 +973,8 @@ async function confirmAndSendProfile() {
     const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveProfile', data: payloadToSend, secret: API_SECRET }) })).json();
     if (!res.ok) throw new Error(res.error);
     
+    Storage.set('profile_last_updated', Date.now().toString()); // Save marker so we stop bothering them
+
     document.getElementById('profileConfirmModal').style.display = 'none'; document.getElementById('profileForm').style.display = 'none'; document.getElementById('profileSuccess').style.display = 'block'; document.getElementById('profileSuccessText').innerText = "Profile Saved!";
   } catch(err) { alert("Error saving profile: " + err.message); }
   btn.disabled = false; btn.innerText = 'Submit';
@@ -1143,16 +1195,42 @@ let pendingOrderPayload = null;
 function processOrder(e) {
   e.preventDefault(); if(!document.getElementById('o-name').value) return alert("Valid Staff ID required.");
   
-  // Custom Form Validations
+  // Custom Form Validations Engine
   let totalJuices = 0;
   document.querySelectorAll('.juice-input').forEach(el => { totalJuices += parseInt(el.getAttribute('data-val') || 0); });
   const freshChecked = Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el=>el.value);
   const bottlesChecked = Array.from(document.querySelectorAll('.inp-bottle:checked')).map(el=>el.value);
   const haccpChecked = Array.from(document.querySelectorAll('.inp-haccp:checked')).map(el=>el.value);
 
-  // ONLY strictly prevent completely blank orders.
-  if (totalJuices === 0 && freshChecked.length === 0 && bottlesChecked.length === 0 && haccpChecked.length === 0) {
+  const hasSugarcane = freshChecked.some(f => f.toLowerCase().includes('sugarcane'));
+  const hasLimeOrGinger = freshChecked.some(f => f.toLowerCase().includes('lime') || f.toLowerCase().includes('ginger'));
+  const hasBottles = bottlesChecked.length > 0;
+  const hasHaccp = haccpChecked.length > 0;
+
+  // 1. Time Restriction (Allowed only 19:00 PM to 05:59 AM)
+  const currentHour = new Date().getHours();
+  if (currentHour >= 6 && currentHour < 19) {
+      return alert("Orders can only be placed between 7:00 PM and 6:00 AM.");
+  }
+
+  // 2. Completely blank order
+  if (totalJuices === 0 && freshChecked.length === 0 && !hasBottles && !hasHaccp) {
       return alert("You cannot submit a completely blank order.");
+  }
+
+  // 3. ONLY HACCP items
+  if (totalJuices === 0 && freshChecked.length === 0 && !hasBottles && hasHaccp) {
+      return alert("You cannot place an order containing ONLY HACCP supplies.");
+  }
+
+  // 4. ONLY Lime or Ginger
+  if (totalJuices === 0 && !hasBottles && !hasSugarcane && hasLimeOrGinger) {
+      return alert("You cannot place an order containing ONLY Lime or Ginger as stand-alone items.");
+  }
+
+  // 5. Less than 3 juices rule
+  if (totalJuices > 0 && totalJuices < 3 && !hasSugarcane && !hasBottles) {
+      return alert("Orders with less than 3 juice bottles must be paired with either Sugarcane or empty Bottles.");
   }
 
   const payload = { "SHOP": document.getElementById('o-branch').value, [activeStore==='chandarana'?"FULL NAME":"FULL NAME (2 Names)"]: currentOrderStaffFullname, "ID NO.": document.getElementById('o-id').value, "PHONE NO.": document.getElementById('o-phone').value, "FRESH INPUTS": freshChecked.join(', '), "BOTTLES": bottlesChecked.join(', '), "HACCP SUPPLIES": haccpChecked.join(', '), "NOTES": document.getElementById('o-notes').value };
@@ -1227,7 +1305,18 @@ function triggerSignAnimation() { const sign = document.getElementById('storeSig
 
 function switchTerminalAtt(term, isInitialOpen = false) {
   if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { triggerSignAnimation(); return; }
-  currentTerminal = term; Storage.set('selected_terminal', term); lastValidatedId = ""; document.getElementById('branch').innerHTML = '<option value="">Loading...</option>'; document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
+  currentTerminal = term; Storage.set('selected_terminal', term); lastValidatedId = ""; 
+  
+  // Directly load cached branches immediately to avoid empty dropdown
+  let bList = branchesCache[term] || [];
+  if(bList.length === 0) try { bList = JSON.parse(Storage.get(term + '_branches') || '[]'); } catch(e){}
+  if(bList.length > 0) {
+      populateBranches(bList);
+  } else {
+      document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
+  }
+
+  document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
   document.body.className = `theme-${currentTerminal}`; updateBGLayer(currentTerminal === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
   const title = document.getElementById('storeSign'); title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1); triggerSignAnimation();
   document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour'); updatePillSlider('a-terminal-wrapper', 'a-pill-slider'); resetStepsFrom(1); document.getElementById('step1').classList.add('activeStep'); document.getElementById('staffID').value = ''; initAppAtt();
@@ -1238,10 +1327,10 @@ function populateBranches(list) {
   const select = document.getElementById('branch'), currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
   const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
   
-  if (lastRenderedAttBranches !== options) { 
+  if (select.innerHTML !== options) { 
       select.innerHTML = options; 
-      lastRenderedAttBranches = options;
   }
+  
   if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
       if (select.value !== currentVal) {
          select.value = currentVal;
@@ -1254,12 +1343,7 @@ function populateBranches(list) {
 
 function initAppAtt() {
   if (!currentTerminal) return;
-  let bList = [];
-  try { bList = JSON.parse(Storage.get(currentTerminal + '_branches') || '[]'); } catch(e){}
   
-  if (branchesCache[currentTerminal] && branchesCache[currentTerminal].length > 0) { bList = branchesCache[currentTerminal]; }
-  if (bList.length > 0) populateBranches(bList);
-
   const savedBranch = Storage.get('last_branch_' + currentTerminal);
   if (savedBranch) { document.getElementById('branch').value = savedBranch; handleBranchChange(true); }
   
