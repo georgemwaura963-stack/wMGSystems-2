@@ -143,6 +143,13 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes floatContainer { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes floatSmallBubbles { 0% { transform: scale(0) translateY(0); opacity: 0; } 30% { transform: scale(1) translateY(0); opacity: 1; } 70% { transform: scale(1) translateY(-3px); opacity: 1; } 100% { transform: scale(0) translateY(-8px); opacity: 0; } }
 
+.profile-reminder-pill { position: absolute; top: -50px; left: 125px; background: var(--bg-primary); border: 2.5px solid #f59e0b; color: #f59e0b; font-weight: 900; font-size: 14px; padding: 8px 18px; border-radius: 50px; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25); z-index: 101; cursor: pointer; opacity: 0; pointer-events: none; transform-origin: left center; display: none; white-space: nowrap; -webkit-tap-highlight-color: transparent;}
+.profile-reminder-pill.show { display: block; animation: cartoonBubbleUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; pointer-events: auto; }
+.profile-reminder-pill:active { transform: scale(0.92) !important; transition: 0.1s; }
+.profile-reminder-pill::before { content: ''; position: absolute; top: 50%; left: -8px; transform: translateY(-50%); border-width: 6px 8px 6px 0; border-style: solid; border-color: transparent #f59e0b transparent transparent; }
+.profile-reminder-pill::after { content: ''; position: absolute; top: 50%; left: -4px; transform: translateY(-50%); border-width: 4px 6px 4px 0; border-style: solid; border-color: transparent var(--bg-primary) transparent transparent; }
+@keyframes cartoonBubbleUp { 0% { opacity: 0; transform: scale(0.3) rotate(-10deg); } 50% { opacity: 1; transform: scale(1.05) rotate(2deg); } 70% { transform: scale(0.98) rotate(-1deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+
 .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; padding: 0 16px; }
 .hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0; transform: translateY(40px); }
 .hub-card:active { transform: scale(0.95) !important; transition: 0.2s; }
@@ -224,8 +231,8 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 .network-indicator.offline{background-color:var(--text-tertiary);opacity:0.4; box-shadow:none;}
 
 .step-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 16px; position: relative; z-index: 5;}
-.step { opacity:0.3; pointer-events:none; transition: opacity 0.4s ease; position: relative; z-index: 10;}
-.step.activeStep { opacity:1; pointer-events:auto; animation:bounceIn 0.45s ease; }
+.step { opacity:0.3; pointer-events:none; transition: opacity 0.4s ease, transform 0.4s ease; position: relative; z-index: 10; transform: scale(0.97); }
+.step.activeStep { opacity:1; pointer-events:auto; transform: scale(1); }
 
 .msg{ font-size:13px;font-weight:600;margin-top:8px; min-height:42px; align-items:flex-start; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.3s ease, color 0.3s ease; opacity: 1; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 .msg.success{color:var(--dynamic-primary);font-size:14px} .msg.error{color:var(--error-color)}
@@ -282,8 +289,6 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 #photoZoomContainer { display:none; position:fixed; inset:0; z-index:20000; pointer-events:none; }
 #photoZoomBg { position: absolute; inset:0; }
 #zoomedImage { position: absolute; object-fit: cover; box-shadow: 0 0 0 4px var(--dynamic-primary), 0 25px 60px rgba(0,0,0,0.6); z-index: 20001; cursor: zoom-out; }
-
-.profile-reminder-banner { display:none; width:100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 24px; text-align: left; box-shadow: 0 6px 15px rgba(245, 158, 11, 0.25); position: relative; animation: bounceIn 0.5s ease; }
 </style>
 </head>
 <body class="theme-welcome">
@@ -322,30 +327,27 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <!-- VIEW 2: HUB MENU -->
 <div id="view-menu" class="view-section" style="justify-content: center; min-height: 100vh;">
   <div class="menu-container">
-    <div class="thought-bubble-container" onclick="openProfile()">
-      <div class="bubble-small"></div>
-      <div class="bubble-medium"></div>
-      <div class="bubble-large">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-        <span>Profile</span>
-      </div>
+    <div style="position:relative; width: 100%; max-width: 440px;">
+        <div class="thought-bubble-container" onclick="openProfile()">
+          <div class="bubble-small"></div>
+          <div class="bubble-medium"></div>
+          <div class="bubble-large">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </div>
+        </div>
+
+        <div id="profileReminderPill" class="profile-reminder-pill" onclick="openProfile(); document.getElementById('profileReminderPill').classList.remove('show'); dismissProfileReminder();">
+            Have you updated your info?
+        </div>
     </div>
 
     <div class="hub-logo">STENTOR OPS</div>
     <div class="menu-subtitle">Select a module</div>
     
-    <div id="profileReminderBanner" class="profile-reminder-banner">
-      <div style="font-weight: 900; font-size: 15px; margin-bottom: 4px;">Update Your Profile</div>
-      <div style="font-size: 13px; font-weight: 700; opacity: 0.95; line-height: 1.4;">Please ensure your details are up to date for this month.</div>
-      <div style="display: flex; gap: 8px; margin-top: 12px;">
-         <button onclick="openProfile(); dismissProfileReminder();" style="flex:1; background: rgba(255,255,255,0.25); border: none; color: white; padding: 8px 0; border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer;">Update Now</button>
-         <button onclick="dismissProfileReminder()" style="flex:1; background: transparent; border: 1.5px solid rgba(255,255,255,0.4); color: white; padding: 8px 0; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer;">Not Now</button>
-      </div>
-    </div>
-
     <div class="hub-grid">
       <div class="hub-card solid-panel" onclick="openAttendance()">
         <div class="hc-icon-box hc-alarm">
@@ -373,7 +375,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
   <div class="app-container scrollable solid-panel">
     <h2 style="font-weight:900; color:var(--text-primary); text-align:center; font-size: 18px; margin-bottom: 20px;">PROFILE REGISTRATION</h2>
     
-    <form id="profileForm" onsubmit="reviewProfile(event)">
+    <form id="profileForm">
       <!-- STEP 1 -->
       <div class="section-card" id="p-step1">
         <label class="input-label">ID Number <span class="req-star">*</span></label>
@@ -382,13 +384,13 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         
         <div id="p-step1-fields" style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease; margin-top: 0;">
           <label class="input-label">Full Name <span class="req-star">*</span></label>
-          <input type="text" id="p-name" class="ui-input" required>
+          <input type="text" id="p-name" class="ui-input">
           
           <label class="input-label" style="margin-top: 15px;">Phone Number <span class="req-star">*</span></label>
-          <input type="tel" id="p-phone" class="ui-input" required>
+          <input type="tel" id="p-phone" class="ui-input">
           
           <label class="input-label" style="margin-top: 15px;">Default Branch <span class="req-star">*</span></label>
-          <select id="p-branch" class="ui-select" required onchange="triggerProfileBranchChange()"><option value="">Select Branch</option></select>
+          <select id="p-branch" class="ui-select" onchange="triggerProfileBranchChange()"><option value="">Select Branch</option></select>
 
           <button type="button" class="btn-primary solid" onclick="nextProfileStep(2)" style="margin-top:20px;">Next →</button>
         </div>
@@ -396,11 +398,11 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 
       <!-- STEP 2 -->
       <div class="section-card" id="p-step2" style="display:none;">
-        <label class="input-label">Email Address <span class="req-star">*</span></label><input type="email" id="p-email" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">Alternative Contact <span class="req-star">*</span></label><input type="tel" id="p-altContact" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">Physical Address (Area) <span class="req-star">*</span></label><input type="text" id="p-address" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">Next of Kin Name <span class="req-star">*</span></label><input type="text" id="p-nok" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">Next of Kin Contact <span class="req-star">*</span></label><input type="tel" id="p-nokContact" class="ui-input" required>
+        <label class="input-label">Email Address <span class="req-star">*</span></label><input type="email" id="p-email" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">Alternative Contact <span class="req-star">*</span></label><input type="tel" id="p-altContact" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">Physical Address (Area) <span class="req-star">*</span></label><input type="text" id="p-address" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">Next of Kin Name <span class="req-star">*</span></label><input type="text" id="p-nok" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">Next of Kin Contact <span class="req-star">*</span></label><input type="tel" id="p-nokContact" class="ui-input">
         
         <div style="display:flex; gap:10px; margin-top:20px;">
           <button type="button" class="btn-secondary" onclick="prevProfileStep(1)" style="margin-top:0;">← Back</button>
@@ -410,17 +412,18 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 
       <!-- STEP 3 -->
       <div class="section-card" id="p-step3" style="display:none;">
-        <label class="input-label">Bank Name <span class="req-star">*</span></label><input type="text" id="p-bank" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">Confirm Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc-confirm" class="ui-input" required>
+        <label class="input-label">Bank Name <span class="req-star">*</span></label><input type="text" id="p-bank" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">Confirm Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc-confirm" class="ui-input">
         <div id="p-accMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
-        <label class="input-label" style="margin-top: 15px;">SHA Number <span class="req-star">*</span></label><input type="text" id="p-nssf" class="ui-input" required>
-        <label class="input-label" style="margin-top: 15px;">KRA PIN <span class="req-star">*</span></label><input type="text" id="p-kra" class="ui-input" required style="text-transform:uppercase;">
-        <label class="input-label" style="margin-top: 15px;">Month & Year of Employment <span class="req-star">*</span></label><input type="month" id="p-emp" class="ui-input" required>
+        <label class="input-label" style="margin-top: 15px;">SHA Number <span class="req-star">*</span></label><input type="text" id="p-sha" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">NSSF Number <span class="req-star">*</span></label><input type="text" id="p-nssf" class="ui-input">
+        <label class="input-label" style="margin-top: 15px;">KRA PIN <span class="req-star">*</span></label><input type="text" id="p-kra" class="ui-input" style="text-transform:uppercase;">
+        <label class="input-label" style="margin-top: 15px;">Month & Year of Employment <span class="req-star">*</span></label><input type="month" id="p-emp" class="ui-input">
 
         <div style="display:flex; gap:10px; margin-top:20px;">
           <button type="button" class="btn-secondary" onclick="prevProfileStep(2)" style="margin-top:0;">← Back</button>
-          <button type="submit" class="btn-primary solid" id="profileReviewBtn" style="margin-top:0;">Review Details</button>
+          <button type="button" class="btn-primary solid" id="profileReviewBtn" onclick="reviewProfile(event)" style="margin-top:0;">Review Details</button>
         </div>
       </div>
     </form>
@@ -789,15 +792,22 @@ function checkProfileReminder() {
         }
     }
 
+    const pill = document.getElementById('profileReminderPill');
     if (!updatedThisMonth && reminders.count < 2) {
-        document.getElementById('profileReminderBanner').style.display = 'block';
+        pill.classList.add('show');
+        // Auto dismiss after 10 seconds
+        setTimeout(() => {
+          if (pill.classList.contains('show')) {
+             pill.classList.remove('show');
+             dismissProfileReminder();
+          }
+        }, 10000);
     } else {
-        document.getElementById('profileReminderBanner').style.display = 'none';
+        pill.classList.remove('show');
     }
 }
 
 function dismissProfileReminder() {
-    document.getElementById('profileReminderBanner').style.display = 'none';
     let reminders = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}');
     const currentMonth = new Date().getFullYear() + '-' + new Date().getMonth();
     
@@ -917,11 +927,17 @@ function instantProfileStaffCheck(val) {
   }, 400);
 }
 
-function showStepError(id) { const el = document.getElementById(id); el.style.borderColor = 'var(--error-color)'; setTimeout(() => { el.style.borderColor = ''; }, 2000); }
+function showStepError(id) { 
+  const el = document.getElementById(id); 
+  el.style.borderColor = 'var(--error-color)'; 
+  el.scrollIntoView({behavior: "smooth", block: "center"});
+  setTimeout(() => { el.style.borderColor = ''; }, 2000); 
+}
 
 function validateProfileStep(step) {
     if(step === 1) { const req = ['p-id', 'p-name', 'p-phone', 'p-branch']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
     if(step === 2) { const req = ['p-email', 'p-altContact', 'p-address', 'p-nok', 'p-nokContact']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
+    if(step === 3) { const req = ['p-bank', 'p-acc', 'p-acc-confirm', 'p-sha', 'p-nssf', 'p-kra', 'p-emp']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
     return true;
 }
 
@@ -931,9 +947,16 @@ function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.di
 let pendingProfilePayload = null;
 
 function reviewProfile(e) {
-  e.preventDefault();
+  if(e) e.preventDefault();
+  if(!validateProfileStep(3)) return; // Strict manual validation
+  
   const acc = document.getElementById('p-acc').value, accConfirm = document.getElementById('p-acc-confirm').value;
-  if (acc !== accConfirm) { document.getElementById('p-accMsg').innerHTML = 'Account Numbers do not match!'; document.getElementById('p-accMsg').className = 'msg error'; return; }
+  if (acc !== accConfirm) { 
+      document.getElementById('p-accMsg').innerHTML = 'Account Numbers do not match!'; 
+      document.getElementById('p-accMsg').className = 'msg error'; 
+      showStepError('p-acc-confirm');
+      return; 
+  }
   document.getElementById('p-accMsg').innerHTML = '';
   
   pendingProfilePayload = {
