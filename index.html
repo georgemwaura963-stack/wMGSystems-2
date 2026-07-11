@@ -106,6 +106,8 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
+@keyframes welcomeNudgeAnim { 0% { transform: scale(1); } 20% { transform: scale(1.03) rotate(2deg); } 40% { transform: scale(1.03) rotate(-2deg); } 60% { transform: scale(1.03) rotate(1deg); } 80% { transform: scale(1.03) rotate(-1deg); } 100% { transform: scale(1); } }
+.welcome-title.nudge { animation: welcomeNudgeAnim 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
 .solid-panel { background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 20; }
 
@@ -114,7 +116,7 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 .welcome-top, .welcome-bottom { opacity: 0; transition: opacity 1.2s ease; }
 .welcome-top.show, .welcome-bottom.show { opacity: 1; }
 .welcome-top { position: relative; z-index: 2; width: 100%; text-align: left; }
-.welcome-title { font-size: clamp(60px, 15vw, 90px); font-weight: 900; line-height: 0.95; color: var(--text-primary); margin: 0; letter-spacing: -2px; }
+.welcome-title { font-size: clamp(60px, 15vw, 90px); font-weight: 900; line-height: 0.95; color: var(--text-primary); margin: 0; letter-spacing: -2px; transform-origin: left center;}
 .welcome-cycler { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 20px; z-index: 2;}
 #welcomeMessage { font-size: 32px; font-weight: 900; text-align: center; opacity: 0; line-height: 1.3; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 .welcome-bottom { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; text-align: right; width: 100%; gap: 10px; }
@@ -566,7 +568,12 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <div id="orderConfirmModal" class="modal-overlay">
   <div class="modal-box">
     <h3 id="modalShopName" style="margin:0 0 10px; font-size:24px; font-weight:900; text-transform:uppercase; color: var(--dynamic-primary);"></h3>
-    <p style="font-size: 13px; color: var(--warning-text); margin-bottom: 12px; font-weight: 800; line-height: 1.4;">⚠️ Please keenly confirm your order details before submitting.</p>
+    
+    <div style="background-color: var(--warning-bg); border: 1.5px solid var(--warning-border); color: var(--warning-text); padding: 10px 14px; border-radius: 50px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; text-align: center; width: 100%; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.05); gap: 6px;">
+      <span style="font-size: 18px; line-height: 1;">⚠️</span>
+      <span style="line-height: 1.2;">Please keenly confirm your order details.</span>
+    </div>
+
     <div id="orderSummaryDetails" class="receipt-content"></div>
     <div class="modal-actions-row">
       <button class="btn-modal btn-edit" onclick="closeConfirmModal()">Edit</button>
@@ -645,6 +652,7 @@ function updateThemeColorMeta() {
 if (window.matchMedia) { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta); }
 
 let activeStore = null, currentTerminal = null;
+let lastRenderedAttBranches = "", lastRenderedOrderBranches = "";
 
 // RAM-ONLY MEMORY (Data completely destroyed when browser closes)
 let portalStaff = { chandarana: [], carrefour: [] };
@@ -654,12 +662,22 @@ let branchesCache = { chandarana: [], carrefour: [] };
 document.addEventListener('DOMContentLoaded', function() {
   updateTime(); setInterval(updateTime, 60000); 
   startWelcomeCycler();
+  triggerWelcomeNudge();
   purgeLegacyData(); 
   loadOrderStaffBackground(); 
   fetchPortalDataSilent(); 
   window.addEventListener('online', checkNetworkStatus); 
   window.addEventListener('offline', checkNetworkStatus);
 });
+
+function triggerWelcomeNudge() {
+  const title = document.querySelector('.welcome-title');
+  if (title) {
+      title.classList.remove('nudge');
+      void title.offsetWidth;
+      title.classList.add('nudge');
+  }
+}
 
 function startWelcomeCycler() {
   const centerEl = document.getElementById('welcomeMessage'), topEl = document.getElementById('welcomeTop'), botEl = document.getElementById('welcomeBottom');
@@ -724,8 +742,14 @@ function updateBGLayer(targetLayerId) {
 
 function switchView(viewId) {
   const welcome = document.getElementById('view-welcome');
-  if (viewId === 'view-welcome') { welcome.style.display = 'flex'; welcome.classList.add('active'); } 
-  else { welcome.classList.remove('active'); welcome.style.display = 'none'; }
+  if (viewId === 'view-welcome') { 
+      welcome.style.display = 'flex'; 
+      welcome.classList.add('active'); 
+      triggerWelcomeNudge();
+  } else { 
+      welcome.classList.remove('active'); 
+      welcome.style.display = 'none'; 
+  }
   document.querySelectorAll('.view-section').forEach(v => {
     if (v.id === 'view-welcome') return; 
     if (v.id === viewId) { v.style.display = 'flex'; v.classList.remove('active'); void v.offsetWidth; v.classList.add('active'); } 
@@ -797,6 +821,13 @@ function triggerProfileBranchChange() {
   updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour');
 }
 
+function processProfileStaffMatch(match, fieldsEl, msgEl) {
+  fieldsEl.style.display = 'block'; document.getElementById('p-name').value = match.name; document.getElementById('p-phone').value = match.phone;
+  const branchSel = document.getElementById('p-branch'); let bMatch = Array.from(branchSel.options).find(o => o.value === match.branch); if(bMatch) branchSel.value = match.branch;
+  msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; msgEl.className = 'msg success';
+  triggerProfileBranchChange(); 
+}
+
 let profileCheckTimer;
 function instantProfileStaffCheck(val) {
   clearTimeout(profileCheckTimer);
@@ -807,12 +838,26 @@ function instantProfileStaffCheck(val) {
     let match = orderStaffCache.chandarana?.find(s => s.id === val) || orderStaffCache.carrefour?.find(s => s.id === val);
     
     if (match) {
-      fieldsEl.style.display = 'block'; document.getElementById('p-name').value = match.name; document.getElementById('p-phone').value = match.phone;
-      const branchSel = document.getElementById('p-branch'); let bMatch = Array.from(branchSel.options).find(o => o.value === match.branch); if(bMatch) branchSel.value = match.branch;
-      msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; msgEl.className = 'msg success';
-      triggerProfileBranchChange(); 
+      processProfileStaffMatch(match, fieldsEl, msgEl);
     } else {
-      fieldsEl.style.display = 'none'; msgEl.innerHTML = 'Invalid ID'; msgEl.className = 'msg error';
+      msgEl.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:14px; height:14px; margin-right:6px;"></span><span style="vertical-align:middle;">Locating staff details...</span>'; 
+      msgEl.className = 'msg';
+      fieldsEl.style.display = 'none';
+
+      fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
+      .then(r => r.json()).then(res => {
+         if (document.getElementById('p-id').value.trim() !== val) return;
+         if (res.found) {
+           if (orderStaffCache[res.store]) orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch});
+           processProfileStaffMatch({name: res.name, phone: res.phone, branch: res.branch, store: res.store}, fieldsEl, msgEl);
+         } else {
+           msgEl.innerHTML = 'ID not found in system'; msgEl.className = 'msg error';
+         }
+      }).catch(e => {
+         if (document.getElementById('p-id').value.trim() === val) {
+             msgEl.innerHTML = 'Network Error. Check connection.'; msgEl.className = 'msg error';
+         }
+      });
     }
   }, 400);
 }
@@ -897,18 +942,20 @@ function openOrder() {
   }
 }
 
-function switchTerminalOrder(store) {
-  if (activeStore) { orderStoreState[activeStore].id = document.getElementById('o-id').value; saveOrderState(); }
+function switchTerminalOrder(store, isAutoPreserve = false) {
+  if (activeStore && !isAutoPreserve) { orderStoreState[activeStore].id = document.getElementById('o-id').value; saveOrderState(); }
   activeStore = store; Storage.set('selected_terminal', store);
   document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour'; updateBGLayer(store === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
   document.getElementById('o-btn-chandarana').classList.toggle('active', store === 'chandarana'); document.getElementById('o-btn-carrefour').classList.toggle('active', store === 'carrefour');
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider'); document.getElementById('orderFormInner').style.display = 'block';
   renderDynamicOrderContent(); restoreOrderState();
   
-  let savedUser = JSON.parse(Storage.get('my_order_user') || 'null');
-  let savedId = orderStoreState[store].id || (savedUser ? savedUser.id : '') || ''; 
-  document.getElementById('o-id').value = savedId; 
-  instantOrderStaffCheck(savedId);
+  if (!isAutoPreserve) {
+      let savedUser = JSON.parse(Storage.get('my_order_user') || 'null');
+      let savedId = orderStoreState[store].id || (savedUser ? savedUser.id : '') || ''; 
+      document.getElementById('o-id').value = savedId; 
+      instantOrderStaffCheck(savedId);
+  }
 }
 
 let branchHoldTimer;
@@ -933,7 +980,13 @@ function populateOrderBranches() {
    
    let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
    html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-   sel.innerHTML = html;
+   
+   if (lastRenderedOrderBranches !== html) {
+       const prevVal = sel.value;
+       sel.innerHTML = html;
+       lastRenderedOrderBranches = html;
+       if (prevVal) sel.value = prevVal;
+   }
 }
 
 document.getElementById('o-branch').addEventListener('change', function(e) {
@@ -955,7 +1008,8 @@ function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) 
   if (clockedInStore && clockedInBranch) { targetStore = clockedInStore; targetBranch = clockedInBranch; isAttendanceVerified = true; if (targetStore !== defaultStore || targetBranch !== match.branch) relievedMsg = ' (Auto-detected)'; }
   if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; relievedMsg = ''; }
 
-  if (targetStore !== activeStore) { switchTerminalOrder(targetStore); }
+  // Preserves ID state to flawlessly switch shops dynamically
+  if (targetStore !== activeStore) { switchTerminalOrder(targetStore, true); }
 
   const msgDiv = document.getElementById('o-staffMsg'), nameInp = document.getElementById('o-name'), nameCont = document.getElementById('o-name-container'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
   
@@ -989,7 +1043,9 @@ function instantOrderStaffCheck(val, forcedStore = null, forcedBranch = null) {
         Storage.set('my_order_user', JSON.stringify({id: match.id, name: match.name, phone: match.phone, branch: match.branch, store: defaultStore}));
         processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch); 
       } else { 
-        msgDiv.innerHTML = '<span class="btn-spinner" style="width:14px;height:14px;"></span> Searching...'; msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+        msgDiv.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:14px; height:14px; margin-right:6px;"></span><span style="vertical-align:middle;">Locating staff details...</span>'; 
+        msgDiv.className = 'msg'; nameCont.style.opacity = '0'; expFields.style.display='none'; lockedSec.classList.remove('unlocked');
+        
         fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
         .then(r => r.json()).then(res => {
            if (document.getElementById('o-id').value.trim() !== val) return;
@@ -1137,8 +1193,19 @@ function populateBranches(list) {
   if (!Array.isArray(list)) return;
   const select = document.getElementById('branch'), currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
   const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
-  if (select.innerHTML !== options) { select.innerHTML = options; }
-  if (currentVal) { select.value = currentVal; showSuccess('branchMsg', 'Branch Selected'); } else { clearMsg('branchMsg'); }
+  
+  if (lastRenderedAttBranches !== options) { 
+      select.innerHTML = options; 
+      lastRenderedAttBranches = options;
+  }
+  if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+      if (select.value !== currentVal) {
+         select.value = currentVal;
+         showSuccess('branchMsg', 'Branch Selected');
+      }
+  } else {
+      if(select.value) clearMsg('branchMsg');
+  }
 }
 
 function initAppAtt() {
