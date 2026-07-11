@@ -306,7 +306,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
     <div class="welcome-tagline">your home of fresh juice</div>
     <div class="welcome-statement">drink well live fresh</div>
     
-    <div class="welcome-next-arrow" onclick="goToMenu(event)">
+    <div class="welcome-next-arrow">
       <svg class="thick-arrow-icon" viewBox="0 0 24 24">
         <line x1="5" y1="12" x2="19" y2="12"></line>
         <polyline points="12 5 19 12 12 19"></polyline>
@@ -684,12 +684,12 @@ function startWelcomeCycler() {
   const introPhrases = ["Welcome", "To Stentor", "Operations"], colors = ["#10b981", "#3b82f6", "#8b5cf6"];
   let step = 0, introSkipped = false, introTimeouts = [];
 
+  // Tap ANYWHERE on the welcome screen to skip straight to the menu
   document.getElementById('view-welcome').addEventListener('click', function(e) {
-      if (e.target.closest('.welcome-next-arrow')) return; 
       if (!introSkipped && step < introPhrases.length) {
           introSkipped = true; introTimeouts.forEach(clearTimeout); step = introPhrases.length; centerEl.style.transition = 'none'; startNormalCycle();
       } else {
-          goToMenu(e); // Tap anywhere after intro skips directly to menu
+          goToMenu(e); // Skip directly to menu
       }
   });
 
@@ -1150,21 +1150,9 @@ function processOrder(e) {
   const bottlesChecked = Array.from(document.querySelectorAll('.inp-bottle:checked')).map(el=>el.value);
   const haccpChecked = Array.from(document.querySelectorAll('.inp-haccp:checked')).map(el=>el.value);
 
+  // ONLY strictly prevent completely blank orders.
   if (totalJuices === 0 && freshChecked.length === 0 && bottlesChecked.length === 0 && haccpChecked.length === 0) {
       return alert("You cannot submit a completely blank order.");
-  }
-  
-  if (totalJuices > 0 && freshChecked.length === 0 && bottlesChecked.length === 0 && haccpChecked.length === 0) {
-      return alert("Please select fresh inputs and bottles along with your juices.");
-  }
-
-  if (freshChecked.length > 0) {
-      const hasSugarcane = freshChecked.some(f => f.toLowerCase().includes('sugarcane'));
-      if (!hasSugarcane) return alert("Please select Sugarcane in your fresh inputs.");
-  }
-
-  if (haccpChecked.length > 0 && totalJuices < 4) {
-      return alert("You cannot request HACCP supplies when ordering less than 4 juice bottles.");
   }
 
   const payload = { "SHOP": document.getElementById('o-branch').value, [activeStore==='chandarana'?"FULL NAME":"FULL NAME (2 Names)"]: currentOrderStaffFullname, "ID NO.": document.getElementById('o-id').value, "PHONE NO.": document.getElementById('o-phone').value, "FRESH INPUTS": freshChecked.join(', '), "BOTTLES": bottlesChecked.join(', '), "HACCP SUPPLIES": haccpChecked.join(', '), "NOTES": document.getElementById('o-notes').value };
