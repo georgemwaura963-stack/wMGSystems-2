@@ -8,9 +8,7 @@
 <meta name="theme-color" id="theme-color-meta" content="#ffffff">
 <title>Stentor Operations</title>
 
-<!-- OPTIMIZATION: Added 'defer' so this heavy script doesn't block the UI from loading instantly -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-
 <script>
   function applyInitialTheme() {
     try {
@@ -27,52 +25,32 @@
 
 :root {
   color-scheme: light dark;
-  --bg-primary: #ffffff; 
-  --bg-secondary: #f7f9fa;
+  --bg-primary: #ffffff; --bg-secondary: #f7f9fa;
   --bg-chan-grad: linear-gradient(135deg, #10b981 0%, #047857 100%);
   --bg-carr-grad: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  --glass-bg: rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --text-primary: #111827; 
-  --text-secondary: #4b5563; 
-  --text-tertiary: #9ca3af;
-  --border-color: #e5e7eb; 
-  --input-bg: #f9fafb; 
-  --input-border: #d1d5db;
-  --button-secondary-bg: #eff6ff;
-  --error-color: #ef4444; --warning-bg: #fef2f2; --warning-border: #fecaca; --warning-text: #b91c1c;
-  --label-text: #6b7280;
-  --theme-chan: #10b981; 
-  --theme-carr: #3b82f6; 
-  --theme-chan-light: rgba(16, 185, 129, 0.15);
-  --theme-carr-light: rgba(59, 130, 246, 0.15);
-  --modal-overlay: rgba(0,0,0,0.65); 
-  --dynamic-primary: #0d9488;
-  --dynamic-light: rgba(13, 148, 136, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.88); --glass-border: rgba(255, 255, 255, 0.6);
+  --text-primary: #111827; --text-secondary: #4b5563; --text-tertiary: #9ca3af;
+  --border-color: #e5e7eb; --input-bg: #f9fafb; --input-border: #d1d5db;
+  --button-secondary-bg: #eff6ff; --error-color: #ef4444; 
+  --warning-bg: #fef2f2; --warning-border: #fecaca; --warning-text: #b91c1c;
+  --label-text: #6b7280; --theme-chan: #10b981; --theme-carr: #3b82f6; 
+  --theme-chan-light: rgba(16, 185, 129, 0.15); --theme-carr-light: rgba(59, 130, 246, 0.15);
+  --modal-overlay: rgba(0,0,0,0.65); --dynamic-primary: #0d9488; --dynamic-light: rgba(13, 148, 136, 0.15);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --bg-primary: #1f2937; 
-    --bg-secondary: #111827;
+    --bg-primary: #1f2937; --bg-secondary: #111827;
     --bg-chan-grad: linear-gradient(135deg, #059669 0%, #064e3b 100%);
     --bg-carr-grad: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
-    --glass-bg: rgba(31, 41, 55, 0.88);
-    --glass-border: rgba(75, 85, 99, 0.6);
-    --text-primary: #f9fafb; 
-    --text-secondary: #d1d5db; 
-    --text-tertiary: #9ca3af;
-    --border-color: #4b5563; 
-    --input-bg: #374151; 
-    --input-border: #6b7280;
-    --button-secondary-bg: #1e3a8a;
-    --error-color: #f87171; --warning-bg: #450a0a; --warning-border: #7f1d1d; --warning-text: #fca5a5;
-    --label-text: #9ca3af;
-    --theme-chan: #059669; 
-    --theme-carr: #2563eb; 
-    --theme-chan-light: rgba(5, 150, 105, 0.25);
-    --theme-carr-light: rgba(37, 99, 235, 0.25);
+    --glass-bg: rgba(31, 41, 55, 0.88); --glass-border: rgba(75, 85, 99, 0.6);
+    --text-primary: #f9fafb; --text-secondary: #d1d5db; --text-tertiary: #9ca3af;
+    --border-color: #4b5563; --input-bg: #374151; --input-border: #6b7280;
+    --button-secondary-bg: #1e3a8a; --error-color: #f87171; 
+    --warning-bg: #450a0a; --warning-border: #7f1d1d; --warning-text: #fca5a5;
+    --label-text: #9ca3af; --theme-chan: #059669; --theme-carr: #2563eb; 
+    --theme-chan-light: rgba(5, 150, 105, 0.25); --theme-carr-light: rgba(37, 99, 235, 0.25);
     --modal-overlay: rgba(0,0,0,0.85); 
   }
 }
@@ -90,10 +68,8 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 .bg-layer { position: fixed; inset: 0; z-index: -10; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
 .bg-layer.previous { z-index: -9; opacity: 1; transition: none; }
 .bg-layer.active { z-index: -8; opacity: 1; }
-.layer-welcome { background: var(--bg-secondary); }
-.layer-hub { background: var(--bg-secondary); }
-.layer-chandarana { background: var(--bg-chan-grad); }
-.layer-carrefour { background: var(--bg-carr-grad); }
+.layer-welcome { background: var(--bg-secondary); } .layer-hub { background: var(--bg-secondary); }
+.layer-chandarana { background: var(--bg-chan-grad); } .layer-carrefour { background: var(--bg-carr-grad); }
 
 .ui-input, .ui-select, .pill-btn, .success-tick, .success-tick-circle, .success-tick-check, .chip-span, .section-card, .order-group, .solid-panel, .success-card, .success-badge, #o-id, .order-group-title::after, .chain::before, .network-indicator, .hanging-sign { transition: background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease, opacity 0.4s ease, transform 0.4s ease; }
 .btn-primary, .btn-secondary, .inline-back { transition: background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease, box-shadow 0.6s ease, transform 0.15s ease, opacity 0.2s ease; }
@@ -108,8 +84,10 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
-@keyframes welcomeNudgeAnim { 0% { transform: scale(1); } 30% { transform: scale(1.01) rotate(0.5deg); } 60% { transform: scale(1.005) rotate(-0.5deg); } 100% { transform: scale(1); } }
-.welcome-title.nudge { animation: welcomeNudgeAnim 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+
+/* UPDATED NUDGE ANIMATION (BOUNCE OUTWARD) */
+@keyframes welcomeNudgeAnim { 0% { transform: scale(1); } 30% { transform: scale(1.12); } 50% { transform: scale(1.05); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.welcome-title.nudge { animation: welcomeNudgeAnim 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
 .solid-panel { background-color: var(--glass-bg) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 20; }
 
@@ -200,13 +178,13 @@ body:not(.theme-chandarana):not(.theme-carrefour) .section-card::before, body:no
 .order-group-title::-webkit-details-marker { display: none; }
 .order-group-title::after { content: '+'; font-size: 18px; color: var(--dynamic-primary); font-weight: 400;}
 .order-group[open] .order-group-title::after { content: '-'; transform: rotate(180deg); }
-.order-group-content { padding: 14px; border-top: 1px solid rgba(156, 163, 175, 0.15); }
+.order-group-content { padding: 14px 10px; border-top: 1px solid rgba(156, 163, 175, 0.15); }
 
 /* PERFECTED TABLE BORDERS */
-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; border-left: 1px solid rgba(156, 163, 175, 0.15); border-top: 1px solid rgba(156, 163, 175, 0.15); border-radius: 8px; overflow: hidden; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; border-left: 1px solid rgba(156, 163, 175, 0.15); border-top: 1px solid rgba(156, 163, 175, 0.15); border-radius: 8px; overflow: hidden; margin-left: 2px;}
 th, td { padding: 8px 4px; border-bottom: 1px solid rgba(156, 163, 175, 0.15); border-right: 1px solid rgba(156, 163, 175, 0.15); }
 th { background: transparent; font-weight: 900; font-size: 12px; width: 35%; text-transform: uppercase;}
-th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--glass-bg); z-index: 10; text-align: left; padding-left: 8px; font-weight:800; font-size:11px; border-left: none;}
+th:first-child, td.flavor-name { position: sticky; left: 0; background: var(--glass-bg); z-index: 10; text-align: left; padding-left: 12px; font-weight:800; font-size:11px; border-left: none; box-shadow: 2px 0 4px -2px rgba(0,0,0,0.08);}
 
 .square-input { width: 50px; height: 34px; border-radius: 10px; margin: 0 auto; background: var(--input-bg); border: 2px solid var(--input-border); color: var(--text-tertiary); font-weight: 900; display: flex; align-items: center; justify-content: center; }
 .square-input.has-value { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
@@ -279,6 +257,9 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 .btn-modal:active { transform: scale(0.95); }
 .btn-edit { background: #6b7280; } .btn-save { background: #3b82f6; } .btn-confirm { background: #10b981; }
 
+.branch-item { padding: 12px 14px; background: var(--input-bg); border-radius: 12px; font-size: 13px; font-weight: 800; color: var(--text-secondary); cursor: pointer; border: 1px solid var(--input-border); transition: background 0.2s, color 0.2s; margin-bottom: 6px; }
+.branch-item:active { background: var(--dynamic-primary); color: #fff; border-color: var(--dynamic-primary); }
+
 .profile-summary-item { padding: 10px 12px; border-bottom: 1px solid rgba(156, 163, 175, 0.15); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; -webkit-tap-highlight-color: transparent; }
 .profile-summary-item:last-child { border-bottom: none; }
 .profile-summary-item:active { background-color: var(--dynamic-light); border-radius: 8px; }
@@ -304,22 +285,14 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
   <div class="welcome-top" id="welcomeTop">
     <h1 class="welcome-title">STENTOR<br>ENT<br>LTD.</h1>
   </div>
-  
-  <div class="welcome-cycler">
-    <div id="welcomeMessage">Welcome</div>
-  </div>
-
+  <div class="welcome-cycler"><div id="welcomeMessage">Welcome</div></div>
   <div class="welcome-bottom" id="welcomeBottom">
     <div class="welcome-date" id="welcome-date"></div>
     <div class="welcome-time" id="welcome-time"></div>
     <div class="welcome-tagline">your home of fresh juice</div>
     <div class="welcome-statement">drink well live fresh</div>
-    
     <div class="welcome-next-arrow">
-      <svg class="thick-arrow-icon" viewBox="0 0 24 24">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
-      </svg>
+      <svg class="thick-arrow-icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
     </div>
   </div>
 </div>
@@ -329,42 +302,29 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
   <div class="menu-container">
     <div style="position:relative; width: 100%; max-width: 440px;">
         <div class="thought-bubble-container" onclick="openProfile()">
-          <div class="bubble-small"></div>
-          <div class="bubble-medium"></div>
+          <div class="bubble-small"></div><div class="bubble-medium"></div>
           <div class="bubble-large">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span>Profile</span>
           </div>
         </div>
-
         <div id="profileReminderPill" class="profile-reminder-pill" onclick="openProfile(); document.getElementById('profileReminderPill').classList.remove('show'); dismissProfileReminder();">
             Have you updated your info?
         </div>
     </div>
-
     <div class="hub-logo">STENTOR OPS</div>
     <div class="menu-subtitle">Select a module</div>
-    
     <div class="hub-grid">
       <div class="hub-card solid-panel" onclick="openAttendance()">
-        <div class="hc-icon-box hc-alarm">
-          <svg viewBox="0 0 24 24" width="36" height="36" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2 2"></path><path d="M5 3L2 6"></path><path d="M19 3l3 3"></path></svg>
-        </div>
+        <div class="hc-icon-box hc-alarm"><svg viewBox="0 0 24 24" width="36" height="36" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2 2"></path><path d="M5 3L2 6"></path><path d="M19 3l3 3"></path></svg></div>
         <div class="hc-text">Attendance</div>
       </div>
-      
       <div class="hub-card solid-panel" onclick="openOrder()">
-        <div class="hc-icon-box hc-cart">
-          <svg viewBox="0 0 24 24" width="36" height="36" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-        </div>
+        <div class="hc-icon-box hc-cart"><svg viewBox="0 0 24 24" width="36" height="36" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></div>
         <div class="hc-text">Place Order</div>
       </div>
     </div>
   </div>
-  
   <div class="inline-back-wrapper" style="margin-top: 30px;">
     <div class="inline-back solid-panel" onclick="goToWelcome()">← Welcome</div>
   </div>
@@ -376,41 +336,27 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
     <h2 style="font-weight:900; color:var(--text-primary); text-align:center; font-size: 18px; margin-bottom: 20px;">PROFILE REGISTRATION</h2>
     
     <form id="profileForm">
-      <!-- STEP 1 -->
       <div class="section-card" id="p-step1">
         <label class="input-label">ID Number <span class="req-star">*</span></label>
         <input type="tel" id="p-id" class="ui-input" placeholder="Enter ID to begin" required autocomplete="off" oninput="instantProfileStaffCheck(this.value)">
         <div id="p-staffMsg" class="msg" style="min-height:20px; margin-top:4px;"></div>
         
         <div id="p-step1-fields" style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease; margin-top: 0;">
-          <label class="input-label">Full Name <span class="req-star">*</span></label>
-          <input type="text" id="p-name" class="ui-input">
-          
-          <label class="input-label" style="margin-top: 15px;">Phone Number <span class="req-star">*</span></label>
-          <input type="tel" id="p-phone" class="ui-input">
-          
+          <label class="input-label">Full Name <span class="req-star">*</span></label><input type="text" id="p-name" class="ui-input">
+          <label class="input-label" style="margin-top: 15px;">Phone Number <span class="req-star">*</span></label><input type="tel" id="p-phone" class="ui-input">
           <label class="input-label" style="margin-top: 15px;">Default Branch <span class="req-star">*</span></label>
           <select id="p-branch" class="ui-select" onchange="triggerProfileBranchChange()"><option value="">Select Branch</option></select>
-
           <button type="button" class="btn-primary solid" onclick="nextProfileStep(2)" style="margin-top:20px;">Next →</button>
         </div>
       </div>
-
-      <!-- STEP 2 -->
       <div class="section-card" id="p-step2" style="display:none;">
         <label class="input-label">Email Address <span class="req-star">*</span></label><input type="email" id="p-email" class="ui-input">
         <label class="input-label" style="margin-top: 15px;">Alternative Contact <span class="req-star">*</span></label><input type="tel" id="p-altContact" class="ui-input">
         <label class="input-label" style="margin-top: 15px;">Physical Address (Area) <span class="req-star">*</span></label><input type="text" id="p-address" class="ui-input">
         <label class="input-label" style="margin-top: 15px;">Next of Kin Name <span class="req-star">*</span></label><input type="text" id="p-nok" class="ui-input">
         <label class="input-label" style="margin-top: 15px;">Next of Kin Contact <span class="req-star">*</span></label><input type="tel" id="p-nokContact" class="ui-input">
-        
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button type="button" class="btn-secondary" onclick="prevProfileStep(1)" style="margin-top:0;">← Back</button>
-          <button type="button" class="btn-primary solid" onclick="nextProfileStep(3)" style="margin-top:0;">Next →</button>
-        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;"><button type="button" class="btn-secondary" onclick="prevProfileStep(1)" style="margin-top:0;">← Back</button><button type="button" class="btn-primary solid" onclick="nextProfileStep(3)" style="margin-top:0;">Next →</button></div>
       </div>
-
-      <!-- STEP 3 -->
       <div class="section-card" id="p-step3" style="display:none;">
         <label class="input-label">Bank Name <span class="req-star">*</span></label><input type="text" id="p-bank" class="ui-input">
         <label class="input-label" style="margin-top: 15px;">Account Number <span class="req-star">*</span></label><input type="tel" id="p-acc" class="ui-input">
@@ -420,11 +366,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         <label class="input-label" style="margin-top: 15px;">NSSF Number <span class="req-star">*</span></label><input type="text" id="p-nssf" class="ui-input">
         <label class="input-label" style="margin-top: 15px;">KRA PIN <span class="req-star">*</span></label><input type="text" id="p-kra" class="ui-input" style="text-transform:uppercase;">
         <label class="input-label" style="margin-top: 15px;">Month & Year of Employment <span class="req-star">*</span></label><input type="month" id="p-emp" class="ui-input">
-
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button type="button" class="btn-secondary" onclick="prevProfileStep(2)" style="margin-top:0;">← Back</button>
-          <button type="button" class="btn-primary solid" id="profileReviewBtn" onclick="reviewProfile(event)" style="margin-top:0;">Review Details</button>
-        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;"><button type="button" class="btn-secondary" onclick="prevProfileStep(2)" style="margin-top:0;">← Back</button><button type="button" class="btn-primary solid" id="profileReviewBtn" onclick="reviewProfile(event)" style="margin-top:0;">Review Details</button></div>
       </div>
     </form>
     
@@ -434,10 +376,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
       <button class="btn-secondary" style="margin-top:20px;" onclick="goToMenu()">Return to Menu</button>
     </div>
   </div>
-  
-  <div class="inline-back-wrapper">
-    <div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div>
-  </div>
+  <div class="inline-back-wrapper"><div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div></div>
 </div>
 
 <!-- VIEW 4: ORDERS -->
@@ -486,13 +425,10 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
     <div class="success-screen" id="orderSuccessScreen" style="display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
       <div style="width:80px;height:80px;background:var(--dynamic-primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">✓</div>
       <h2 style="font-weight:900; margin-bottom:8px; color: var(--text-primary);">Order Sent!</h2>
-      <button class="btn-primary solid" style="max-width:200px;" onclick="resetOrderForm()">New Order</button>
+      <button class="btn-primary solid" style="max-width:200px;" onclick="resetOrderForm()">Place Another</button>
     </div>
   </div>
-  
-  <div class="inline-back-wrapper">
-    <div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div>
-  </div>
+  <div class="inline-back-wrapper"><div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div></div>
 </div>
 
 <!-- VIEW 5: ATTENDANCE -->
@@ -516,26 +452,10 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 
       <div id="attMainFormInner" style="display: none; width: 100%;">
         <div class="step-grid">
-          <div id="step1" class="step activeStep">
-            <label class="input-label">Branch</label>
-            <select id="branch" class="ui-select"><option value="">Choose Branch</option></select>
-            <div id="branchMsg" class="msg"></div>
-          </div>
-          <div id="step2" class="step">
-            <label class="input-label">Staff ID</label>
-            <input id="staffID" class="ui-input" type="tel" placeholder="Enter ID" autocomplete="off">
-            <div id="staffMsg" class="msg"></div>
-          </div>
-          <div id="step3" class="step">
-            <label class="input-label">GPS Location</label>
-            <button class="btn-primary solid" onclick="verifyGPS()">Verify</button>
-            <div id="gpsMsg" class="msg"></div>
-          </div>
-          <div id="step4" class="step">
-            <label class="input-label">Identity</label>
-            <button class="btn-primary solid" id="openCameraBtn" onclick="startCamera()">Take Selfie</button>
-            <div id="cameraMsg" class="msg"></div>
-          </div>
+          <div id="step1" class="step activeStep"><label class="input-label">Branch</label><select id="branch" class="ui-select"><option value="">Choose Branch</option></select><div id="branchMsg" class="msg"></div></div>
+          <div id="step2" class="step"><label class="input-label">Staff ID</label><input id="staffID" class="ui-input" type="tel" placeholder="Enter ID" autocomplete="off"><div id="staffMsg" class="msg"></div></div>
+          <div id="step3" class="step"><label class="input-label">GPS Location</label><button class="btn-primary solid" onclick="verifyGPS()">Verify</button><div id="gpsMsg" class="msg"></div></div>
+          <div id="step4" class="step"><label class="input-label">Identity</label><button class="btn-primary solid" id="openCameraBtn" onclick="startCamera()">Take Selfie</button><div id="cameraMsg" class="msg"></div></div>
         </div>
       </div>
 
@@ -544,24 +464,15 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         <div style="display:flex; align-items:center; justify-content:center; margin-bottom:24px;">
           <div class="success-badge" id="successBadge">
             <span id="successBadgeText">CLOCK IN</span>
-            <svg id="successSvg" class="success-tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle id="successTickCircle" class="success-tick-circle" cx="26" cy="26" r="25" />
-              <path id="successTickCheck" class="success-tick-check" fill="none" stroke-width="4" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-            </svg>
+            <svg id="successSvg" class="success-tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle id="successTickCircle" class="success-tick-circle" cx="26" cy="26" r="25" /><path id="successTickCheck" class="success-tick-check" fill="none" stroke-width="4" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
           </div>
         </div>
-        <div class="success-card">
-          <div class="success-name" id="successName"></div>
-          <div class="success-msg" id="successMsg"></div>
-        </div>
+        <div class="success-card"><div class="success-name" id="successName"></div><div class="success-msg" id="successMsg"></div></div>
         <button class="btn-primary solid" onclick="resetAttForm()">← Submit Another</button>
       </div>
     </div>
   </div>
-  
-  <div class="inline-back-wrapper">
-    <div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div>
-  </div>
+  <div class="inline-back-wrapper"><div class="inline-back solid-panel" onclick="goToMenu()">← Menu</div></div>
 </div>
 
 <!-- MODALS & OVERLAYS -->
@@ -569,10 +480,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <div id="videoContainerWrapper">
   <video id="cameraVideo" autoplay playsinline muted></video>
   <div id="cameraFlash" class="camera-flash"></div>
-  <div class="camera-ui">
-    <button class="single-shutter-btn" id="shutterBtn" onclick="capturePhotoNative()"></button>
-  </div>
-  <!-- OPTIMIZATION: Low-End Phone Native Fallback -->
+  <div class="camera-ui"><button class="single-shutter-btn" id="shutterBtn" onclick="capturePhotoNative()"></button></div>
   <input type="file" id="fallbackCameraInput" accept="image/*" capture="user" style="display: none;" onchange="handleFallbackCamera(event)">
 </div>
 
@@ -584,18 +492,30 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <div id="orderConfirmModal" class="modal-overlay">
   <div class="modal-box">
     <h3 id="modalShopName" style="margin:0 0 10px; font-size:24px; font-weight:900; text-transform:uppercase; color: var(--dynamic-primary);"></h3>
-    
-    <div style="background-color: transparent; border: 1.5px solid var(--error-color); color: var(--error-color); padding: 10px 14px; border-radius: 50px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; text-align: center; width: 100%; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.05); gap: 6px;">
-      <span style="font-size: 18px; line-height: 1;">⚠️</span>
-      <span style="line-height: 1.2;">Please keenly confirm your order details.</span>
-    </div>
-
+    <div style="background-color: transparent; border: 1.5px solid var(--error-color); color: var(--error-color); padding: 10px 14px; border-radius: 50px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; text-align: center; width: 100%; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.05); gap: 6px;"><span style="font-size: 18px; line-height: 1;">⚠️</span><span style="line-height: 1.2;">Please keenly confirm your order details.</span></div>
     <div id="orderSummaryDetails" class="receipt-content"></div>
     <div class="modal-actions-row">
-      <button class="btn-modal btn-edit" onclick="closeConfirmModal()">Edit</button>
+      <button class="btn-modal btn-edit" onclick="document.getElementById('orderConfirmModal').style.display='none'">Edit</button>
       <button class="btn-modal btn-save" id="saveReceiptBtn" onclick="downloadReceipt(this)">Save</button>
       <button class="btn-modal btn-confirm" id="confirmSendBtn" onclick="confirmAndSendOrder()">Confirm</button>
     </div>
+  </div>
+</div>
+
+<div id="branchModal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 420px; padding: 22px; text-align: left;">
+    <h3 style="margin: 0 0 16px; font-weight: 900; font-size: 18px; text-align: center;">SELECT SHOP</h3>
+    <div style="display: flex; gap: 16px; max-height: 55vh; overflow-y: auto;">
+      <div style="flex: 1;">
+        <div style="font-weight: 900; color: var(--theme-chan); margin-bottom: 10px; position: sticky; top: 0; background: var(--bg-primary); padding-bottom: 6px; border-bottom: 2px solid var(--theme-chan-light);">CHANDARANA</div>
+        <div id="chanBranchList" style="display: flex; flex-direction: column;"></div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: 900; color: var(--theme-carr); margin-bottom: 10px; position: sticky; top: 0; background: var(--bg-primary); padding-bottom: 6px; border-bottom: 2px solid var(--theme-carr-light);">CARREFOUR</div>
+        <div id="carrBranchList" style="display: flex; flex-direction: column;"></div>
+      </div>
+    </div>
+    <button class="btn-secondary" style="margin-top: 20px; width: 100%;" onclick="document.getElementById('branchModal').style.display = 'none'">Cancel</button>
   </div>
 </div>
 
@@ -626,544 +546,267 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVy7MbFQmI6fVQM0ti52y05c0rc7-KvqUsU3Uq3WXzJ1CEqYP3vF0noIJbNtuL4nOT/exec";
 const API_SECRET = "STENTOR_SECURE_2024"; 
-
-// Utility to prevent malicious code injection (XSS)
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.toString().replace(/[&<>'"]/g, 
-    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
-  );
-}
-
-function getKbSize(base64Str) {
-  return (base64Str.length * (3/4)) / 1024;
-}
-
-var Storage = { 
-  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){ return false; }}, 
-  get:function(k){try{return localStorage.getItem(k)}catch(e){return null}}, 
-  remove:function(k){try{localStorage.removeItem(k)}catch(e){}} 
-};
-
-// CLEANS OUT THE VULNERABLE MASSIVE LISTS BUT LEAVES THE NEW SAFE CACHE
-function purgeLegacyData() {
-  Storage.remove('chandarana_portal_data'); 
-  Storage.remove('carrefour_portal_data'); 
-  Storage.remove('order_staff_chandarana'); 
-  Storage.remove('order_staff_carrefour'); 
-}
+const escapeHTML = (str) => !str ? '' : str.toString().replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t]));
+const getKbSize = (b) => (b.length * (3/4)) / 1024;
+const Storage = { set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}, get:(k)=>{try{return localStorage.getItem(k)}catch(e){return null}}, remove:(k)=>{try{localStorage.removeItem(k)}catch(e){}} };
 
 function updateThemeColorMeta() {
-  var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  var meta = document.getElementById('theme-color-meta');
+  const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches, meta = document.getElementById('theme-color-meta');
   if (!meta) return;
-  if (document.body.className === '' || document.body.className === 'theme-welcome') {
-      meta.setAttribute('content', isDark ? '#111827' : '#ffffff');
-  } else if (document.body.className.includes('chandarana')) {
-      meta.setAttribute('content', isDark ? '#059669' : '#10b981');
-  } else if (document.body.className.includes('carrefour')) {
-      meta.setAttribute('content', isDark ? '#2563eb' : '#3b82f6');
-  }
+  meta.setAttribute('content', document.body.className.includes('chandarana') ? (isDark?'#059669':'#10b981') : (document.body.className.includes('carrefour') ? (isDark?'#2563eb':'#3b82f6') : (isDark?'#111827':'#ffffff')));
 }
 if (window.matchMedia) { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta); }
 
-let activeStore = null, currentTerminal = null;
-let lastRenderedOrderBranches = "";
+let activeStore = null, currentTerminal = null, lastRenderedOrderBranches = "";
+let portalStaff = { chandarana: [], carrefour: [] }, orderStaffCache = { chandarana: [], carrefour: [] }, branchesCache = { chandarana: [], carrefour: [] };
 
-// RAM-ONLY MEMORY (Data completely destroyed when browser closes)
-let portalStaff = { chandarana: [], carrefour: [] };
-let orderStaffCache = { chandarana: [], carrefour: [] };
-let branchesCache = { chandarana: [], carrefour: [] };
-
-document.addEventListener('DOMContentLoaded', function() {
-  updateTime(); setInterval(updateTime, 60000); 
-  startWelcomeCycler();
-  triggerWelcomeNudge();
-  purgeLegacyData(); 
-  loadOrderStaffBackground(); 
-  fetchPortalDataSilent(); 
-  window.addEventListener('online', checkNetworkStatus); 
-  window.addEventListener('offline', checkNetworkStatus);
+document.addEventListener('DOMContentLoaded', () => {
+  updateTime(); setInterval(updateTime, 60000); startWelcomeCycler();
+  const t = document.querySelector('.welcome-title'); if (t) { t.classList.remove('nudge'); void t.offsetWidth; t.classList.add('nudge'); }
+  Storage.remove('chandarana_portal_data'); Storage.remove('carrefour_portal_data'); Storage.remove('order_staff_chandarana'); Storage.remove('order_staff_carrefour'); 
+  loadOrderStaffBackground(); fetchPortalDataSilent(); 
+  window.addEventListener('online', checkNetworkStatus); window.addEventListener('offline', checkNetworkStatus);
 });
 
-function triggerWelcomeNudge() {
-  const title = document.querySelector('.welcome-title');
-  if (title) {
-      title.classList.remove('nudge');
-      void title.offsetWidth;
-      title.classList.add('nudge');
-  }
-}
-
 function startWelcomeCycler() {
-  const centerEl = document.getElementById('welcomeMessage'), topEl = document.getElementById('welcomeTop'), botEl = document.getElementById('welcomeBottom');
-  const introPhrases = ["Welcome", "To Stentor", "Operations"], colors = ["#10b981", "#3b82f6", "#8b5cf6"];
-  let step = 0, introSkipped = false, introTimeouts = [];
+  const cEl = document.getElementById('welcomeMessage'), tEl = document.getElementById('welcomeTop'), bEl = document.getElementById('welcomeBottom');
+  const intro = ["Welcome", "To Stentor", "Operations"], clrs = ["#10b981", "#3b82f6", "#8b5cf6"]; let step = 0, skipped = false, to = [];
 
-  // Tap ANYWHERE on the welcome screen to skip straight to the menu
-  document.getElementById('view-welcome').addEventListener('click', function(e) {
-      if (!introSkipped && step < introPhrases.length) {
-          introSkipped = true; introTimeouts.forEach(clearTimeout); step = introPhrases.length; centerEl.style.transition = 'none'; startNormalCycle();
-      } else {
-          goToMenu(e); // Skip directly to menu
-      }
+  document.getElementById('view-welcome').addEventListener('click', e => {
+      if (!skipped && step < intro.length) { skipped = true; to.forEach(clearTimeout); step = intro.length; cEl.style.transition = 'none'; startNormalCycle(); } 
+      else { goToMenu(e); }
   });
-
-  centerEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease'; centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(0.8)';
+  cEl.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease'; cEl.style.opacity = '0'; cEl.style.transform = 'scale(0.8)';
 
   function nextIntro() {
-      if (introSkipped) return;
-      if (step < introPhrases.length) {
-          centerEl.innerText = introPhrases[step]; centerEl.style.color = colors[step]; centerEl.style.transform = 'scale(0.8)'; centerEl.style.opacity = '0';
-          void centerEl.offsetWidth; 
-          centerEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease'; centerEl.style.opacity = '1'; centerEl.style.transform = 'scale(1.1)';
-          introTimeouts.push(setTimeout(() => {
-              if (introSkipped) return;
-              centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(1.4)'; step++;
-              introTimeouts.push(setTimeout(nextIntro, 300));
-          }, 600));
+      if (skipped) return;
+      if (step < intro.length) {
+          cEl.innerText = intro[step]; cEl.style.color = clrs[step]; cEl.style.transform = 'scale(0.8)'; cEl.style.opacity = '0'; void cEl.offsetWidth; 
+          cEl.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease'; cEl.style.opacity = '1'; cEl.style.transform = 'scale(1.1)';
+          to.push(setTimeout(() => { if(skipped) return; cEl.style.opacity = '0'; cEl.style.transform = 'scale(1.4)'; step++; to.push(setTimeout(nextIntro, 300)); }, 600));
       } else { startNormalCycle(); }
   }
 
   function startNormalCycle() {
-      const phrases = ["Welcome", "Place your order seamlessly", "Clock your attendance with ease", "Update your info conveniently"];
-      const normalColors = ["#10b981", "#3b82f6", "#f59e0b", "#ec4899"]; let i = 0;
-      
-      centerEl.style.transition = 'opacity 0.4s ease, color 0.4s ease, transform 0.4s ease'; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1';
-      topEl.classList.add('show'); botEl.classList.add('show');
-      if (window.welcomeCyclerInterval) clearInterval(window.welcomeCyclerInterval);
-      window.welcomeCyclerInterval = setInterval(() => {
-          centerEl.style.opacity = '0'; centerEl.style.transform = 'scale(0.95)';
-          setTimeout(() => { i = (i + 1) % phrases.length; centerEl.innerText = phrases[i]; centerEl.style.color = normalColors[i]; centerEl.style.transform = 'scale(1)'; centerEl.style.opacity = '1'; }, 400); 
-      }, 1800); // 1.8 seconds cycle
+      const p = ["Welcome", "Place your order seamlessly", "Clock your attendance with ease", "Update your info conveniently"], nc = ["#10b981", "#3b82f6", "#f59e0b", "#ec4899"]; let i = 0;
+      cEl.style.transition = 'opacity 0.4s ease, color 0.4s ease, transform 0.4s ease'; cEl.innerText = p[i]; cEl.style.color = nc[i]; cEl.style.transform = 'scale(1)'; cEl.style.opacity = '1'; tEl.classList.add('show'); bEl.classList.add('show');
+      if (window.welCyclerInt) clearInterval(window.welCyclerInt);
+      window.welCyclerInt = setInterval(() => { cEl.style.opacity = '0'; cEl.style.transform = 'scale(0.95)'; setTimeout(() => { i = (i + 1) % p.length; cEl.innerText = p[i]; cEl.style.color = nc[i]; cEl.style.transform = 'scale(1)'; cEl.style.opacity = '1'; }, 400); }, 1800);
   }
-  introTimeouts.push(setTimeout(nextIntro, 150));
+  to.push(setTimeout(nextIntro, 150));
 }
 
-function updateTime() {
-  const d = new Date(), dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }, timeOptions = { hour: 'numeric', minute: '2-digit' };
-  document.getElementById('welcome-date').innerText = d.toLocaleDateString('en-GB', dateOptions); document.getElementById('welcome-time').innerText = d.toLocaleTimeString('en-US', timeOptions);
-}
-
+function updateTime() { const d = new Date(); document.getElementById('welcome-date').innerText = d.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'}); document.getElementById('welcome-time').innerText = d.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}); }
 function checkNetworkStatus() { const ind = document.getElementById('networkIndicator'); if (ind) navigator.onLine ? ind.classList.remove('offline') : ind.classList.add('offline'); }
 
-function updateBGLayer(targetLayerId) {
-  const layers = document.querySelectorAll('.bg-layer'), target = document.getElementById(targetLayerId);
-  if (target.classList.contains('active')) return;
-  layers.forEach(layer => {
-    if (layer.classList.contains('active')) { layer.classList.remove('active'); layer.classList.add('previous'); } 
-    else if (layer !== target) { layer.classList.remove('previous'); }
-  });
-  target.classList.remove('previous'); void target.offsetWidth; target.classList.add('active');
-  updateThemeColorMeta();
+function updateBGLayer(id) {
+  const layers = document.querySelectorAll('.bg-layer'), target = document.getElementById(id); if (target.classList.contains('active')) return;
+  layers.forEach(l => { if (l.classList.contains('active')) { l.classList.remove('active'); l.classList.add('previous'); } else if (l !== target) l.classList.remove('previous'); });
+  target.classList.remove('previous'); void target.offsetWidth; target.classList.add('active'); updateThemeColorMeta();
 }
 
-function switchView(viewId) {
-  const welcome = document.getElementById('view-welcome');
-  if (viewId === 'view-welcome') { 
-      welcome.style.display = 'flex'; 
-      welcome.classList.add('active'); 
-      triggerWelcomeNudge();
-  } else { 
-      welcome.classList.remove('active'); 
-      welcome.style.display = 'none'; 
-  }
-  document.querySelectorAll('.view-section').forEach(v => {
-    if (v.id === 'view-welcome') return; 
-    if (v.id === viewId) { v.style.display = 'flex'; v.classList.remove('active'); void v.offsetWidth; v.classList.add('active'); } 
-    else { v.classList.remove('active'); v.style.display = 'none'; }
-  });
+function switchView(id) {
+  const w = document.getElementById('view-welcome'); if (id === 'view-welcome') { w.style.display = 'flex'; w.classList.add('active'); const t = document.querySelector('.welcome-title'); if (t) { t.classList.remove('nudge'); void t.offsetWidth; t.classList.add('nudge'); } } else { w.classList.remove('active'); w.style.display = 'none'; }
+  document.querySelectorAll('.view-section').forEach(v => { if (v.id === 'view-welcome') return; if (v.id === id) { v.style.display = 'flex'; v.classList.remove('active'); void v.offsetWidth; v.classList.add('active'); } else { v.classList.remove('active'); v.style.display = 'none'; } });
 }
 
 function checkProfileReminder() {
-    const lastUpdate = Storage.get('profile_last_updated');
-    let reminders = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}');
-    const currentMonth = new Date().getFullYear() + '-' + new Date().getMonth();
-
-    if (reminders.month !== currentMonth) {
-        reminders = { month: currentMonth, count: 0 };
-    }
-
-    let updatedThisMonth = false;
-    if (lastUpdate) {
-        const d = new Date(parseInt(lastUpdate));
-        if (d.getFullYear() + '-' + d.getMonth() === currentMonth) {
-            updatedThisMonth = true;
-        }
-    }
-
-    const pill = document.getElementById('profileReminderPill');
-    if (!updatedThisMonth && reminders.count < 2) {
-        pill.classList.add('show');
-        // Auto dismiss after 10 seconds
-        setTimeout(() => {
-          if (pill.classList.contains('show')) {
-             pill.classList.remove('show');
-             dismissProfileReminder();
-          }
-        }, 10000);
-    } else {
-        pill.classList.remove('show');
-    }
+    const lu = Storage.get('profile_last_updated'); let r = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}'); const cm = new Date().getFullYear() + '-' + new Date().getMonth();
+    if (r.month !== cm) r = { month: cm, count: 0 };
+    let utm = lu && (new Date(parseInt(lu)).getFullYear() + '-' + new Date(parseInt(lu)).getMonth() === cm);
+    const p = document.getElementById('profileReminderPill');
+    if (!utm && r.count < 2) { p.classList.add('show'); setTimeout(() => { if (p.classList.contains('show')) { p.classList.remove('show'); dismissProfileReminder(); } }, 10000); } else { p.classList.remove('show'); }
 }
+function dismissProfileReminder() { let r = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}'); const cm = new Date().getFullYear() + '-' + new Date().getMonth(); if (r.month !== cm) r = { month: cm, count: 1 }; else r.count += 1; Storage.set('profile_reminders', JSON.stringify(r)); }
 
-function dismissProfileReminder() {
-    let reminders = JSON.parse(Storage.get('profile_reminders') || '{"month":"","count":0}');
-    const currentMonth = new Date().getFullYear() + '-' + new Date().getMonth();
-    
-    if (reminders.month !== currentMonth) {
-        reminders = { month: currentMonth, count: 1 };
-    } else {
-        reminders.count += 1;
-    }
-    Storage.set('profile_reminders', JSON.stringify(reminders));
-}
-
-function goToMenu(e) {
-  if (e) { e.stopPropagation(); e.preventDefault(); }
-  if (document.getElementById('view-orders').classList.contains('active') && activeStore) saveOrderState();
-  if (document.getElementById('view-attendance').classList.contains('active')) stopCamera();
-  
-  checkProfileReminder(); // Show banner occasionally
-  updateBGLayer('layerHub'); document.body.className = ''; switchView('view-menu'); 
-}
-
+function goToMenu(e) { if (e) { e.stopPropagation(); e.preventDefault(); } if (document.getElementById('view-orders').classList.contains('active') && activeStore) saveOrderState(); if (document.getElementById('view-attendance').classList.contains('active')) stopCamera(); checkProfileReminder(); updateBGLayer('layerHub'); document.body.className = ''; switchView('view-menu'); }
 function goToWelcome() { updateBGLayer('layerWelcome'); document.body.className = 'theme-welcome'; switchView('view-welcome'); }
+function updatePillSlider(c, s) { setTimeout(() => { const ab = document.querySelector(`#${c} .pill-btn.active`); const sl = document.getElementById(s); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }, 50); }
 
-function updatePillSlider(containerId, sliderId) { setTimeout(() => { const ab = document.querySelector(`#${containerId} .pill-btn.active`); const sl = document.getElementById(sliderId); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }, 50); }
-
-// =====================================
-// DATA FETCHING (SAFE MEMORY)
-// =====================================
 function fetchPortalDataSilent() {
   ['chandarana', 'carrefour'].forEach(term => {
-    fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:'getPortalData', terminal:term, secret: API_SECRET}) })
-    .then(r => r.json()).then(j => { 
-      if(j.ok) { 
-        portalStaff[term] = j.data.staff || [];
-        branchesCache[term] = j.data.branches || [];
-        Storage.set(term + '_branches', JSON.stringify(j.data.branches)); // Only save branches safely
-        if(currentTerminal === term && document.getElementById('view-attendance').classList.contains('active')) {
-          populateBranches(j.data.branches);
-        }
-      } 
-    }).catch(e=>{});
+    fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'getPortalData', terminal:term, secret: API_SECRET}) }).then(r => r.json()).then(j => { 
+      if(j.ok) { portalStaff[term] = j.data.staff || []; branchesCache[term] = j.data.branches || []; Storage.set(term + '_branches', JSON.stringify(j.data.branches)); if(currentTerminal === term && document.getElementById('view-attendance').classList.contains('active')) populateBranches(j.data.branches); } 
+    }).catch(()=>{});
   });
 }
 
 function loadOrderStaffBackground() {
-  fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'getOrderStaff', secret: API_SECRET }) })
-    .then(r => r.json()).then(res => { 
-      if(res.ok) { 
-        orderStaffCache = res.data; 
-      } 
-    }).catch(e => {});
+  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getOrderStaff', secret: API_SECRET }) }).then(r => r.json()).then(res => { if(res.ok) orderStaffCache = res.data; }).catch(()=>{});
 }
 
-// PROFILE REGISTRATION LOGIC
+// PROFILE LOGIC
 function openProfile() {
   switchView('view-profile'); document.body.className = ''; updateBGLayer('layerHub');
   document.getElementById('profileForm').reset(); document.getElementById('p-step1-fields').style.maxHeight = '0'; document.getElementById('p-step1-fields').style.opacity = '0'; document.getElementById('p-step1-fields').style.marginTop = '0'; document.getElementById('p-step1').style.display = 'block'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none'; document.getElementById('p-staffMsg').innerHTML = '';
   
-  const branchSel = document.getElementById('p-branch'); let chanBranches = [], carrBranches = [];
-  try { chanBranches = JSON.parse(Storage.get('chandarana_branches') || '[]').map(b => b[0]); } catch(e) {}
-  try { carrBranches = JSON.parse(Storage.get('carrefour_branches') || '[]').map(b => b[0]); } catch(e) {}
-  
-  let html = `<option value="">Select Branch</option>`;
-  html += `<optgroup label="Chandarana">` + chanBranches.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-  html += `<optgroup label="Carrefour">` + carrBranches.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-  branchSel.innerHTML = html;
-  
+  const bSel = document.getElementById('p-branch'); let cB=[], caB=[];
+  try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
+  bSel.innerHTML = `<option value="">Select Branch</option><optgroup label="Chandarana">` + cB.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour">` + caB.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
 }
 
-function triggerProfileBranchChange() {
-  const sel = document.getElementById('p-branch');
-  if(!sel.value) { document.body.className = ''; updateBGLayer('layerHub'); return; }
-  const opt = sel.options[sel.selectedIndex], isChan = opt.parentNode.label === 'Chandarana';
-  document.body.className = isChan ? 'theme-chandarana' : 'theme-carrefour';
-  updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour');
+function triggerProfileBranchChange() { const s = document.getElementById('p-branch'); if(!s.value) { document.body.className = ''; updateBGLayer('layerHub'); return; } const isChan = s.options[s.selectedIndex].parentNode.label === 'Chandarana'; document.body.className = isChan ? 'theme-chandarana' : 'theme-carrefour'; updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour'); }
+
+function processProfileStaffMatch(m, fEl, msgEl, hasProf) {
+  fEl.style.maxHeight = '500px'; fEl.style.opacity = '1'; fEl.style.marginTop = '15px';
+  if(m.name) document.getElementById('p-name').value = m.name; if(m.phone) document.getElementById('p-phone').value = m.phone;
+  const bSel = document.getElementById('p-branch'); if(Array.from(bSel.options).find(o => o.value === m.branch)) bSel.value = m.branch;
+  msgEl.innerHTML = hasProf ? `<span class="dot"></span> Profile loaded. You can edit your details.` : `<span class="dot"></span> ID valid, please complete your details.`; msgEl.className = 'msg success'; triggerProfileBranchChange(); 
 }
 
-function processProfileStaffMatch(match, fieldsEl, msgEl) {
-  fieldsEl.style.maxHeight = '500px'; fieldsEl.style.opacity = '1'; fieldsEl.style.marginTop = '15px';
-  document.getElementById('p-name').value = match.name; document.getElementById('p-phone').value = match.phone;
-  const branchSel = document.getElementById('p-branch'); let bMatch = Array.from(branchSel.options).find(o => o.value === match.branch); if(bMatch) branchSel.value = match.branch;
-  msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; msgEl.className = 'msg success';
-  triggerProfileBranchChange(); 
-}
-
-let profileCheckTimer;
+let pCheckTimer;
 function instantProfileStaffCheck(val) {
-  clearTimeout(profileCheckTimer);
-  profileCheckTimer = setTimeout(() => {
-    val = val.trim(); const fieldsEl = document.getElementById('p-step1-fields'), msgEl = document.getElementById('p-staffMsg');
-    if (val.length < 2) { fieldsEl.style.maxHeight = '0'; fieldsEl.style.opacity = '0'; fieldsEl.style.marginTop = '0'; msgEl.innerHTML = ''; return; }
+  clearTimeout(pCheckTimer);
+  pCheckTimer = setTimeout(() => {
+    val = val.trim(); const fEl = document.getElementById('p-step1-fields'), msgEl = document.getElementById('p-staffMsg');
+    if (val.length < 2) { fEl.style.maxHeight = '0'; fEl.style.opacity = '0'; fEl.style.marginTop = '0'; msgEl.innerHTML = ''; return; }
     
-    let match = orderStaffCache.chandarana?.find(s => s.id === val) || orderStaffCache.carrefour?.find(s => s.id === val);
-    
-    if (match) {
-      processProfileStaffMatch(match, fieldsEl, msgEl);
-    } else {
-      msgEl.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:14px; height:14px; margin-right:6px;"></span><span style="vertical-align:middle;">Locating staff details...</span>'; 
-      msgEl.className = 'msg';
-      fieldsEl.style.maxHeight = '0'; fieldsEl.style.opacity = '0'; fieldsEl.style.marginTop = '0';
+    msgEl.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:14px; height:14px; margin-right:6px;"></span><span style="vertical-align:middle;">Checking existing profile...</span>'; msgEl.className = 'msg'; fEl.style.maxHeight = '0'; fEl.style.opacity = '0'; fEl.style.marginTop = '0';
 
-      fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
-      .then(r => r.json()).then(res => {
-         if (document.getElementById('p-id').value.trim() !== val) return;
-         if (res.found) {
-           if (orderStaffCache[res.store]) orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch});
-           processProfileStaffMatch({name: res.name, phone: res.phone, branch: res.branch, store: res.store}, fieldsEl, msgEl);
-         } else {
-           msgEl.innerHTML = 'ID not found in system'; msgEl.className = 'msg error';
-         }
-      }).catch(e => {
-         if (document.getElementById('p-id').value.trim() === val) {
-             msgEl.innerHTML = 'Network Error. Check connection.'; msgEl.className = 'msg error';
-         }
-      });
-    }
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) }).then(r => r.json()).then(res => {
+       if (document.getElementById('p-id').value.trim() !== val) return;
+       if (res.found) {
+         if (res.profile) {
+             const p = res.profile; document.getElementById('p-email').value = p.email||''; document.getElementById('p-altContact').value = p.altContact||''; document.getElementById('p-address').value = p.address||''; document.getElementById('p-nok').value = p.nok||''; document.getElementById('p-nokContact').value = p.nokContact||''; document.getElementById('p-bank').value = p.bank||''; document.getElementById('p-acc').value = p.acc||''; document.getElementById('p-acc-confirm').value = p.acc||''; document.getElementById('p-sha').value = p.sha||''; document.getElementById('p-nssf').value = p.nssf||''; document.getElementById('p-kra').value = p.kra||'';
+             if (p.empDate) try { document.getElementById('p-emp').value = new Date(p.empDate).toISOString().slice(0,7); } catch(e){}
+         } else { ['p-email','p-altContact','p-address','p-nok','p-nokContact','p-bank','p-acc','p-acc-confirm','p-sha','p-nssf','p-kra','p-emp'].forEach(id => document.getElementById(id).value = ''); }
+         if (res.name && res.store && orderStaffCache[res.store]) orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch});
+         processProfileStaffMatch({name: res.name || res.profile?.name, phone: res.phone || res.profile?.phone, branch: res.branch || res.profile?.branch, store: res.store}, fEl, msgEl, !!res.profile);
+       } else { msgEl.innerHTML = 'ID not found in system'; msgEl.className = 'msg error'; }
+    }).catch(() => { if (document.getElementById('p-id').value.trim() === val) { msgEl.innerHTML = 'Network Error. Check connection.'; msgEl.className = 'msg error'; } });
   }, 400);
 }
 
-function showStepError(id) { 
-  const el = document.getElementById(id); 
-  el.style.borderColor = 'var(--error-color)'; 
-  el.scrollIntoView({behavior: "smooth", block: "center"});
-  setTimeout(() => { el.style.borderColor = ''; }, 2000); 
-}
+function showStepError(id) { const el = document.getElementById(id); el.style.borderColor = 'var(--error-color)'; el.scrollIntoView({behavior: "smooth", block: "center"}); setTimeout(() => el.style.borderColor = '', 2000); }
+function validateProfileStep(s) { const rq = s===1?['p-id','p-name','p-phone','p-branch']:s===2?['p-email','p-altContact','p-address','p-nok','p-nokContact']:['p-bank','p-acc','p-acc-confirm','p-sha','p-nssf','p-kra','p-emp']; for(let i of rq) if(!document.getElementById(i).value.trim()) { showStepError(i); return false; } return true; }
 
-function validateProfileStep(step) {
-    if(step === 1) { const req = ['p-id', 'p-name', 'p-phone', 'p-branch']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
-    if(step === 2) { const req = ['p-email', 'p-altContact', 'p-address', 'p-nok', 'p-nokContact']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
-    if(step === 3) { const req = ['p-bank', 'p-acc', 'p-acc-confirm', 'p-sha', 'p-nssf', 'p-kra', 'p-emp']; for(let id of req) { if(!document.getElementById(id).value.trim()) { showStepError(id); return false; } } }
-    return true;
-}
+function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.getElementById('p-step' + (n-1)).style.display = 'none'; const ns = document.getElementById('p-step' + n); ns.style.display = 'block'; requestAnimationFrame(() => ns.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'); }
+function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const ps = document.getElementById('p-step' + n); ps.style.display = 'block'; requestAnimationFrame(() => ps.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'); }
 
-function nextProfileStep(n) { if(!validateProfileStep(n-1)) return; document.getElementById('p-step' + (n-1)).style.display = 'none'; const nextStep = document.getElementById('p-step' + n); nextStep.style.display = 'block'; requestAnimationFrame(() => nextStep.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'); }
-function prevProfileStep(n) { document.getElementById('p-step' + (n+1)).style.display = 'none'; const prevStep = document.getElementById('p-step' + n); prevStep.style.display = 'block'; requestAnimationFrame(() => prevStep.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'); }
-
-let pendingProfilePayload = null;
-
+let pPayload = null;
 function reviewProfile(e) {
-  if(e) e.preventDefault();
-  if(!validateProfileStep(3)) return; // Strict manual validation
-  
-  const acc = document.getElementById('p-acc').value, accConfirm = document.getElementById('p-acc-confirm').value;
-  if (acc !== accConfirm) { 
-      document.getElementById('p-accMsg').innerHTML = 'Account Numbers do not match!'; 
-      document.getElementById('p-accMsg').className = 'msg error'; 
-      showStepError('p-acc-confirm');
-      return; 
-  }
+  if(e) e.preventDefault(); if(!validateProfileStep(3)) return; 
+  if (document.getElementById('p-acc').value !== document.getElementById('p-acc-confirm').value) { document.getElementById('p-accMsg').innerHTML = 'Account Numbers do not match!'; document.getElementById('p-accMsg').className = 'msg error'; showStepError('p-acc-confirm'); return; }
   document.getElementById('p-accMsg').innerHTML = '';
   
-  pendingProfilePayload = {
-    id: document.getElementById('p-id').value, name: document.getElementById('p-name').value, phone: document.getElementById('p-phone').value, branch: document.getElementById('p-branch').value, email: document.getElementById('p-email').value,
-    altContact: document.getElementById('p-altContact').value, address: document.getElementById('p-address').value, nok: document.getElementById('p-nok').value, nokContact: document.getElementById('p-nokContact').value, bank: document.getElementById('p-bank').value,
-    acc: acc, sha: document.getElementById('p-sha').value, nssf: document.getElementById('p-nssf').value, kra: document.getElementById('p-kra').value, empDate: document.getElementById('p-emp').value
-  };
-
-  const p = pendingProfilePayload;
-  const makeRow = (label, value, step) => `
-    <div class="profile-summary-item" onclick="editProfileStep(${step})">
-      <div><strong>${label}</strong><span>${escapeHTML(value) || '-'}</span></div><div class="edit-icon">✏️</div>
-    </div>`;
-
-  let html = '';
-  html += makeRow('ID Number', p.id, 1); html += makeRow('Full Name', p.name, 1); html += makeRow('Phone', p.phone, 1); html += makeRow('Default Branch', p.branch, 1);
-  html += makeRow('Email', p.email, 2); html += makeRow('Alt Contact', p.altContact, 2); html += makeRow('Physical Address', p.address, 2); html += makeRow('Next of Kin', p.nok, 2); html += makeRow('NOK Contact', p.nokContact, 2);
-  html += makeRow('Bank Name', p.bank, 3); html += makeRow('Account Number', p.acc, 3); html += makeRow('SHA Number', p.sha, 3); html += makeRow('NSSF Number', p.nssf, 3); html += makeRow('KRA PIN', p.kra, 3); html += makeRow('Emp. Date', p.empDate, 3);
-
-  document.getElementById('profileSummaryDetails').innerHTML = html;
+  pPayload = { id: document.getElementById('p-id').value, name: document.getElementById('p-name').value, phone: document.getElementById('p-phone').value, branch: document.getElementById('p-branch').value, email: document.getElementById('p-email').value, altContact: document.getElementById('p-altContact').value, address: document.getElementById('p-address').value, nok: document.getElementById('p-nok').value, nokContact: document.getElementById('p-nokContact').value, bank: document.getElementById('p-bank').value, acc: document.getElementById('p-acc').value, sha: document.getElementById('p-sha').value, nssf: document.getElementById('p-nssf').value, kra: document.getElementById('p-kra').value, empDate: document.getElementById('p-emp').value };
+  
+  const m = (l, v, s) => `<div class="profile-summary-item" onclick="editProfileStep(${s})"><div><strong>${l}</strong><span>${escapeHTML(v) || '-'}</span></div><div class="edit-icon">✏️</div></div>`;
+  document.getElementById('profileSummaryDetails').innerHTML = m('ID Number',pPayload.id,1)+m('Full Name',pPayload.name,1)+m('Phone',pPayload.phone,1)+m('Default Branch',pPayload.branch,1)+m('Email',pPayload.email,2)+m('Alt Contact',pPayload.altContact,2)+m('Physical Address',pPayload.address,2)+m('Next of Kin',pPayload.nok,2)+m('NOK Contact',pPayload.nokContact,2)+m('Bank Name',pPayload.bank,3)+m('Account Number',pPayload.acc,3)+m('SHA Number',pPayload.sha,3)+m('NSSF Number',pPayload.nssf,3)+m('KRA PIN',pPayload.kra,3)+m('Emp. Date',pPayload.empDate,3);
   document.getElementById('profileConfirmModal').style.display = 'flex';
 }
 
-function editProfileStep(targetStepNum) {
-  document.getElementById('profileConfirmModal').style.display = 'none';
-  document.getElementById('p-step1').style.display = 'none'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none';
-  const targetStep = document.getElementById('p-step' + targetStepNum); targetStep.style.display = 'block'; requestAnimationFrame(() => targetStep.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards');
-}
+function editProfileStep(t) { document.getElementById('profileConfirmModal').style.display = 'none'; [1,2,3].forEach(i => document.getElementById('p-step'+i).style.display='none'); const s = document.getElementById('p-step' + t); s.style.display = 'block'; requestAnimationFrame(() => s.style.animation = 'sectionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'); }
 
 async function confirmAndSendProfile() {
-  const btn = document.getElementById('confirmProfileSendBtn');
-  btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span> Saving...';
-  
-  const payloadToSend = { ...pendingProfilePayload };
-  ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => {
-    if (payloadToSend[k]) payloadToSend[k] = "'" + payloadToSend[k];
-  });
-
+  const b = document.getElementById('confirmProfileSendBtn'); b.disabled = true; b.innerHTML = '<span class="btn-spinner"></span> Saving...';
+  const py = { ...pPayload }; ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => { if (py[k]) py[k] = "'" + py[k]; });
   try {
-    const res = await (await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveProfile', data: payloadToSend, secret: API_SECRET }) })).json();
+    const res = await (await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveProfile', data: py, secret: API_SECRET }) })).json();
     if (!res.ok) throw new Error(res.error);
-    
-    Storage.set('profile_last_updated', Date.now().toString()); // Save marker so we stop bothering them
-
+    Storage.set('profile_last_updated', Date.now().toString()); 
     document.getElementById('profileConfirmModal').style.display = 'none'; document.getElementById('profileForm').style.display = 'none'; document.getElementById('profileSuccess').style.display = 'block'; document.getElementById('profileSuccessText').innerText = "Profile Saved!";
   } catch(err) { alert("Error saving profile: " + err.message); }
-  btn.disabled = false; btn.innerText = 'Submit';
+  b.disabled = false; b.innerText = 'Submit';
 }
 
-// ORDER SYSTEM LOGIC
-let currentOrderStaffFullname = "";
+// ORDER LOGIC
+let curOStaffName = "";
 let orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } };
-let orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
+let oStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
 
 function openOrder() {
   document.getElementById('orderTopBar').style.display = 'flex'; document.getElementById('orderSuccessScreen').style.display = 'none';
-  let savedTerminal = Storage.get('selected_terminal'); switchView('view-orders'); 
-  
-  if (savedTerminal) { switchTerminalOrder(savedTerminal); } 
-  else {
-      activeStore = null; document.body.className = ''; updateBGLayer('layerHub'); document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('o-pill-slider').style.width = '0';
-      document.getElementById('o-btn-chandarana').classList.remove('active'); document.getElementById('o-btn-carrefour').classList.remove('active');
-  }
+  let sT = Storage.get('selected_terminal'); switchView('view-orders'); 
+  if (sT) switchTerminalOrder(sT); else { activeStore = null; document.body.className = ''; updateBGLayer('layerHub'); document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('o-pill-slider').style.width = '0'; document.getElementById('o-btn-chandarana').classList.remove('active'); document.getElementById('o-btn-carrefour').classList.remove('active'); }
 }
 
-function switchTerminalOrder(store, isAutoPreserve = false) {
-  if (activeStore && !isAutoPreserve) { orderStoreState[activeStore].id = document.getElementById('o-id').value; saveOrderState(); }
-  activeStore = store; Storage.set('selected_terminal', store);
-  document.body.className = store === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour'; updateBGLayer(store === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
-  document.getElementById('o-btn-chandarana').classList.toggle('active', store === 'chandarana'); document.getElementById('o-btn-carrefour').classList.toggle('active', store === 'carrefour');
+function switchTerminalOrder(st, isAuto = false) {
+  if (activeStore && !isAuto) { oStoreState[activeStore].id = document.getElementById('o-id').value; saveOrderState(); }
+  activeStore = st; Storage.set('selected_terminal', st);
+  document.body.className = st === 'chandarana' ? 'theme-chandarana' : 'theme-carrefour'; updateBGLayer(st === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
+  document.getElementById('o-btn-chandarana').classList.toggle('active', st === 'chandarana'); document.getElementById('o-btn-carrefour').classList.toggle('active', st === 'carrefour');
   updatePillSlider('o-terminal-wrapper', 'o-pill-slider'); document.getElementById('orderFormInner').style.display = 'block';
   renderDynamicOrderContent(); restoreOrderState();
-  
-  if (!isAutoPreserve) {
-      let savedUser = JSON.parse(Storage.get('my_order_user') || 'null');
-      let savedId = orderStoreState[store].id || (savedUser ? savedUser.id : '') || ''; 
-      document.getElementById('o-id').value = savedId; 
-      instantOrderStaffCheck(savedId);
-  }
+  if (!isAuto) { let sU = JSON.parse(Storage.get('my_order_user') || 'null'); let sid = oStoreState[st].id || (sU ? sU.id : '') || ''; document.getElementById('o-id').value = sid; instantOrderStaffCheck(sid); }
 }
 
-let branchHoldTimer;
-function startBranchHold(e) { if (e.type === 'mousedown' && e.button !== 0) return; branchHoldTimer = setTimeout(() => { unlockBranchSelect(); if(navigator.vibrate) navigator.vibrate(50); }, 600); }
-function cancelBranchHold() { clearTimeout(branchHoldTimer); }
+let bHoldTmr;
+function startBranchHold(e) { if (e.type === 'mousedown' && e.button !== 0) return; bHoldTmr = setTimeout(() => { openBranchModal(); if(navigator.vibrate) navigator.vibrate(50); }, 600); }
+function cancelBranchHold() { clearTimeout(bHoldTmr); }
 
-function lockBranchSelect(isAttendanceVerified) {
-  const sel = document.getElementById('o-branch'), overlay = document.getElementById('o-branch-overlay'), icon = document.getElementById('o-branch-lock-icon');
+function lockBranchSelect() {
+  const sel = document.getElementById('o-branch'), ov = document.getElementById('o-branch-overlay'), ic = document.getElementById('o-branch-lock-icon');
   sel.style.pointerEvents = 'none'; sel.style.appearance = 'none'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900';
-  if (isAttendanceVerified) { 
-      icon.style.display = 'none'; overlay.style.display = 'none'; sel.style.background = 'transparent'; sel.style.borderColor = 'transparent'; 
-  } else { 
-      icon.style.display = 'inline'; icon.innerText = 'Hold to edit'; overlay.style.display = 'block'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)'; 
-  }
-}
-
-function unlockBranchSelect() {
-  const sel = document.getElementById('o-branch'), overlay = document.getElementById('o-branch-overlay'), icon = document.getElementById('o-branch-lock-icon');
-  sel.style.pointerEvents = 'auto'; sel.style.appearance = 'auto'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900'; 
-  overlay.style.display = 'none'; icon.style.display = 'none'; 
+  ov.style.display = 'block'; ic.style.display = 'inline'; ic.innerText = 'Hold to edit';
   sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)';
 }
 
-function populateOrderBranches() {
-   const sel = document.getElementById('o-branch'); let chanBranches = [], carrBranches = [];
-   try { chanBranches = JSON.parse(Storage.get('chandarana_branches') || '[]').map(b => b[0]); } catch(e) {}
-   try { carrBranches = JSON.parse(Storage.get('carrefour_branches') || '[]').map(b => b[0]); } catch(e) {}
-   
-   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-   html += `<optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
-   
-   if (lastRenderedOrderBranches !== html) {
-       const prevVal = sel.value;
-       sel.innerHTML = html;
-       lastRenderedOrderBranches = html;
-       if (prevVal) sel.value = prevVal;
-   }
+function openBranchModal() {
+  let cB = [], caB = []; try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
+  document.getElementById('chanBranchList').innerHTML = cB.map(b => `<div class="branch-item" onclick="selectBranchFromModal('${escapeHTML(b)}', 'chandarana')">${escapeHTML(b)}</div>`).join('');
+  document.getElementById('carrBranchList').innerHTML = caB.map(b => `<div class="branch-item" onclick="selectBranchFromModal('${escapeHTML(b)}', 'carrefour')">${escapeHTML(b)}</div>`).join('');
+  document.getElementById('branchModal').style.display = 'flex';
 }
 
-document.getElementById('o-branch').addEventListener('change', function(e) {
-  const opt = this.options[this.selectedIndex], selectedStore = opt.getAttribute('data-store'), selectedBranch = this.value, currentId = document.getElementById('o-id').value;
-  if (selectedStore && selectedStore !== activeStore) instantOrderStaffCheck(currentId, selectedStore, selectedBranch);
+function selectBranchFromModal(branch, store) {
+  document.getElementById('branchModal').style.display = 'none';
+  const sel = document.getElementById('o-branch'); if(!Array.from(sel.options).some(o=>o.value===branch)){ const o=document.createElement('option'); o.value=branch; o.textContent=branch; o.setAttribute('data-store', store); sel.appendChild(o); } sel.value = branch;
+  instantOrderStaffCheck(document.getElementById('o-id').value, store, branch);
+}
+
+function populateOrderBranches() {
+   const sel = document.getElementById('o-branch'); let cB=[], caB=[];
+   try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
+   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + cB.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + caB.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+   if (lastRenderedOrderBranches !== html) { const p = sel.value; sel.innerHTML = html; lastRenderedOrderBranches = html; if (p) sel.value = p; }
+}
+
+document.getElementById('o-branch').addEventListener('change', function() {
+  const st = this.options[this.selectedIndex].getAttribute('data-store');
+  if (st && st !== activeStore) instantOrderStaffCheck(document.getElementById('o-id').value, st, this.value);
 });
 
-function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) {
-  let isAttendanceVerified = false, targetStore = defaultStore, targetBranch = match.branch, relievedMsg = '';
-  let latestClockInTime = 0, clockedInStore = null, clockedInBranch = null;
+function processStaffMatch(val, m, defSt, frcSt, frcBr) {
+  let tSt = defSt, tBr = m.branch, rMsg = '', lstTime = 0, clkSt = null, clkBr = null;
+  try { const loc = JSON.parse(Storage.get('local_att_state'))||{}; const lM = loc[val]; if(lM && lM.date === new Date().toDateString() && lM.action === 'Clock In'){ clkSt=lM.store; clkBr=lM.branch; lstTime=lM.ts; } } catch(e){}
+  ['chandarana', 'carrefour'].forEach(s => { try { const u = portalStaff[s]?.find(x => x.id === val); if(u && u.lastTime && new Date(u.lastTime).toDateString()===new Date().toDateString() && u.status==='Clock In' && u.lastTime>lstTime) { lstTime=u.lastTime; clkSt=s; clkBr=u.branch; } } catch(e){} });
 
-  // 1. Check local accurate attendance state first
-  try {
-      const localState = JSON.parse(Storage.get('local_att_state')) || {};
-      const myLocal = localState[val];
-      if (myLocal && myLocal.date === new Date().toDateString() && myLocal.action === 'Clock In') {
-          clockedInStore = myLocal.store;
-          clockedInBranch = myLocal.branch;
-          latestClockInTime = myLocal.ts;
-      }
-  } catch(e) {}
+  if (clkSt && clkBr) { tSt=clkSt; tBr=clkBr; if(tSt!==defSt || tBr!==m.branch) rMsg=' (Auto-detected)'; }
+  if (frcBr && frcSt) { tSt=frcSt; tBr=frcBr; rMsg=''; }
 
-  // 2. Check portalStaff background silently fetched (handles cross-device)
-  ['chandarana', 'carrefour'].forEach(store => {
-    try {
-      const s = portalStaff[store]?.find(x => x.id === val);
-      if (s && s.lastTime) { 
-          const d = new Date(s.lastTime), now = new Date(); 
-          if (d.toDateString() === now.toDateString() && s.status === 'Clock In') { 
-              if (s.lastTime > latestClockInTime) { 
-                  latestClockInTime = s.lastTime; clockedInStore = store; clockedInBranch = s.branch; 
-              } 
-          } 
-      }
-    } catch(e) {}
-  });
+  if (tSt !== activeStore) switchTerminalOrder(tSt, true);
 
-  if (clockedInStore && clockedInBranch) { 
-      targetStore = clockedInStore; targetBranch = clockedInBranch; isAttendanceVerified = true; 
-      if (targetStore !== defaultStore || targetBranch !== match.branch) relievedMsg = ' (Auto-detected)'; 
-  }
-  
-  if (forcedBranch && forcedStore) { targetStore = forcedStore; targetBranch = forcedBranch; isAttendanceVerified = false; relievedMsg = ''; }
+  const mD = document.getElementById('o-staffMsg'), nI = document.getElementById('o-name'), nC = document.getElementById('o-name-container'), eF = document.getElementById('o-expanded-fields'), lS = document.getElementById('o-locked-section');
+  curOStaffName = m.name; nI.value = m.name.trim().split(' ').slice(0, 2).join(' ') + (m.name.split(' ').length>2?'...':'');
+  populateOrderBranches(); const sel = document.getElementById('o-branch'); sel.value = tBr;
+  if(sel.value !== tBr) { const o = document.createElement('option'); o.value=tBr; o.textContent=tBr; o.setAttribute('data-store', tSt); sel.appendChild(o); sel.value=tBr; }
 
-  // Preserves ID state to flawlessly switch shops dynamically
-  if (targetStore !== activeStore) { switchTerminalOrder(targetStore, true); }
-
-  const msgDiv = document.getElementById('o-staffMsg'), nameInp = document.getElementById('o-name'), nameCont = document.getElementById('o-name-container'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-  
-  currentOrderStaffFullname = match.name; const parts = match.name.trim().split(' '); nameInp.value = parts.slice(0, 2).join(' ') + (parts.length>2?'...':'');
-  populateOrderBranches(); const sel = document.getElementById('o-branch'); sel.value = targetBranch;
-  if (sel.value !== targetBranch) { const opt = document.createElement('option'); opt.value = targetBranch; opt.textContent = targetBranch; opt.setAttribute('data-store', targetStore); sel.appendChild(opt); sel.value = targetBranch; }
-
-  lockBranchSelect(isAttendanceVerified); document.getElementById('o-phone').value = match.phone || '';
-  nameCont.classList.add('unlocked'); expFields.classList.add('unlocked'); lockedSec.classList.add('unlocked');
-  msgDiv.innerHTML = `<span class="dot"></span> ID Verified${relievedMsg}`; msgDiv.className = 'msg success'; 
+  lockBranchSelect(); document.getElementById('o-phone').value = m.phone || '';
+  nC.classList.add('unlocked'); eF.classList.add('unlocked'); lS.classList.add('unlocked');
+  mD.innerHTML = `<span class="dot"></span> ID Verified${rMsg}`; mD.className = 'msg success'; 
 }
 
-let orderStaffCheckTimer;
-function instantOrderStaffCheck(val, forcedStore = null, forcedBranch = null) {
-  clearTimeout(orderStaffCheckTimer);
-  orderStaffCheckTimer = setTimeout(() => {
-      val = val.trim(); 
-      const msgDiv = document.getElementById('o-staffMsg'), nameCont = document.getElementById('o-name-container'), nameInp = document.getElementById('o-name'), expFields = document.getElementById('o-expanded-fields'), lockedSec = document.getElementById('o-locked-section');
-      if(val.length < 2) { msgDiv.innerHTML = ''; nameInp.value = ''; currentOrderStaffFullname = ''; document.getElementById('o-branch').innerHTML = '<option value="">Select</option>'; document.getElementById('o-phone').value = ''; nameCont.classList.remove('unlocked'); expFields.classList.remove('unlocked'); lockedSec.classList.remove('unlocked'); return; }
+let oCheckTmr;
+function instantOrderStaffCheck(val, frcSt = null, frcBr = null) {
+  clearTimeout(oCheckTmr);
+  oCheckTmr = setTimeout(() => {
+      val = val.trim(); const mD = document.getElementById('o-staffMsg'), nC = document.getElementById('o-name-container'), nI = document.getElementById('o-name'), eF = document.getElementById('o-expanded-fields'), lS = document.getElementById('o-locked-section');
+      if(val.length < 2) { mD.innerHTML = ''; nI.value = ''; curOStaffName = ''; document.getElementById('o-branch').innerHTML = '<option value="">Select</option>'; document.getElementById('o-phone').value = ''; nC.classList.remove('unlocked'); eF.classList.remove('unlocked'); lS.classList.remove('unlocked'); return; }
 
-      let match = orderStaffCache.chandarana?.find(s => s.id === val); let defaultStore = match ? 'chandarana' : null;
-      if (!match) { match = orderStaffCache.carrefour?.find(s => s.id === val); if (match) defaultStore = 'carrefour'; }
+      let m = orderStaffCache.chandarana?.find(s => s.id === val), dSt = m ? 'chandarana' : null;
+      if (!m) { m = orderStaffCache.carrefour?.find(s => s.id === val); if (m) dSt = 'carrefour'; }
+      if (!m) { const mu = JSON.parse(Storage.get('my_order_user')||'null'); if(mu && mu.id===val){ m=mu; dSt=mu.store; } }
       
-      // Memory fallback for instantly verified user
-      if (!match) {
-         const myUser = JSON.parse(Storage.get('my_order_user') || 'null');
-         if (myUser && myUser.id === val) { match = myUser; defaultStore = myUser.store; }
-      }
-      
-      if(match) { 
-        Storage.set('my_order_user', JSON.stringify({id: match.id, name: match.name, phone: match.phone, branch: match.branch, store: defaultStore}));
-        processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch); 
-      } else { 
-        msgDiv.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:14px; height:14px; margin-right:6px;"></span><span style="vertical-align:middle;">Locating staff details...</span>'; 
-        msgDiv.className = 'msg'; nameCont.classList.remove('unlocked'); expFields.classList.remove('unlocked'); lockedSec.classList.remove('unlocked');
-        
-        fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) })
-        .then(r => r.json()).then(res => {
+      if(m) { Storage.set('my_order_user', JSON.stringify({id: m.id, name: m.name, phone: m.phone, branch: m.branch, store: dSt})); processStaffMatch(val, m, dSt, frcSt, frcBr); } 
+      else { 
+        mD.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:14px; height:14px; margin-right:6px;"></span><span style="vertical-align:middle;">Locating staff details...</span>'; mD.className = 'msg'; nC.classList.remove('unlocked'); eF.classList.remove('unlocked'); lS.classList.remove('unlocked');
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchUser', id: val, secret: API_SECRET }) }).then(r => r.json()).then(res => {
            if (document.getElementById('o-id').value.trim() !== val) return;
-           if (res.found) { 
-             Storage.set('my_order_user', JSON.stringify({id: val, name: res.name, phone: res.phone, branch: res.branch, store: res.store}));
-             if(orderStaffCache[res.store]) orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); 
-             processStaffMatch(val, {name: res.name, phone: res.phone, branch: res.branch}, res.store, forcedStore, forcedBranch); 
-           } else { msgDiv.innerHTML = 'Invalid ID'; msgDiv.className = 'msg error'; }
-        }).catch(e => { if (document.getElementById('o-id').value.trim() === val) { msgDiv.innerHTML = 'Network Error'; msgDiv.className = 'msg error'; } });
+           if (res.found) { Storage.set('my_order_user', JSON.stringify({id: val, name: res.name, phone: res.phone, branch: res.branch, store: res.store})); if(orderStaffCache[res.store]) orderStaffCache[res.store].push({id: val, name: res.name, phone: res.phone, branch: res.branch}); processStaffMatch(val, {name: res.name, phone: res.phone, branch: res.branch}, res.store, frcSt, frcBr); } 
+           else { mD.innerHTML = 'Invalid ID'; mD.className = 'msg error'; }
+        }).catch(() => { if (document.getElementById('o-id').value.trim() === val) { mD.innerHTML = 'Network Error'; mD.className = 'msg error'; } });
       }
   }, 400);
 }
@@ -1171,36 +814,29 @@ function instantOrderStaffCheck(val, forcedStore = null, forcedBranch = null) {
 const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
 
 function handleJuiceTouch(e, step) {
-  const el = e.currentTarget;
-  if (e.type === 'touchmove') { el.hasScrolled = true; clearTimeout(el.pressTimer); return; }
+  const el = e.currentTarget; if (e.type === 'touchmove') { el.hs = true; clearTimeout(el.pT); return; }
   if (e.type === 'touchstart' || e.type === 'mousedown') {
-    if (e.type === 'touchstart') el.ignoreMouse = true; if (e.type === 'mousedown' && el.ignoreMouse) return;
-    el.hasScrolled = false; el.isLong = false; clearTimeout(el.pressTimer);
-    el.pressTimer = setTimeout(() => { el.isLong = true; if(navigator.vibrate) navigator.vibrate(50); el.setAttribute('data-val', "0"); el.innerText = '-'; el.classList.remove('has-value'); }, 400);
+    if (e.type === 'touchstart') el.iM = true; if (e.type === 'mousedown' && el.iM) return;
+    el.hs = false; el.iL = false; clearTimeout(el.pT);
+    el.pT = setTimeout(() => { el.iL = true; if(navigator.vibrate) navigator.vibrate(50); el.setAttribute('data-val', "0"); el.innerText = '-'; el.classList.remove('has-value'); }, 400);
   } else if (e.type === 'touchend' || e.type === 'mouseup') {
-    if (e.type === 'mouseup' && el.ignoreMouse) { setTimeout(() => el.ignoreMouse = false, 300); return; }
-    clearTimeout(el.pressTimer); if (el.hasScrolled) return; if (e.cancelable && e.type === 'touchend') e.preventDefault();
-    if(!el.isLong) {
-      let currentVal = parseInt(el.getAttribute('data-val')) || 0; currentVal += step; if(currentVal > 60) currentVal = 0;
-      el.setAttribute('data-val', currentVal); el.innerText = currentVal === 0 ? '-' : currentVal; el.classList.toggle('has-value', currentVal > 0);
-      const flavor = el.getAttribute('data-flavor'), vol = el.getAttribute('data-vol'), otherVol = vol === '5L' ? '3L' : '5L';
-      const otherEl = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="${otherVol}"]`);
-      if (currentVal > 0 && otherEl && parseInt(otherEl.getAttribute('data-val')) > 0) { otherEl.setAttribute('data-val', "0"); otherEl.innerText = '-'; otherEl.classList.remove('has-value'); }
+    if (e.type === 'mouseup' && el.iM) { setTimeout(() => el.iM = false, 300); return; }
+    clearTimeout(el.pT); if (el.hs) return; if (e.cancelable && e.type === 'touchend') e.preventDefault();
+    if(!el.iL) {
+      let v = parseInt(el.getAttribute('data-val')) || 0; v += step; if(v > 60) v = 0;
+      el.setAttribute('data-val', v); el.innerText = v === 0 ? '-' : v; el.classList.toggle('has-value', v > 0);
+      const fl = el.getAttribute('data-flavor'), vo = el.getAttribute('data-vol'), ov = vo === '5L' ? '3L' : '5L', oe = document.querySelector(`.juice-input[data-flavor="${fl}"][data-vol="${ov}"]`);
+      if (v > 0 && oe && parseInt(oe.getAttribute('data-val')) > 0) { oe.setAttribute('data-val', "0"); oe.innerText = '-'; oe.classList.remove('has-value'); }
     }
-  } else { clearTimeout(el.pressTimer); }
+  } else { clearTimeout(el.pT); }
 }
 
 function renderDynamicOrderContent() {
   if (!activeStore) return;
-  let html = `<details class="order-group"><summary class="order-group-title">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none;"><div style="overflow-x:auto;"><table><thead><tr><th>Flavor</th><th>5 Litres</th><th>3 Litres</th></tr></thead><tbody>`;
-  JUICES[activeStore].forEach(flavor => { 
-    html += `<tr><td class="flavor-name">${flavor}</td>`; 
-    ["5L", "3L"].forEach(v => { html += `<td><div class="square-input juice-input" data-flavor="${flavor}" data-vol="${v}" data-val="0" ontouchstart="handleJuiceTouch(event, ${parseInt(v)})" ontouchmove="handleJuiceTouch(event, 0)" ontouchend="handleJuiceTouch(event, ${parseInt(v)})" ontouchcancel="handleJuiceTouch(event, 0)" onmousedown="handleJuiceTouch(event, ${parseInt(v)})" onmouseup="handleJuiceTouch(event, ${parseInt(v)})" onmouseleave="handleJuiceTouch(event, 0)">-</div></td>`; }); 
-    html += `</tr>`; 
-  }); 
-  html += `</tbody></table></div><div style="font-size:11px; color:var(--text-tertiary); text-align:center; margin:12px 0 8px; font-weight: 800;">Tap and hold a box to delete selection</div></div></details>`;
-  html += `<details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
-  if(activeStore === 'chandarana') { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label><label class="chip-label"><input type="radio" name="sg" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label><label class="chip-label"><input type="radio" name="sg" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`; } else { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`; }
+  let html = `<details class="order-group"><summary class="order-group-title">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none;"><div style="overflow-x:auto; padding-left:2px;"><table><thead><tr><th>Flavor</th><th>5 Litres</th><th>3 Litres</th></tr></thead><tbody>`;
+  JUICES[activeStore].forEach(f => { html += `<tr><td class="flavor-name">${f}</td>`; ["5L", "3L"].forEach(v => { html += `<td><div class="square-input juice-input" data-flavor="${f}" data-vol="${v}" data-val="0" ontouchstart="handleJuiceTouch(event, ${parseInt(v)})" ontouchmove="handleJuiceTouch(event, 0)" ontouchend="handleJuiceTouch(event, ${parseInt(v)})" ontouchcancel="handleJuiceTouch(event, 0)" onmousedown="handleJuiceTouch(event, ${parseInt(v)})" onmouseup="handleJuiceTouch(event, ${parseInt(v)})" onmouseleave="handleJuiceTouch(event, 0)">-</div></td>`; }); html += `</tr>`; }); 
+  html += `</tbody></table></div><div style="font-size:11px; color:var(--text-tertiary); text-align:center; margin:12px 0 8px; font-weight: 800;">Tap and hold a box to delete selection</div></div></details><details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
+  if(activeStore === 'chandarana') { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`; } else { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`; }
   html += `</div></div></details><details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group"><label class="chip-label"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label><label class="chip-label"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
   if(activeStore === 'carrefour') html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
   html += `</div></div></details><details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group"><label class="chip-label"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
@@ -1208,396 +844,219 @@ function renderDynamicOrderContent() {
   html += `</div></div></details>`; document.getElementById('dynamicOrderContent').innerHTML = html;
 }
 
-function saveOrderState() { if(!activeStore) return; const s = orderState[activeStore]; s.juices={}; document.querySelectorAll('.juice-input').forEach(el => { s.juices[`${el.getAttribute('data-flavor')}_${el.getAttribute('data-vol')}`] = el.getAttribute('data-val'); }); s.fresh = Array.from(document.querySelectorAll('.inp-fresh')).map(el => ({val: el.value, checked: el.checked})); s.bottles = Array.from(document.querySelectorAll('.inp-bottle')).map(el => ({val: el.value, checked: el.checked})); s.haccp = Array.from(document.querySelectorAll('.inp-haccp')).map(el => ({val: el.value, checked: el.checked})); }
-function restoreOrderState() { if(!activeStore) return; const s = orderState[activeStore]; Object.keys(s.juices).forEach(key => { const parts = key.split('_'), el = document.querySelector(`.juice-input[data-flavor="${parts[0]}"][data-vol="${parts[1]}"]`); if(el) { el.setAttribute('data-val', s.juices[key]); el.innerText = s.juices[key] === '0' ? '-' : s.juices[key]; el.classList.toggle('has-value', s.juices[key] > 0); } }); s.fresh.forEach(item => { const el = document.querySelector(`.inp-fresh[value="${item.val}"]`); if(el) el.checked = item.checked; }); s.bottles.forEach(item => { const el = document.querySelector(`.inp-bottle[value="${item.val}"]`); if(el) el.checked = item.checked; }); s.haccp.forEach(item => { const el = document.querySelector(`.inp-haccp[value="${item.val}"]`); if(el) el.checked = item.checked; }); }
+function saveOrderState() { if(!activeStore) return; const s = orderState[activeStore]; s.juices={}; document.querySelectorAll('.juice-input').forEach(e => s.juices[`${e.getAttribute('data-flavor')}_${e.getAttribute('data-vol')}`] = e.getAttribute('data-val')); s.fresh = Array.from(document.querySelectorAll('.inp-fresh')).map(e => ({val: e.value, checked: e.checked})); s.bottles = Array.from(document.querySelectorAll('.inp-bottle')).map(e => ({val: e.value, checked: e.checked})); s.haccp = Array.from(document.querySelectorAll('.inp-haccp')).map(e => ({val: e.value, checked: e.checked})); }
+function restoreOrderState() { if(!activeStore) return; const s = orderState[activeStore]; Object.keys(s.juices).forEach(k => { const p = k.split('_'), e = document.querySelector(`.juice-input[data-flavor="${p[0]}"][data-vol="${p[1]}"]`); if(e) { e.setAttribute('data-val', s.juices[k]); e.innerText = s.juices[k] === '0' ? '-' : s.juices[k]; e.classList.toggle('has-value', s.juices[k] > 0); } }); s.fresh.forEach(i => { const e = document.querySelector(`.inp-fresh[value="${i.val}"]`); if(e) e.checked = i.checked; }); s.bottles.forEach(i => { const e = document.querySelector(`.inp-bottle[value="${i.val}"]`); if(e) e.checked = i.checked; }); s.haccp.forEach(i => { const e = document.querySelector(`.inp-haccp[value="${i.val}"]`); if(e) e.checked = i.checked; }); }
 
 function resetOrderForm() {
-  document.getElementById('o-id').value = ''; document.getElementById('o-name').value = ''; document.getElementById('o-phone').value = ''; document.getElementById('o-notes').value = ''; document.getElementById('o-name-container').classList.remove('unlocked'); document.getElementById('o-expanded-fields').classList.remove('unlocked'); document.getElementById('o-locked-section').classList.remove('unlocked'); document.getElementById('o-staffMsg').innerHTML = '';
-  document.getElementById('orderSuccessScreen').style.display = 'none'; document.getElementById('orderFormInner').style.display = 'block'; document.getElementById('orderTopBar').style.display = 'flex';
+  document.getElementById('o-notes').value = ''; document.getElementById('orderSuccessScreen').style.display = 'none'; document.getElementById('orderFormInner').style.display = 'block'; document.getElementById('orderTopBar').style.display = 'flex';
   orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } }; renderDynamicOrderContent();
 }
 
-let pendingOrderPayload = null;
+let oPayload = null;
 function processOrder(e) {
   e.preventDefault(); if(!document.getElementById('o-name').value) return alert("Valid Staff ID required.");
   
-  // Custom Form Validations Engine
-  let totalJuices = 0;
-  document.querySelectorAll('.juice-input').forEach(el => { totalJuices += parseInt(el.getAttribute('data-val') || 0); });
-  const freshChecked = Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el=>el.value);
-  const bottlesChecked = Array.from(document.querySelectorAll('.inp-bottle:checked')).map(el=>el.value);
-  const haccpChecked = Array.from(document.querySelectorAll('.inp-haccp:checked')).map(el=>el.value);
+  let tJ = 0; document.querySelectorAll('.juice-input').forEach(e => tJ += parseInt(e.getAttribute('data-val') || 0));
+  const fC = Array.from(document.querySelectorAll('.inp-fresh:checked')).map(e=>e.value), bC = Array.from(document.querySelectorAll('.inp-bottle:checked')).map(e=>e.value), hC = Array.from(document.querySelectorAll('.inp-haccp:checked')).map(e=>e.value);
+  const hS = fC.some(f => f.toLowerCase().includes('sugarcane')), hL = fC.some(f => f.toLowerCase().includes('lime') || f.toLowerCase().includes('ginger')), hB = bC.length > 0, hH = hC.length > 0, hN = document.getElementById('o-notes').value.trim().length > 0;
 
-  const hasSugarcane = freshChecked.some(f => f.toLowerCase().includes('sugarcane'));
-  const hasLimeOrGinger = freshChecked.some(f => f.toLowerCase().includes('lime') || f.toLowerCase().includes('ginger'));
-  const hasBottles = bottlesChecked.length > 0;
-  const hasHaccp = haccpChecked.length > 0;
+  const cH = new Date().getHours(); if (cH >= 6 && cH < 19) return alert("Orders can only be placed between 7:00 PM and midnight.");
+  if (tJ === 0 && fC.length === 0 && !hB && !hH) return alert("You cannot submit a completely blank order.");
+  if (tJ === 0 && fC.length === 0 && !hB && hH) return alert("You cannot place an order containing ONLY HACCP supplies.");
+  if (tJ === 0 && !hB && !hS && hL) return alert("You cannot place an order containing ONLY Lime or Ginger as stand-alone items.");
+  if (tJ > 0 && tJ < 3 && !hS && !hB && !hN) return alert("Orders with less than 3 juice bottles must be paired with either Sugarcane, empty Bottles, or Notes.");
 
-  // 1. Time Restriction (Allowed only 19:00 PM to 05:59 AM)
-  const currentHour = new Date().getHours();
-  if (currentHour >= 6 && currentHour < 19) {
-      return alert("Orders can only be placed between 7:00 PM and midnight.");
-  }
-
-  // 2. Completely blank order
-  if (totalJuices === 0 && freshChecked.length === 0 && !hasBottles && !hasHaccp) {
-      return alert("You cannot submit a completely blank order.");
-  }
-
-  // 3. ONLY HACCP items
-  if (totalJuices === 0 && freshChecked.length === 0 && !hasBottles && hasHaccp) {
-      return alert("You cannot place an order containing ONLY HACCP supplies.");
-  }
-
-  // 4. ONLY Lime or Ginger
-  if (totalJuices === 0 && !hasBottles && !hasSugarcane && hasLimeOrGinger) {
-      return alert("You cannot place an order containing ONLY Lime or Ginger as stand-alone items.");
-  }
-
-  // 5. Less than 3 juices rule
-  if (totalJuices > 0 && totalJuices < 3 && !hasSugarcane && !hasBottles) {
-      return alert("Orders with less than 3 juice bottles must be paired with either Sugarcane or empty Bottles.");
-  }
-
-  const payload = { "SHOP": document.getElementById('o-branch').value, [activeStore==='chandarana'?"FULL NAME":"FULL NAME (2 Names)"]: currentOrderStaffFullname, "ID NO.": document.getElementById('o-id').value, "PHONE NO.": document.getElementById('o-phone').value, "FRESH INPUTS": freshChecked.join(', '), "BOTTLES": bottlesChecked.join(', '), "HACCP SUPPLIES": haccpChecked.join(', '), "NOTES": document.getElementById('o-notes').value };
+  const p = { "SHOP": document.getElementById('o-branch').value, [activeStore==='chandarana'?"FULL NAME":"FULL NAME (2 Names)"]: curOStaffName, "ID NO.": document.getElementById('o-id').value, "PHONE NO.": document.getElementById('o-phone').value, "FRESH INPUTS": fC.join(', '), "BOTTLES": bC.join(', '), "HACCP SUPPLIES": hC.join(', '), "NOTES": document.getElementById('o-notes').value };
   
-  let html = `<div class="receipt-header">STENTOR ORDER</div><p style="margin-bottom:6px;"><strong>Shop:</strong> ${escapeHTML(payload["SHOP"])}</p><p style="margin-bottom:6px;"><strong>Staff:</strong> ${escapeHTML(currentOrderStaffFullname)} (${escapeHTML(payload["ID NO."])})</p><p style="margin-bottom:6px;"><strong>Phone:</strong> ${escapeHTML(payload["PHONE NO."])}</p>`;
-  let hasJuices = false; let juiceHtml = `<div style="margin-top:12px; padding-top:12px; border-top:2px solid var(--dynamic-primary);"><strong style="color:var(--dynamic-primary);">JUICES</strong><ul style="margin:8px 0 0 20px; padding:0;">`;
+  let ht = `<div class="receipt-header">STENTOR ORDER</div><p style="margin-bottom:6px;"><strong>Shop:</strong> ${escapeHTML(p["SHOP"])}</p><p style="margin-bottom:6px;"><strong>Staff:</strong> ${escapeHTML(curOStaffName)} (${escapeHTML(p["ID NO."])})</p><p style="margin-bottom:6px;"><strong>Phone:</strong> ${escapeHTML(p["PHONE NO."])}</p>`;
+  let hJ = false, jHt = `<div style="margin-top:12px; padding-top:12px; border-top:2px solid var(--dynamic-primary);"><strong style="color:var(--dynamic-primary);">JUICES</strong><ul style="margin:8px 0 0 20px; padding:0;">`;
   
-  JUICES[activeStore].forEach(flavor => { 
-    let flavorKey = flavor; if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(flavor)) { flavorKey = activeStore === 'chandarana' ? `${flavor} ` : flavor; } 
-    let val5 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val') || "0"; let val3 = document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val') || "0"; let qty = val5 !== "0" ? val5 : (val3 !== "0" ? val3 : "0"); 
-    
-    if(qty !== "0") { payload[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${flavorKey}]`] = qty + " Litres"; hasJuices = true; juiceHtml += `<li style="margin-bottom:4px;">${flavor} - ${qty} L</li>`; } 
-  });
-  juiceHtml += `</ul></div>`; if(hasJuices) html += juiceHtml;
+  JUICES[activeStore].forEach(f => { 
+    let fk = f; if (["TREE TOMATO", "HIBISCUS", "TAMARIND", "BEETROOT", "TANGERINE", "CARROT"].includes(f)) fk = activeStore === 'chandarana' ? `${f} ` : f;
+    let v5 = document.querySelector(`.juice-input[data-flavor="${f}"][data-vol="5L"]`)?.getAttribute('data-val') || "0", v3 = document.querySelector(`.juice-input[data-flavor="${f}"][data-vol="3L"]`)?.getAttribute('data-val') || "0", q = v5 !== "0" ? v5 : (v3 !== "0" ? v3 : "0"); 
+    if(q !== "0") { p[(activeStore==='chandarana'?"JUICE (5 LITRES/3 LITRES)":"JUICE (5 ITRES / 3 LITRES)") + ` [${fk}]`] = q + " Litres"; hJ = true; jHt += `<li style="margin-bottom:4px;">${f} - ${q} L</li>`; } 
+  }); jHt += `</ul></div>`; if(hJ) ht += jHt;
 
-  function formatList(title, commaStr) { if(!commaStr) return ''; let items = commaStr.split(',').map(s => s.trim()).filter(Boolean); return `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156, 163, 175, 0.15);"><strong style="color:var(--dynamic-primary);">${title}</strong><ul style="margin:8px 0 0 20px; padding:0;">` + items.map(i => `<li style="margin-bottom:4px;">${escapeHTML(i)}</li>`).join('') + `</ul></div>`; }
+  const fL = (t, c) => { if(!c) return ''; return `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156,163,175,0.15);"><strong style="color:var(--dynamic-primary);">${t}</strong><ul style="margin:8px 0 0 20px; padding:0;">` + c.split(',').map(s=>s.trim()).filter(Boolean).map(i => `<li style="margin-bottom:4px;">${escapeHTML(i)}</li>`).join('') + `</ul></div>`; }
 
-  if(payload["FRESH INPUTS"]) html += formatList("FRESH INPUTS", payload["FRESH INPUTS"]);
-  if(payload["BOTTLES"]) html += formatList("BOTTLES", payload["BOTTLES"]);
-  if(payload["HACCP SUPPLIES"]) html += formatList("HACCP SUPPLIES", payload["HACCP SUPPLIES"]);
-  if(payload["NOTES"]) html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156, 163, 175, 0.15);"><strong style="color:var(--dynamic-primary);">NOTES</strong><br>${escapeHTML(payload["NOTES"])}</div>`;
+  if(p["FRESH INPUTS"]) ht += fL("FRESH INPUTS", p["FRESH INPUTS"]); if(p["BOTTLES"]) ht += fL("BOTTLES", p["BOTTLES"]); if(p["HACCP SUPPLIES"]) ht += fL("HACCP SUPPLIES", p["HACCP SUPPLIES"]); if(p["NOTES"]) ht += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156,163,175,0.15);"><strong style="color:var(--dynamic-primary);">NOTES</strong><br>${escapeHTML(p["NOTES"])}</div>`;
 
-  pendingOrderPayload = payload; document.getElementById('modalShopName').innerText = activeStore.toUpperCase(); document.getElementById('orderSummaryDetails').innerHTML = html; document.getElementById('orderConfirmModal').style.display = 'flex';
+  oPayload = p; document.getElementById('modalShopName').innerText = activeStore.toUpperCase(); document.getElementById('orderSummaryDetails').innerHTML = ht; document.getElementById('orderConfirmModal').style.display = 'flex';
 }
 
-function closeConfirmModal() { document.getElementById('orderConfirmModal').style.display = 'none'; }
-
-function downloadReceipt(btn) {
-  const oldText = btn.innerHTML; btn.innerHTML = 'Wait...'; btn.disabled = true; const content = document.getElementById('orderSummaryDetails');
+function downloadReceipt(b) {
+  const oT = b.innerHTML; b.innerHTML = 'Wait...'; b.disabled = true; const c = document.getElementById('orderSummaryDetails');
   if (window.html2canvas) {
-      const tempDiv = document.createElement('div'); tempDiv.style.width = '600px'; tempDiv.style.padding = '30px'; tempDiv.style.background = '#ffffff'; tempDiv.style.color = '#111827'; tempDiv.style.fontFamily = 'Nunito, sans-serif';
-      const clone = content.cloneNode(true); clone.style.boxShadow = 'none'; clone.style.border = '2px solid #e5e7eb'; clone.style.margin = '0'; clone.style.fontSize = '16px'; clone.style.borderRadius = '16px'; clone.style.padding = '24px'; clone.style.maxHeight = 'none'; clone.style.overflow = 'visible';
-      const title = document.createElement('h2'); title.innerText = activeStore.toUpperCase() + ' ORDER'; title.style.textAlign = 'center'; title.style.marginBottom = '20px'; title.style.color = activeStore === 'chandarana' ? '#10b981' : '#3b82f6';
-      tempDiv.appendChild(title); tempDiv.appendChild(clone); document.body.appendChild(tempDiv); tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px';
+      const d = document.createElement('div'); d.style.cssText = 'width:600px;padding:30px;background:#fff;color:#111827;font-family:Nunito,sans-serif;position:absolute;left:-9999px;';
+      const cl = c.cloneNode(true); cl.style.cssText = 'border:2px solid #e5e7eb;font-size:16px;border-radius:16px;padding:24px;';
+      const t = document.createElement('h2'); t.innerText = activeStore.toUpperCase() + ' ORDER'; t.style.cssText = `text-align:center;margin-bottom:20px;color:${activeStore==='chandarana'?'#10b981':'#3b82f6'};`;
+      d.appendChild(t); d.appendChild(cl); document.body.appendChild(d);
       
-      window.html2canvas(tempDiv, { scale: 1.5, useCORS: true, logging: false }).then(canvas => {
-          const a = document.createElement('a'); a.href = canvas.toDataURL('image/jpeg', 0.85); a.download = 'Order_' + document.getElementById('o-id').value + '_' + Date.now() + '.jpg';
-          document.body.appendChild(a); a.click(); document.body.removeChild(a); document.body.removeChild(tempDiv);
-          btn.innerHTML = 'Saved!'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 1500); 
-      }).catch(e => { btn.innerHTML = 'Error'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 1500); document.body.removeChild(tempDiv); });
-  } else { btn.innerHTML = 'Error'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 1500); alert("Save functionality is not loaded yet. Check your connection."); }
+      window.html2canvas(d, { scale: 1.5, useCORS: true, logging: false }).then(cv => {
+          const a = document.createElement('a'); a.href = cv.toDataURL('image/jpeg', 0.85); a.download = 'Order_' + document.getElementById('o-id').value + '_' + Date.now() + '.jpg';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a); document.body.removeChild(d);
+          b.innerHTML = 'Saved!'; setTimeout(() => { b.innerHTML = oT; b.disabled = false; }, 1500); 
+      }).catch(() => { b.innerHTML = 'Error'; setTimeout(() => { b.innerHTML = oT; b.disabled = false; }, 1500); document.body.removeChild(d); });
+  } else { b.innerHTML = 'Error'; setTimeout(() => { b.innerHTML = oT; b.disabled = false; }, 1500); alert("Check connection."); }
 }
 
 async function confirmAndSendOrder() {
-  const btn = document.getElementById('confirmSendBtn'); btn.disabled = true; btn.innerHTML = 'Sending...';
+  const b = document.getElementById('confirmSendBtn'); b.disabled = true; b.innerHTML = 'Sending...';
   try {
-    const targetSheet = activeStore === 'chandarana' ? 'Chandarana' : 'Carrefour';
-
-    const payloadToSend = { ...pendingOrderPayload };
-    if (payloadToSend["ID NO."]) payloadToSend["ID NO."] = "'" + payloadToSend["ID NO."];
-    if (payloadToSend["PHONE NO."]) payloadToSend["PHONE NO."] = "'" + payloadToSend["PHONE NO."];
-
-    const res = await fetch(SCRIPT_URL, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveOrder', store: targetSheet, data: payloadToSend, secret: API_SECRET }) });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error);
-    
+    const py = { ...oPayload }; if (py["ID NO."]) py["ID NO."] = "'" + py["ID NO."]; if (py["PHONE NO."]) py["PHONE NO."] = "'" + py["PHONE NO."];
+    const res = await (await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveOrder', store: activeStore==='chandarana'?'Chandarana':'Carrefour', data: py, secret: API_SECRET }) })).json();
+    if (!res.ok) throw new Error(res.error);
     document.getElementById('orderConfirmModal').style.display = 'none'; document.getElementById('orderFormInner').style.display = 'none'; document.getElementById('orderTopBar').style.display = 'none'; document.getElementById('orderSuccessScreen').style.display = 'flex';
-    orderState = { chandarana: { juices: {}, fresh: [], bottles: [], haccp: [] }, carrefour: { juices: {}, fresh: [], bottles: [], haccp: [] } }; orderStoreState = { chandarana: { id: '' }, carrefour: { id: '' } }; 
-  } catch (err) { alert("Failed to send order. Ensure you have internet connection.\n" + err.message); }
-  btn.disabled = false; btn.innerText = 'Confirm';
+  } catch (err) { alert("Failed to send order.\n" + err.message); }
+  b.disabled = false; b.innerText = 'Confirm';
 }
 
-// ATTENDANCE SYSTEM LOGIC
-let staffName = "", photo = null, coords = null, currentAction = "", lastValidatedId = ""; 
+// ATTENDANCE LOGIC
+let sName = "", ph = null, crd = null, cAct = "", lVId = ""; 
 
 function openAttendance() { 
-  switchView('view-attendance'); let savedTerminal = Storage.get('selected_terminal');
-  if (savedTerminal) { switchTerminalAtt(savedTerminal, true); } else { currentTerminal = null; document.body.className = ''; updateBGLayer('layerHub'); document.getElementById('attMainFormInner').style.display = 'none'; document.getElementById('a-pill-slider').style.width = '0'; document.getElementById('a-btn-chandarana').classList.remove('active'); document.getElementById('a-btn-carrefour').classList.remove('active'); document.getElementById('storeSign').innerText = 'SELECT SHOP'; triggerSignAnimation(); }
+  switchView('view-attendance'); let sT = Storage.get('selected_terminal');
+  if (sT) switchTerminalAtt(sT, true); else { currentTerminal = null; document.body.className = ''; updateBGLayer('layerHub'); document.getElementById('attMainFormInner').style.display = 'none'; document.getElementById('a-pill-slider').style.width = '0'; document.getElementById('a-btn-chandarana').classList.remove('active'); document.getElementById('a-btn-carrefour').classList.remove('active'); document.getElementById('storeSign').innerText = 'SELECT SHOP'; const s = document.getElementById('storeSign'); if (s) { s.classList.remove('nudge'); void s.offsetWidth; s.classList.add('nudge'); } }
 }
 
-function triggerSignAnimation() { const sign = document.getElementById('storeSign'); if (sign) { sign.classList.remove('nudge'); void sign.offsetWidth; sign.classList.add('nudge'); } }
-
-function switchTerminalAtt(term, isInitialOpen = false) {
-  if (currentTerminal === term && document.getElementById('view-attendance').classList.contains('active') && !isInitialOpen) { triggerSignAnimation(); return; }
-  currentTerminal = term; Storage.set('selected_terminal', term); lastValidatedId = ""; 
-  
-  // Directly load cached branches immediately to avoid empty dropdown
-  let bList = branchesCache[term] || [];
-  if(bList.length === 0) try { bList = JSON.parse(Storage.get(term + '_branches') || '[]'); } catch(e){}
-  if(bList.length > 0) {
-      populateBranches(bList);
-  } else {
-      document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
-  }
+function switchTerminalAtt(t, init = false) {
+  if (currentTerminal === t && document.getElementById('view-attendance').classList.contains('active') && !init) { const s = document.getElementById('storeSign'); if(s){s.classList.remove('nudge');void s.offsetWidth;s.classList.add('nudge');} return; }
+  currentTerminal = t; Storage.set('selected_terminal', t); lVId = ""; 
+  let bL = branchesCache[t] || []; if(bL.length === 0) try { bL = JSON.parse(Storage.get(t + '_branches') || '[]'); } catch(e){}
+  if(bL.length > 0) populateBranches(bL); else document.getElementById('branch').innerHTML = '<option value="">Loading...</option>';
 
   document.getElementById('attSuccessScreen').style.display = 'none'; document.getElementById('attMainFormInner').style.display = 'block'; document.getElementById('attMainContainer').style.overflow = 'hidden';
-  document.body.className = `theme-${currentTerminal}`; updateBGLayer(currentTerminal === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
-  const title = document.getElementById('storeSign'); title.innerText = currentTerminal.charAt(0).toUpperCase() + currentTerminal.slice(1); triggerSignAnimation();
-  document.getElementById('a-btn-chandarana').classList.toggle('active', currentTerminal === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  currentTerminal === 'carrefour'); updatePillSlider('a-terminal-wrapper', 'a-pill-slider'); resetStepsFrom(1); document.getElementById('step1').classList.add('activeStep'); document.getElementById('staffID').value = ''; initAppAtt();
+  document.body.className = `theme-${t}`; updateBGLayer(t === 'chandarana' ? 'layerChandarana' : 'layerCarrefour');
+  document.getElementById('storeSign').innerText = t.charAt(0).toUpperCase() + t.slice(1); const sn = document.getElementById('storeSign'); if(sn){sn.classList.remove('nudge');void sn.offsetWidth;sn.classList.add('nudge');}
+  document.getElementById('a-btn-chandarana').classList.toggle('active', t === 'chandarana'); document.getElementById('a-btn-carrefour').classList.toggle('active',  t === 'carrefour'); updatePillSlider('a-terminal-wrapper', 'a-pill-slider'); resetStepsFrom(1); document.getElementById('step1').classList.add('activeStep'); document.getElementById('staffID').value = ''; 
+  const sB = Storage.get('last_branch_' + t); if (sB) { document.getElementById('branch').value = sB; handleBranchChange(true); } let sU = JSON.parse(Storage.get('my_att_user') || 'null'); if (sU) { document.getElementById('staffID').value = sU.id; handleStaffInput(); }
 }
 
-function populateBranches(list) {
-  if (!Array.isArray(list)) return;
-  const select = document.getElementById('branch'), currentVal = select.value || Storage.get('last_branch_' + currentTerminal);
-  const options = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + list.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
-  
-  if (select.innerHTML !== options) { 
-      select.innerHTML = options; 
-  }
-  
-  if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
-      if (select.value !== currentVal) {
-         select.value = currentVal;
-         showSuccess('branchMsg', 'Branch Selected');
-      }
-  } else {
-      if(select.value) clearMsg('branchMsg');
-  }
+function populateBranches(l) {
+  if (!Array.isArray(l)) return; const s = document.getElementById('branch'), cV = s.value || Storage.get('last_branch_' + currentTerminal);
+  const o = '<option value="" style="color: var(--text-primary)">Choose Branch</option>' + l.map(b => `<option value="${escapeHTML(b[0])}" style="color: var(--dynamic-primary); font-weight: 700;">${escapeHTML(b[0])}</option>`).join('');
+  if (s.innerHTML !== o) s.innerHTML = o; 
+  if (cV && Array.from(s.options).some(x => x.value === cV)) { if (s.value !== cV) { s.value = cV; sMsg('branchMsg', 'Branch Selected'); } } else if(s.value) cMsg('branchMsg');
 }
 
-function initAppAtt() {
-  if (!currentTerminal) return;
-  
-  const savedBranch = Storage.get('last_branch_' + currentTerminal);
-  if (savedBranch) { document.getElementById('branch').value = savedBranch; handleBranchChange(true); }
-  
-  let savedUser = JSON.parse(Storage.get('my_att_user') || 'null');
-  if (savedUser) { document.getElementById('staffID').value = savedUser.id; handleStaffInput(); }
-}
+function actStp(n) { document.getElementById('step'+n).classList.add('activeStep'); }
+function resetStepsFrom(n) { for (let i = n; i <= 4; i++) { const e = document.getElementById('step'+i); if (e) e.classList.remove('activeStep'); } if (n <= 2) { sName = ''; cMsg('staffMsg'); lVId = ""; } if (n <= 3) { crd = null; cMsg('gpsMsg'); } if (n <= 4) { ph = null; stopCamera(); cMsg('cameraMsg'); document.getElementById('successPhoto').src = ''; } }
+function resetAttForm() { document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('attMainFormInner').style.display='block'; document.getElementById('attMainContainer').style.overflow = 'hidden'; document.getElementById('successPhoto').style.opacity = '1'; document.getElementById('staffID').value = ''; resetStepsFrom(3); handleBranchChange(true); let sU = JSON.parse(Storage.get('my_att_user') || 'null'); if (sU) { document.getElementById('staffID').value = sU.id; handleStaffInput(); } }
 
-function activateStep(n) { document.getElementById('step'+n).classList.add('activeStep'); }
-function resetStepsFrom(n) {
-  for (let i = n; i <= 4; i++) { const el = document.getElementById('step'+i); if (el) el.classList.remove('activeStep'); }
-  if (n <= 2) { staffName = ''; clearMsg('staffMsg'); lastValidatedId = ""; }
-  if (n <= 3) { coords = null; clearMsg('gpsMsg'); }
-  if (n <= 4) { photo = null; stopCamera(); clearMsg('cameraMsg'); document.getElementById('successPhoto').src = ''; }
-}
+function sMsg(i,t){ document.getElementById(i).innerHTML=`<span class="dot"></span> ${t}`; document.getElementById(i).className='msg success'; }
+function eMsg(i,t){ document.getElementById(i).innerText=t; document.getElementById(i).className='msg error'; }
+function cMsg(i)  { document.getElementById(i).innerText=''; document.getElementById(i).className='msg'; }
 
-function resetAttForm() { document.getElementById('attSuccessScreen').style.display='none'; document.getElementById('attMainFormInner').style.display='block'; document.getElementById('attMainContainer').style.overflow = 'hidden'; document.getElementById('successPhoto').style.opacity = '1'; document.getElementById('staffID').value = ''; resetStepsFrom(3); handleBranchChange(true); initAppAtt(); }
+function openZoom() { const c = document.getElementById('photoZoomContainer'), b = document.getElementById('photoZoomBg'), oi = document.getElementById('zoomedImage'), si = document.getElementById('successPhoto'); const r = si.getBoundingClientRect(); oi.src = si.src; oi.style.transition = 'none'; oi.style.left = r.left + 'px'; oi.style.top = r.top + 'px'; oi.style.width = r.width + 'px'; oi.style.height = r.height + 'px'; oi.style.borderRadius = '50%'; c.style.display = 'block'; void c.offsetWidth; si.style.opacity = '0'; oi.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.4, 1)'; const tW = Math.min(window.innerWidth * 0.85, 400); oi.style.left = ((window.innerWidth - tW) / 2) + 'px'; oi.style.top = ((window.innerHeight - tW) / 2) + 'px'; oi.style.width = tW + 'px'; oi.style.height = tW + 'px'; oi.style.borderRadius = '24px'; b.classList.add('show'); }
+function closeZoom() { const c = document.getElementById('photoZoomContainer'), b = document.getElementById('photoZoomBg'), oi = document.getElementById('zoomedImage'), si = document.getElementById('successPhoto'); const r = si.getBoundingClientRect(); oi.style.left = r.left + 'px'; oi.style.top = r.top + 'px'; oi.style.width = r.width + 'px'; oi.style.height = r.height + 'px'; oi.style.borderRadius = '50%'; b.classList.remove('show'); setTimeout(() => { c.style.display = 'none'; si.style.opacity = '1'; }, 400); }
 
-function showSuccess(id,txt){ const e=document.getElementById(id); e.innerHTML=`<span class="dot"></span> ${txt}`; e.className='msg success'; }
-function showError(id,txt)  { const e=document.getElementById(id); e.innerText=txt; e.className='msg error'; }
-function clearMsg(id)       { const e=document.getElementById(id); e.innerText=''; e.className='msg'; }
-
-function openZoom() { const container = document.getElementById('photoZoomContainer'), bg = document.getElementById('photoZoomBg'), overlayImg = document.getElementById('zoomedImage'), sourceImg = document.getElementById('successPhoto'); const rect = sourceImg.getBoundingClientRect(); overlayImg.src = sourceImg.src; overlayImg.style.transition = 'none'; overlayImg.style.left = rect.left + 'px'; overlayImg.style.top = rect.top + 'px'; overlayImg.style.width = rect.width + 'px'; overlayImg.style.height = rect.height + 'px'; overlayImg.style.borderRadius = '50%'; container.style.display = 'block'; void container.offsetWidth; sourceImg.style.opacity = '0'; overlayImg.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.4, 1)'; const targetW = Math.min(window.innerWidth * 0.85, 400); overlayImg.style.left = ((window.innerWidth - targetW) / 2) + 'px'; overlayImg.style.top = ((window.innerHeight - targetW) / 2) + 'px'; overlayImg.style.width = targetW + 'px'; overlayImg.style.height = targetW + 'px'; overlayImg.style.borderRadius = '24px'; bg.classList.add('show'); }
-function closeZoom() { const container = document.getElementById('photoZoomContainer'), bg = document.getElementById('photoZoomBg'), overlayImg = document.getElementById('zoomedImage'), sourceImg = document.getElementById('successPhoto'); const rect = sourceImg.getBoundingClientRect(); overlayImg.style.left = rect.left + 'px'; overlayImg.style.top = rect.top + 'px'; overlayImg.style.width = rect.width + 'px'; overlayImg.style.height = rect.height + 'px'; overlayImg.style.borderRadius = '50%'; bg.classList.remove('show'); setTimeout(() => { container.style.display = 'none'; sourceImg.style.opacity = '1'; }, 400); }
-
-function handleBranchChange(isInit = false) { const val = document.getElementById('branch').value; if (!val) { resetStepsFrom(2); clearMsg('branchMsg'); return; } Storage.set('last_branch_' + currentTerminal, val); showSuccess('branchMsg', 'Branch Selected'); if (!document.getElementById('step2').classList.contains('activeStep')) { activateStep(2); } const staffEl = document.getElementById('staffID'); if (staffEl.value.length >= 2) { handleStaffInput(); } }
-document.getElementById('branch').addEventListener('change', () => handleBranchChange(false));
+function handleBranchChange() { const v = document.getElementById('branch').value; if (!v) { resetStepsFrom(2); cMsg('branchMsg'); return; } Storage.set('last_branch_' + currentTerminal, v); sMsg('branchMsg', 'Branch Selected'); if (!document.getElementById('step2').classList.contains('activeStep')) actStp(2); if (document.getElementById('staffID').value.length >= 2) handleStaffInput(); }
+document.getElementById('branch').addEventListener('change', handleBranchChange);
 
 function handleStaffInput() {
-  const val = document.getElementById('staffID').value.trim(); 
-  if (val.length < 2) { lastValidatedId = ""; resetStepsFrom(3); clearMsg('staffMsg'); return; }
-  
-  let match = portalStaff[currentTerminal]?.find(s => s.id === val);
-  
-  // Memory check if offline / slow sync
-  if (!match) {
-     const myUser = JSON.parse(Storage.get('my_att_user') || 'null');
-     if (myUser && myUser.id === val) match = myUser;
-  }
-
-  if (match) {
-    Storage.set('my_att_user', JSON.stringify({id: match.id, name: match.name, status: match.status, lastTime: match.lastTime, branch: match.branch}));
-    
-    lastValidatedId = val; staffName = match.name; let lastAction = match.status; let lastTime = match.lastTime;
-    try { const localState = JSON.parse(Storage.get('local_att_state')) || {}; const myLocal = localState[val]; const todayStr = new Date().toDateString(); if (myLocal && myLocal.date === todayStr) { if (!lastTime || myLocal.ts > lastTime) { lastAction = myLocal.action; lastTime = myLocal.ts; } } } catch(e) {}
-    
-    if (lastTime) { const d = new Date(lastTime), now = new Date(); if (d.getDate() !== now.getDate() || d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) { lastAction = null; } }
-    
-    if (lastAction === 'Clock Out') { showError('staffMsg', 'You have already clocked out today.'); resetStepsFrom(3); return; } 
-    else if (lastAction === 'Clock In') { const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60); const currentHour = new Date().getHours(); if (hoursSince < 6 && currentHour < 19) { showError('staffMsg', 'You already clocked in, clock out at the end of your shift.'); resetStepsFrom(3); return; } }
-    
-    currentAction = (lastAction === 'Clock In') ? 'Clock Out' : 'Clock In';
-    showSuccess('staffMsg', `Welcome ${escapeHTML(staffName)}`);
-    activateStep(3);
-  } else { 
-    lastValidatedId = ""; resetStepsFrom(3); 
-    showError('staffMsg','Invalid ID.'); 
-  }
+  const v = document.getElementById('staffID').value.trim(); if (v.length < 2) { lVId = ""; resetStepsFrom(3); cMsg('staffMsg'); return; }
+  let m = portalStaff[currentTerminal]?.find(s => s.id === v); if (!m) { const mu = JSON.parse(Storage.get('my_att_user') || 'null'); if (mu && mu.id === v) m = mu; }
+  if (m) {
+    Storage.set('my_att_user', JSON.stringify({id: m.id, name: m.name, status: m.status, lastTime: m.lastTime, branch: m.branch}));
+    lVId = v; sName = m.name; let lA = m.status, lT = m.lastTime;
+    try { const ls = JSON.parse(Storage.get('local_att_state')) || {}; const ml = ls[v]; if (ml && ml.date === new Date().toDateString() && (!lT || ml.ts > lT)) { lA = ml.action; lT = ml.ts; } } catch(e) {}
+    if (lT && (new Date(lT).toDateString() !== new Date().toDateString())) lA = null;
+    if (lA === 'Clock Out') { eMsg('staffMsg', 'You have already clocked out today.'); resetStepsFrom(3); return; } 
+    else if (lA === 'Clock In' && ((Date.now() - lT) / 3600000) < 6 && new Date().getHours() < 19) { eMsg('staffMsg', 'You already clocked in, clock out at the end of your shift.'); resetStepsFrom(3); return; }
+    cAct = (lA === 'Clock In') ? 'Clock Out' : 'Clock In'; sMsg('staffMsg', `Welcome ${escapeHTML(sName)}`); actStp(3);
+  } else { lVId = ""; resetStepsFrom(3); eMsg('staffMsg','Invalid ID.'); }
 }
 document.getElementById('staffID').oninput = handleStaffInput;
 
-function showGuideModal(type) {
-  const modal=document.getElementById('guideModal'), title=document.getElementById('guideTitle'), text=document.getElementById('guideText'), icon=document.getElementById('guideIcon');
-  if (type==='gps') { icon.textContent='📍'; title.textContent='Location Blocked'; title.style.color='var(--error-color)'; text.innerHTML='<p>We need your location to verify you are at the branch.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong><br>Settings → Privacy & Security → Location Services → Allow Safari/Chrome.</p><p style="margin-top:8px"><strong>🤖 Android:</strong><br>⋮ Menu → Settings → Site settings → Location → Allow.</p><p style="margin-top:12px; color:var(--error-color); font-weight:bold;">After allowing, please clear the browser from your recent apps and reopen.</p>'; } 
-  else if (type==='gps_signal') { icon.textContent='📡'; title.textContent='Weak GPS Signal'; title.style.color='var(--warning-text)'; text.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; } 
-  else if (type==='camera') { icon.textContent='📸'; title.textContent='Camera Access Denied'; title.style.color='var(--error-color)'; text.innerHTML='<p>Camera permission is required to capture your identity securely.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong> Settings → Safari/Chrome → Camera → Allow.</p><p style="margin-top:8px"><strong>🤖 Android:</strong> Site settings → Camera → Allow.</p><p style="margin-top:12px; color:var(--error-color); font-weight:bold;">After allowing, please clear the browser from your recent apps and reopen.</p>'; }
-  modal.style.display = 'flex';
+function showGuideModal(t) {
+  const m=document.getElementById('guideModal'), tl=document.getElementById('guideTitle'), tx=document.getElementById('guideText'), ic=document.getElementById('guideIcon');
+  if (t==='gps') { ic.textContent='📍'; tl.textContent='Location Blocked'; tl.style.color='var(--error-color)'; tx.innerHTML='<p>We need your location to verify you are at the branch.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong><br>Settings → Privacy & Security → Location Services → Allow Safari/Chrome.</p><p style="margin-top:8px"><strong>🤖 Android:</strong><br>⋮ Menu → Settings → Site settings → Location → Allow.</p><p style="margin-top:12px; color:var(--error-color); font-weight:bold;">After allowing, please clear the browser from your recent apps and reopen.</p>'; } 
+  else if (t==='gps_signal') { ic.textContent='📡'; tl.textContent='Weak GPS Signal'; tl.style.color='var(--warning-text)'; tx.innerHTML='<p>We couldn\'t get an accurate location reading.</p><ul style="margin-top:8px;padding-left:20px"><li>Step outside or near a window.</li><li>Turn WiFi ON — it helps GPS lock faster.</li></ul>'; } 
+  else if (t==='camera') { ic.textContent='📸'; tl.textContent='Camera Access Denied'; tl.style.color='var(--error-color)'; tx.innerHTML='<p>Camera permission is required to capture your identity securely.</p><p style="margin-top:8px"><strong>🍎 iPhone:</strong> Settings → Safari/Chrome → Camera → Allow.</p><p style="margin-top:8px"><strong>🤖 Android:</strong> Site settings → Camera → Allow.</p><p style="margin-top:12px; color:var(--error-color); font-weight:bold;">After allowing, please clear the browser from your recent apps and reopen.</p>'; }
+  m.style.display = 'flex';
 }
 
-function doVerifyGPS(isRetry) {
+function verifyGPS(isRet = false) {
   document.getElementById('gpsMsg').innerText = 'Locating…'; document.getElementById('gpsMsg').className = 'msg';
-  if (!navigator.geolocation) { showError('gpsMsg','GPS not supported on this device.'); return; }
+  if (!navigator.geolocation) { eMsg('gpsMsg','GPS not supported on this device.'); return; }
   navigator.geolocation.getCurrentPosition(
     pos => {
-      coords = pos.coords; 
-      let bList = branchesCache[currentTerminal] || [];
-      if(bList.length === 0) try { bList = JSON.parse(Storage.get(currentTerminal + '_branches') || '[]'); } catch(e){}
-      
-      const b = bList.find(branch => branch[0] === document.getElementById('branch').value);
-      if (!b) { showError('gpsMsg','Select branch first.'); return; }
-      
-      const R = 6371e3; const dLat = (b[1]-coords.latitude)*Math.PI/180; const dLon = (b[2]-coords.longitude)*Math.PI/180;
-      const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(coords.latitude*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-      const dist = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-      
-      if (dist > (isRetry ? 350 : 250)) { 
-        if (currentAction === 'Clock Out' && coords.accuracy > 70) {
-           showError('gpsMsg', 'Indoor GPS signal is weak. Please turn on Wi-Fi for an accurate location and tap Verify again.');
-        } else if (!isRetry && navigator.onLine) { 
-           setTimeout(() => doVerifyGPS(true), 500); 
-        } else { 
-           showError('gpsMsg', dist>1000 ? `Too far (${(dist/1000).toFixed(1)}km)` : `Too far (${Math.round(dist)}m) — move closer`); 
-        } 
-      } else { showSuccess('gpsMsg','Location Verified'); activateStep(4); }
+      crd = pos.coords; let bL = branchesCache[currentTerminal] || []; if(bL.length === 0) try { bL = JSON.parse(Storage.get(currentTerminal + '_branches') || '[]'); } catch(e){}
+      const b = bL.find(x => x[0] === document.getElementById('branch').value); if (!b) { eMsg('gpsMsg','Select branch first.'); return; }
+      const R = 6371e3, dL = (b[1]-crd.latitude)*Math.PI/180, dLo = (b[2]-crd.longitude)*Math.PI/180;
+      const a = Math.sin(dL/2)*Math.sin(dL/2) + Math.cos(crd.latitude*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2);
+      const d = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+      if (d > (isRet ? 350 : 250)) { if (cAct === 'Clock Out' && crd.accuracy > 70) eMsg('gpsMsg', 'Indoor GPS signal is weak. Please turn on Wi-Fi for an accurate location and tap Verify again.'); else if (!isRet && navigator.onLine) setTimeout(() => verifyGPS(true), 500); else eMsg('gpsMsg', d>1000 ? `Too far (${(d/1000).toFixed(1)}km)` : `Too far (${Math.round(d)}m) — move closer`); } 
+      else { sMsg('gpsMsg','Location Verified'); actStp(4); }
     },
-    err => { if(err.code===1) { showGuideModal('gps'); showError('gpsMsg', 'Location Denied.'); } else { if (!isRetry && navigator.onLine) { setTimeout(() => doVerifyGPS(true), 500); } else { showGuideModal('gps_signal'); showError('gpsMsg', 'Weak Signal. Tap Verify again.'); } } },
-    {enableHighAccuracy:true, timeout:20000, maximumAge: isRetry ? 0 : 30000}
+    err => { if(err.code===1) { showGuideModal('gps'); eMsg('gpsMsg', 'Location Denied.'); } else { if (!isRet && navigator.onLine) setTimeout(() => verifyGPS(true), 500); else { showGuideModal('gps_signal'); eMsg('gpsMsg', 'Weak Signal. Tap Verify again.'); } } },
+    {enableHighAccuracy:true, timeout:20000, maximumAge: isRet ? 0 : 30000}
   );
 }
 
-function verifyGPS() { doVerifyGPS(false); }
-
 function startCamera() {
-  const btn = document.getElementById('openCameraBtn');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { document.getElementById('fallbackCameraInput').click(); return; }
-  
-  btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Starting...</span>'; 
-  clearMsg('cameraMsg');
-  
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
-    .then(stream => { 
-      videoStream = stream; const video = document.getElementById('cameraVideo'); video.srcObject = stream; 
-      video.onloadedmetadata = () => { 
-        video.play().catch(()=>{}); 
-        document.getElementById('videoContainerWrapper').classList.add('expanded'); 
-        document.getElementById('cameraBackdrop').classList.add('show'); 
-        video.classList.add('live'); btn.innerText = 'Take Selfie'; 
-        document.getElementById('shutterBtn').classList.remove('loading');
-      }; 
-    })
-    .catch(err => { btn.innerText = 'Take Selfie'; document.getElementById('fallbackCameraInput').click(); });
+  const b = document.getElementById('openCameraBtn'); if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { document.getElementById('fallbackCameraInput').click(); return; }
+  b.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Starting...</span>'; cMsg('cameraMsg');
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }).then(str => { 
+      videoStream = str; const v = document.getElementById('cameraVideo'); v.srcObject = str; 
+      v.onloadedmetadata = () => { v.play().catch(()=>{}); document.getElementById('videoContainerWrapper').classList.add('expanded'); document.getElementById('cameraBackdrop').classList.add('show'); v.classList.add('live'); b.innerText = 'Take Selfie'; document.getElementById('shutterBtn').classList.remove('loading'); }; 
+  }).catch(() => { b.innerText = 'Take Selfie'; document.getElementById('fallbackCameraInput').click(); });
 }
 
-function handleFallbackCamera(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const btn = document.getElementById('openCameraBtn');
-  btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Processing...';
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-      const maxW = 480; const scale = img.width > maxW ? (maxW / img.width) : 1;
-      canvas.width = img.width * scale; canvas.height = img.height * scale;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      photo = canvas.toDataURL('image/jpeg', 0.6); 
-      document.getElementById('successPhoto').src = photo;
-      canvas.width = 0; canvas.height = 0; img.src = ''; 
-      
-      btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Submitting...';
-      btn.disabled = true; submitAttendanceRealtime();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+function handleFallbackCamera(e) {
+  const f = e.target.files[0]; if (!f) return; const b = document.getElementById('openCameraBtn'); b.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Processing...';
+  const r = new FileReader(); r.onload = ev => {
+    const i = new Image(); i.onload = () => {
+      const cv = document.createElement('canvas'), ctx = cv.getContext('2d'), mw = 480, sc = i.width > mw ? (mw / i.width) : 1;
+      cv.width = i.width * sc; cv.height = i.height * sc; ctx.drawImage(i, 0, 0, cv.width, cv.height);
+      ph = cv.toDataURL('image/jpeg', 0.6); document.getElementById('successPhoto').src = ph; cv.width = 0; cv.height = 0; i.src = ''; 
+      b.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span>Submitting...'; b.disabled = true; submitAttendanceRealtime();
+    }; i.src = ev.target.result;
+  }; r.readAsDataURL(f);
 }
 
 function capturePhotoNative() {
-  const flash = document.getElementById('cameraFlash'); flash.classList.remove('fire'); void flash.offsetWidth; flash.classList.add('fire');
-  const shutterBtn = document.getElementById('shutterBtn'); shutterBtn.classList.add('loading');
-  const video = document.getElementById('cameraVideo'), wrapper = document.getElementById('videoContainerWrapper'); 
-  const vw = video.videoWidth || 640, vh = video.videoHeight || 480, cw = wrapper.offsetWidth, ch = wrapper.offsetHeight;
-  const containerAspect = cw / ch, videoAspect = vw / vh; let sWidth, sHeight, startX, startY;
+  const fl = document.getElementById('cameraFlash'); fl.classList.remove('fire'); void fl.offsetWidth; fl.classList.add('fire');
+  document.getElementById('shutterBtn').classList.add('loading');
+  const v = document.getElementById('cameraVideo'), wr = document.getElementById('videoContainerWrapper'), vw = v.videoWidth || 640, vh = v.videoHeight || 480, cw = wr.offsetWidth, ch = wr.offsetHeight, cA = cw / ch, vA = vw / vh; 
+  let sW, sH, sX, sY; if (vA > cA) { sH = vh; sW = vh * cA; sX = (vw - sW) / 2; sY = 0; } else { sW = vw; sH = vw / cA; sX = 0; sY = (vh - sH) / 2; }
   
-  if (videoAspect > containerAspect) { sHeight = vh; sWidth = vh * containerAspect; startX = (vw - sWidth) / 2; startY = 0; } else { sWidth = vw; sHeight = vw / containerAspect; startX = 0; startY = (vh - sHeight) / 2; }
+  const cv = document.createElement('canvas'), cx = cv.getContext('2d'); let mO = 720, sc = (sW > mO || sH > mO) ? (mO / Math.max(sW, sH)) : 1;
+  cv.width = Math.round(sW * sc); cv.height = Math.round(sH * sc); cx.translate(cv.width, 0); cx.scale(-1, 1); cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high'; cx.drawImage(v, sX, sY, sW, sH, 0, 0, cv.width, cv.height);
   
-  const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-  let maxOutput = 720; let scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
-  canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
+  ph = cv.toDataURL('image/jpeg', 0.80); if (getKbSize(ph) > 150) ph = cv.toDataURL('image/jpeg', 0.60);
+  if (getKbSize(ph) > 150) { mO = 480; sc = (sW > mO || sH > mO) ? (mO / Math.max(sW, sH)) : 1; cv.width = Math.round(sW * sc); cv.height = Math.round(sH * sc); cx.translate(cv.width, 0); cx.scale(-1, 1); cx.drawImage(v, sX, sY, sW, sH, 0, 0, cv.width, cv.height); ph = cv.toDataURL('image/jpeg', 0.50); }
+  cv.width = 0; cv.height = 0; v.pause();
   
-  ctx.translate(canvas.width, 0); ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; 
-  ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-  
-  photo = canvas.toDataURL('image/jpeg', 0.80);
-  if (getKbSize(photo) > 150) { photo = canvas.toDataURL('image/jpeg', 0.60); }
-  if (getKbSize(photo) > 150) {
-      maxOutput = 480; scale = (sWidth > maxOutput || sHeight > maxOutput) ? (maxOutput / Math.max(sWidth, sHeight)) : 1;
-      canvas.width = Math.round(sWidth * scale); canvas.height = Math.round(sHeight * scale);
-      ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-      ctx.drawImage(video, startX, startY, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-      photo = canvas.toDataURL('image/jpeg', 0.50);
-  }
-  
-  canvas.width = 0; canvas.height = 0; video.pause();
-  
-  setTimeout(() => {
-    document.getElementById('successPhoto').src = photo; stopCamera(); 
-    const btn = document.getElementById('openCameraBtn'); btn.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Submitting...</span>'; btn.disabled = true; clearMsg('cameraMsg'); submitAttendanceRealtime();
-  }, 250); 
+  setTimeout(() => { document.getElementById('successPhoto').src = ph; stopCamera(); const b = document.getElementById('openCameraBtn'); b.innerHTML = '<span class="btn-spinner" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:8px;"></span><span style="vertical-align:middle;">Submitting...</span>'; b.disabled = true; cMsg('cameraMsg'); submitAttendanceRealtime(); }, 250); 
 }
 
 function stopCamera() { 
-  const wrapper = document.getElementById('videoContainerWrapper'), backdrop = document.getElementById('cameraBackdrop'); wrapper.classList.remove('expanded'); backdrop.classList.remove('show'); 
-  const video = document.getElementById('cameraVideo'); video.classList.remove('live'); 
-  const btn = document.getElementById('openCameraBtn'); if (btn) btn.textContent = 'Take Selfie'; 
-  setTimeout(() => { 
-    if (videoStream) { videoStream.getTracks().forEach(t => { t.stop(); t.enabled = false; }); videoStream = null; } 
-    video.pause(); video.srcObject = null; video.removeAttribute('src'); video.load(); 
-  }, 300); 
+  document.getElementById('videoContainerWrapper').classList.remove('expanded'); document.getElementById('cameraBackdrop').classList.remove('show'); 
+  const v = document.getElementById('cameraVideo'); v.classList.remove('live'); const b = document.getElementById('openCameraBtn'); if (b) b.textContent = 'Take Selfie'; 
+  setTimeout(() => { if (window.videoStream) { window.videoStream.getTracks().forEach(t => { t.stop(); t.enabled = false; }); window.videoStream = null; } v.pause(); v.srcObject = null; v.removeAttribute('src'); v.load(); }, 300); 
 }
 
 async function submitAttendanceRealtime() {
-  const branch = document.getElementById('branch').value, staffID = document.getElementById('staffID').value;
-  if (!branch || !staffID || !currentAction || !photo) return;
-  
-  const payload = { name: staffName, id: staffID, branch: branch, action: currentAction, image: photo, lat: coords ? coords.latitude : 0, lng: coords ? coords.longitude : 0, clientTimestamp: new Date().toISOString() };
-  const btn = document.getElementById('openCameraBtn'); 
-
+  const b = document.getElementById('branch').value, i = document.getElementById('staffID').value;
+  if (!b || !i || !cAct || !ph) return;
+  const p = { name: sName, id: i, branch: b, action: cAct, image: ph, lat: crd ? crd.latitude : 0, lng: crd ? crd.longitude : 0, clientTimestamp: new Date().toISOString() }, bt = document.getElementById('openCameraBtn'); 
   try {
-    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'recordAttendance', data: payload, terminal: currentTerminal, secret: API_SECRET }) });
-    const j = await res.json();
-    if (j.ok) {
-        let localState = {}; try { localState = JSON.parse(Storage.get('local_att_state')) || {}; } catch(e){} 
-        localState[staffID] = { action: currentAction, ts: Date.now(), date: new Date().toDateString(), store: currentTerminal, branch: branch }; 
-        Storage.set('local_att_state', JSON.stringify(localState));
-        
-        clearMsg('cameraMsg'); finishSubmission(currentAction);
-    } else {
-        showError('cameraMsg', j.error || 'Server error.');
-    }
-  } catch(err) { 
-    showError('cameraMsg', 'Connection failed. Please connect to internet and submit again.');
-  } finally {
-    btn.disabled = false; btn.textContent = 'Take Selfie';
-  }
+    const res = await (await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'recordAttendance', data: p, terminal: currentTerminal, secret: API_SECRET }) })).json();
+    if (res.ok) {
+        let ls = {}; try { ls = JSON.parse(Storage.get('local_att_state')) || {}; } catch(e){} ls[i] = { action: cAct, ts: Date.now(), date: new Date().toDateString(), store: currentTerminal, branch: b }; Storage.set('local_att_state', JSON.stringify(ls));
+        cMsg('cameraMsg'); finishSubmission(cAct);
+    } else eMsg('cameraMsg', res.error || 'Server error.');
+  } catch(e) { eMsg('cameraMsg', 'Connection failed. Please connect to internet and submit again.'); } finally { bt.disabled = false; bt.textContent = 'Take Selfie'; }
 }
 
-function triggerSuccessAnimation() { const circle = document.getElementById('successTickCircle'); const check = document.getElementById('successTickCheck'); circle.classList.remove('animate-circle'); check.classList.remove('animate-check'); void circle.offsetWidth; void check.offsetWidth; circle.classList.add('animate-circle'); check.classList.add('animate-check'); }
-
-function finishSubmission(action) {
-  const firstName = staffName.split(' ')[0] || staffName, hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0); let msg='';
-  if (action === 'Clock In') { if (timeVal < 6.5) { msg="Fantastic start — you're early today! Keep it up."; } else if (timeVal <= 7.66) { msg="Great, you are on time for the morning shift."; } else if (timeVal < 11.0) { msg="Note: Late for morning shift."; } else if (timeVal < 14.0) { msg="Early for the second shift. Great job!"; } else if (timeVal <= 14.66) { msg="On time for the second shift. Have a productive afternoon!"; } else { msg="Note: Late for afternoon shift."; } } else { if (hrs < 16) { msg="Have a wonderful afternoon!"; } else { msg="Have a restful night!"; } if (hrs >= 18) { msg += " And remember to place your order."; } }
-
-  let tickColor = action === 'Clock In' ? (currentTerminal === 'carrefour' ? '#3b82f6' : '#10b981') : '#f59e0b';
-  document.getElementById('successBadgeText').textContent = action.toUpperCase(); 
-  const badge = document.getElementById('successBadge'); badge.style.color = tickColor; badge.style.border = `2px solid ${tickColor}`; document.getElementById('successSvg').style.stroke = tickColor; triggerSuccessAnimation();
-  document.getElementById('successName').textContent = escapeHTML(firstName); document.getElementById('successMsg').textContent = escapeHTML(msg);
+function finishSubmission(a) {
+  const fn = sName.split(' ')[0] || sName, h = new Date().getHours(), tV = h + (new Date().getMinutes() / 60.0); let m='';
+  if (a === 'Clock In') { if (tV < 6.5) m="Fantastic start — you're early today! Keep it up."; else if (tV <= 7.66) m="Great, you are on time for the morning shift."; else if (tV < 11.0) m="Note: Late for morning shift."; else if (tV < 14.0) m="Early for the second shift. Great job!"; else if (tV <= 14.66) m="On time for the second shift. Have a productive afternoon!"; else m="Note: Late for afternoon shift."; } else { if (h < 16) m="Have a wonderful afternoon!"; else m="Have a restful night!"; if (h >= 18) m += " And remember to place your order."; }
+  let tc = a === 'Clock In' ? (currentTerminal === 'carrefour' ? '#3b82f6' : '#10b981') : '#f59e0b';
+  document.getElementById('successBadgeText').textContent = a.toUpperCase(); const b = document.getElementById('successBadge'); b.style.color = tc; b.style.border = `2px solid ${tc}`; document.getElementById('successSvg').style.stroke = tc;
+  const ci = document.getElementById('successTickCircle'), ck = document.getElementById('successTickCheck'); ci.classList.remove('animate-circle'); ck.classList.remove('animate-check'); void ci.offsetWidth; void ck.offsetWidth; ci.classList.add('animate-circle'); ck.classList.add('animate-check');
+  document.getElementById('successName').textContent = escapeHTML(fn); document.getElementById('successMsg').textContent = escapeHTML(m);
   document.getElementById('attMainContainer').style.overflow = 'visible'; document.getElementById('attMainFormInner').style.display = 'none'; document.getElementById('attSuccessScreen').style.display = 'flex';
 }
 </script>
