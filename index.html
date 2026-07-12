@@ -85,7 +85,6 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; font-fam
 @keyframes bounceIn{ 0%{transform:scale(0.9);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
 @keyframes spin{ to { transform: rotate(360deg); } }
 
-/* UPDATED NUDGE ANIMATION (BOUNCE OUTWARD) */
 @keyframes welcomeNudgeAnim { 0% { transform: scale(1); } 30% { transform: scale(1.12); } 50% { transform: scale(1.05); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
 .welcome-title.nudge { animation: welcomeNudgeAnim 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
@@ -831,12 +830,19 @@ function handleJuiceTouch(e, step) {
   } else { clearTimeout(el.pT); }
 }
 
+function toggleSugarcane(el) {
+  if(el.checked) {
+    const o = document.querySelector('.inp-fresh[value="Sugarcane (' + (el.value.includes('Full') ? 'Half' : 'Full') + ')"]');
+    if(o) o.checked = false;
+  }
+}
+
 function renderDynamicOrderContent() {
   if (!activeStore) return;
   let html = `<details class="order-group"><summary class="order-group-title">Juice Flavors</summary><div class="order-group-content" style="padding:0; border-top:none;"><div style="overflow-x:auto; padding-left:2px;"><table><thead><tr><th>Flavor</th><th>5 Litres</th><th>3 Litres</th></tr></thead><tbody>`;
   JUICES[activeStore].forEach(f => { html += `<tr><td class="flavor-name">${f}</td>`; ["5L", "3L"].forEach(v => { html += `<td><div class="square-input juice-input" data-flavor="${f}" data-vol="${v}" data-val="0" ontouchstart="handleJuiceTouch(event, ${parseInt(v)})" ontouchmove="handleJuiceTouch(event, 0)" ontouchend="handleJuiceTouch(event, ${parseInt(v)})" ontouchcancel="handleJuiceTouch(event, 0)" onmousedown="handleJuiceTouch(event, ${parseInt(v)})" onmouseup="handleJuiceTouch(event, ${parseInt(v)})" onmouseleave="handleJuiceTouch(event, 0)">-</div></td>`; }); html += `</tr>`; }); 
   html += `</tbody></table></div><div style="font-size:11px; color:var(--text-tertiary); text-align:center; margin:12px 0 8px; font-weight: 800;">Tap and hold a box to delete selection</div></div></details><details class="order-group"><summary class="order-group-title">Fresh Inputs</summary><div class="order-group-content"><div class="chip-group">`;
-  if(activeStore === 'chandarana') { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane (Full)"><span class="chip-span">Sugarcane (Full)</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane (Half)"><span class="chip-span">Sugarcane (Half)</span></label>`; } else { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`; }
+  if(activeStore === 'chandarana') { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane (Full)" onchange="toggleSugarcane(this)"><span class="chip-span">Sugarcane (Full)</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane (Half)" onchange="toggleSugarcane(this)"><span class="chip-span">Sugarcane (Half)</span></label>`; } else { html += `<label class="chip-label"><input type="checkbox" class="inp-fresh" value="Sugarcane"><span class="chip-span">Sugarcane</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Ginger"><span class="chip-span">Ginger</span></label><label class="chip-label"><input type="checkbox" class="inp-fresh" value="Lime"><span class="chip-span">Lime</span></label>`; }
   html += `</div></div></details><details class="order-group"><summary class="order-group-title">Bottles</summary><div class="order-group-content"><div class="chip-group"><label class="chip-label"><input type="checkbox" class="inp-bottle" value="1 Litre"><span class="chip-span">1 Litre</span></label><label class="chip-label"><input type="checkbox" class="inp-bottle" value="500ml"><span class="chip-span">500ml</span></label>`;
   if(activeStore === 'carrefour') html += `<label class="chip-label"><input type="checkbox" class="inp-bottle" value="250ml"><span class="chip-span">250ml</span></label>`;
   html += `</div></div></details><details class="order-group"><summary class="order-group-title">HACCP Supplies</summary><div class="order-group-content"><div class="chip-group"><label class="chip-label"><input type="checkbox" class="inp-haccp" value="Sampling Cups"><span class="chip-span">Sampling Cups</span></label>`;
