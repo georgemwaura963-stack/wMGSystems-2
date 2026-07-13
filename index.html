@@ -656,11 +656,21 @@ function goToWelcome() { updateBGLayer('layerWelcome'); document.body.className 
 function updatePillSlider(c, s) { setTimeout(() => { const ab = document.querySelector(`#${c} .pill-btn.active`); const sl = document.getElementById(s); if (ab && sl) { sl.style.width = ab.offsetWidth + 'px'; sl.style.left = ab.offsetLeft + 'px'; } }, 50); }
 
 function fetchPortalDataSilent() {
-  ['chandarana', 'carrefour'].forEach(term => {
-    fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'getPortalData', terminal:term, secret: API_SECRET}) }).then(r => r.json()).then(j => { 
-      if(j.ok) { portalStaff[term] = j.data.staff || []; branchesCache[term] = j.data.branches || []; Storage.set(term + '_branches', JSON.stringify(j.data.branches)); if(currentTerminal === term && document.getElementById('view-attendance').classList.contains('active')) populateBranches(j.data.branches); } 
+  const fetchTerm = (term) => {
+    fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'getPortalData', terminal:term, secret: API_SECRET}) })
+    .then(r => r.json())
+    .then(j => { 
+      if(j.ok) { 
+          portalStaff[term] = j.data.staff || []; 
+          branchesCache[term] = j.data.branches || []; 
+          Storage.set(term + '_branches', JSON.stringify(j.data.branches)); 
+          if(currentTerminal === term && document.getElementById('view-attendance').classList.contains('active')) populateBranches(j.data.branches); 
+      } 
     }).catch(()=>{});
-  });
+  };
+  // ISOLATED FETCH FOR EACH SHOP TO AVOID OVERWRITING ARRAYS
+  fetchTerm('chandarana');
+  fetchTerm('carrefour');
 }
 
 function loadOrderStaffBackground() {
@@ -670,15 +680,38 @@ function loadOrderStaffBackground() {
 // PROFILE LOGIC
 function openProfile() {
   switchView('view-profile'); document.body.className = ''; updateBGLayer('layerHub');
-  document.getElementById('profileForm').reset(); document.getElementById('p-step1-fields').style.maxHeight = '0'; document.getElementById('p-step1-fields').style.opacity = '0'; document.getElementById('p-step1-fields').style.marginTop = '0'; document.getElementById('p-step1').style.display = 'block'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none'; document.getElementById('p-staffMsg').innerHTML = '';
+  document.getElementById('profileForm').reset(); 
+  document.getElementById('p-step1-fields').style.maxHeight = '0'; 
+  document.getElementById('p-step1-fields').style.opacity = '0'; 
+  document.getElementById('p-step1-fields').style.marginTop = '0'; 
+  document.getElementById('p-step1').style.display = 'block'; 
+  document.getElementById('p-step2').style.display = 'none'; 
+  document.getElementById('p-step3').style.display = 'none'; 
+  document.getElementById('p-staffMsg').innerHTML = '';
   
-  const bSel = document.getElementById('p-branch'); let cB=[], caB=[];
-  try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
-  bSel.innerHTML = `<option value="">Select Branch</option><optgroup label="Chandarana">` + cB.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour">` + caB.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+  const bSel = document.getElementById('p-branch'); 
+  let chandaranaList = [], carrefourList = [];
+  try { 
+      const chanRaw = Storage.get('chandarana_branches');
+      if (chanRaw) chandaranaList = JSON.parse(chanRaw).map(b => b[0]); 
+      const carrRaw = Storage.get('carrefour_branches');
+      if (carrRaw) carrefourList = JSON.parse(carrRaw).map(b => b[0]); 
+  } catch(e){}
+  
+  bSel.innerHTML = `<option value="">Select Branch</option><optgroup label="Chandarana">` + chandaranaList.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour">` + carrefourList.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
 
-  // AUTO LOAD CACHED PROFILE ID
-  const savedId = Storage.get('my_profile_id');
+  // AUTO LOAD CACHED PROFILE ID FROM EITHER PROFILE, ATTENDANCE, OR ORDER MEMORY
+  let savedId = Storage.get('my_profile_id');
+  if (!savedId) {
+      const au = JSON.parse(Storage.get('my_att_user') || 'null');
+      if (au && au.id) savedId = au.id;
+  }
+  if (!savedId) {
+      const ou = JSON.parse(Storage.get('my_order_user') || 'null');
+      if (ou && ou.id) savedId = ou.id;
+  }
+  
   if (savedId) {
       document.getElementById('p-id').value = savedId;
       instantProfileStaffCheck(savedId);
@@ -691,7 +724,7 @@ function processProfileStaffMatch(m, fEl, msgEl, hasProf) {
   fEl.style.maxHeight = '500px'; fEl.style.opacity = '1'; fEl.style.marginTop = '15px';
   if(m.name) document.getElementById('p-name').value = m.name; if(m.phone) document.getElementById('p-phone').value = m.phone;
   const bSel = document.getElementById('p-branch'); if(Array.from(bSel.options).find(o => o.value === m.branch)) bSel.value = m.branch;
-  msgEl.innerHTML = hasProf ? `<span class="dot"></span> Profile loaded. You can edit your details.` : `<span class="dot"></span> ID valid, please complete your details.`; msgEl.className = 'msg success'; triggerProfileBranchChange(); 
+  msgEl.innerHTML = hasProf ? `<span class="dot"></span> Profile loaded. Tap Next to edit.` : `<span class="dot"></span> ID valid, please complete your details.`; msgEl.className = 'msg success'; triggerProfileBranchChange(); 
 }
 
 let pCheckTimer;
@@ -767,7 +800,7 @@ function editProfileStep(t) { document.getElementById('profileConfirmModal').sty
 async function confirmAndSendProfile() {
   const b = document.getElementById('confirmProfileSendBtn'); b.disabled = true; b.innerHTML = '<span class="btn-spinner"></span> Saving...';
   const py = { ...pPayload }; 
-  Storage.set('my_profile_id', document.getElementById('p-id').value.trim()); // CACHE THE PROFILE ID
+  Storage.set('my_profile_id', document.getElementById('p-id').value.trim()); // CACHE THE PROFILE ID ONLY
   ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => { if (py[k]) py[k] = "'" + py[k]; });
   try {
     const res = await (await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveProfile', data: py, secret: API_SECRET }) })).json();
@@ -811,9 +844,16 @@ function lockBranchSelect() {
 }
 
 function openBranchModal() {
-  let cB = [], caB = []; try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
-  document.getElementById('chanBranchList').innerHTML = cB.map(b => `<div class="branch-item chan" onclick="selectBranchFromModal('${escapeHTML(b)}', 'chandarana')">${escapeHTML(b)}</div>`).join('');
-  document.getElementById('carrBranchList').innerHTML = caB.map(b => `<div class="branch-item carr" onclick="selectBranchFromModal('${escapeHTML(b)}', 'carrefour')">${escapeHTML(b)}</div>`).join('');
+  let chandaranaList = [], carrefourList = []; 
+  try { 
+      const chanRaw = Storage.get('chandarana_branches');
+      if (chanRaw) chandaranaList = JSON.parse(chanRaw).map(b => b[0]); 
+      const carrRaw = Storage.get('carrefour_branches');
+      if (carrRaw) carrefourList = JSON.parse(carrRaw).map(b => b[0]); 
+  } catch(e){}
+  
+  document.getElementById('chanBranchList').innerHTML = chandaranaList.map(b => `<div class="branch-item chan" onclick="selectBranchFromModal('${escapeHTML(b)}', 'chandarana')">${escapeHTML(b)}</div>`).join('');
+  document.getElementById('carrBranchList').innerHTML = carrefourList.map(b => `<div class="branch-item carr" onclick="selectBranchFromModal('${escapeHTML(b)}', 'carrefour')">${escapeHTML(b)}</div>`).join('');
   document.getElementById('branchModal').style.display = 'flex';
 }
 
@@ -824,9 +864,16 @@ function selectBranchFromModal(branch, store) {
 }
 
 function populateOrderBranches() {
-   const sel = document.getElementById('o-branch'); let cB=[], caB=[];
-   try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
-   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + cB.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + caB.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+   const sel = document.getElementById('o-branch'); 
+   let chandaranaList = [], carrefourList = [];
+   try { 
+       const chanRaw = Storage.get('chandarana_branches');
+       if (chanRaw) chandaranaList = JSON.parse(chanRaw).map(b => b[0]); 
+       const carrRaw = Storage.get('carrefour_branches');
+       if (carrRaw) carrefourList = JSON.parse(carrRaw).map(b => b[0]); 
+   } catch(e){}
+   
+   let html = `<optgroup label="Chandarana" style="color: var(--theme-chan); font-weight: 900;">` + chandaranaList.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour" style="color: var(--theme-carr); font-weight: 900;">` + carrefourList.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: var(--text-primary); font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
    if (lastRenderedOrderBranches !== html) { const p = sel.value; sel.innerHTML = html; lastRenderedOrderBranches = html; if (p) sel.value = p; }
 }
 
