@@ -59,7 +59,7 @@ body.theme-chandarana { --dynamic-primary: var(--theme-chan); --dynamic-light: v
 body.theme-carrefour { --dynamic-primary: var(--theme-carr); --dynamic-light: var(--theme-carr-light); }
 
 ::-webkit-scrollbar { display: none; }
-* { -ms-overflow-style: none; scrollbar-width: none; box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+* { -ms-overflow-style: none; scrollbar-width: none; box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
 body { font-family: 'Nunito', sans-serif; color:var(--text-primary); background: transparent; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top, 16px) 12px env(safe-area-inset-bottom, 16px); overflow-y:auto; -webkit-overflow-scrolling:touch; }
 input, textarea, select { -webkit-user-select: auto; user-select: auto; font-family: inherit;}
@@ -676,6 +676,13 @@ function openProfile() {
   try { cB = JSON.parse(Storage.get('chandarana_branches')||'[]').map(b=>b[0]); caB = JSON.parse(Storage.get('carrefour_branches')||'[]').map(b=>b[0]); } catch(e){}
   bSel.innerHTML = `<option value="">Select Branch</option><optgroup label="Chandarana">` + cB.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup><optgroup label="Carrefour">` + caB.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
+
+  // AUTO LOAD CACHED PROFILE ID
+  const savedId = Storage.get('my_profile_id');
+  if (savedId) {
+      document.getElementById('p-id').value = savedId;
+      instantProfileStaffCheck(savedId);
+  }
 }
 
 function triggerProfileBranchChange() { const s = document.getElementById('p-branch'); if(!s.value) { document.body.className = ''; updateBGLayer('layerHub'); return; } const isChan = s.options[s.selectedIndex].parentNode.label === 'Chandarana'; document.body.className = isChan ? 'theme-chandarana' : 'theme-carrefour'; updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour'); }
@@ -759,7 +766,9 @@ function editProfileStep(t) { document.getElementById('profileConfirmModal').sty
 
 async function confirmAndSendProfile() {
   const b = document.getElementById('confirmProfileSendBtn'); b.disabled = true; b.innerHTML = '<span class="btn-spinner"></span> Saving...';
-  const py = { ...pPayload }; ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => { if (py[k]) py[k] = "'" + py[k]; });
+  const py = { ...pPayload }; 
+  Storage.set('my_profile_id', document.getElementById('p-id').value.trim()); // CACHE THE PROFILE ID
+  ['id', 'phone', 'altContact', 'nokContact', 'acc', 'sha', 'nssf', 'kra'].forEach(k => { if (py[k]) py[k] = "'" + py[k]; });
   try {
     const res = await (await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: 'saveProfile', data: py, secret: API_SECRET }) })).json();
     if (!res.ok) throw new Error(res.error);
@@ -811,7 +820,7 @@ function openBranchModal() {
 function selectBranchFromModal(branch, store) {
   document.getElementById('branchModal').style.display = 'none';
   const sel = document.getElementById('o-branch'); if(!Array.from(sel.options).some(o=>o.value===branch)){ const o=document.createElement('option'); o.value=branch; o.textContent=branch; o.setAttribute('data-store', store); sel.appendChild(o); } sel.value = branch;
-  instantOrderStaffCheck(document.getElementById('o-id').value, store, branch);
+  instantOrderStaffCheck(document.getElementById('o-id').value, store, branch, true); // IMMEDIATE INVOKE TO REMOVE LAG
 }
 
 function populateOrderBranches() {
@@ -823,7 +832,7 @@ function populateOrderBranches() {
 
 document.getElementById('o-branch').addEventListener('change', function() {
   const st = this.options[this.selectedIndex].getAttribute('data-store');
-  if (st && st !== activeStore) instantOrderStaffCheck(document.getElementById('o-id').value, st, this.value);
+  if (st && st !== activeStore) instantOrderStaffCheck(document.getElementById('o-id').value, st, this.value, true); // IMMEDIATE INVOKE TO REMOVE LAG
 });
 
 function processStaffMatch(val, m, defSt, frcSt, frcBr) {
@@ -847,9 +856,8 @@ function processStaffMatch(val, m, defSt, frcSt, frcBr) {
 }
 
 let oCheckTmr;
-function instantOrderStaffCheck(val, frcSt = null, frcBr = null) {
-  clearTimeout(oCheckTmr);
-  oCheckTmr = setTimeout(() => {
+function instantOrderStaffCheck(val, frcSt = null, frcBr = null, immediate = false) {
+  const exec = () => {
       val = val.trim(); const mD = document.getElementById('o-staffMsg'), nC = document.getElementById('o-name-container'), nI = document.getElementById('o-name'), eF = document.getElementById('o-expanded-fields'), lS = document.getElementById('o-locked-section');
       if(val.length < 2) { mD.innerHTML = ''; nI.value = ''; curOStaffName = ''; document.getElementById('o-branch').innerHTML = '<option value="">Select</option>'; document.getElementById('o-phone').value = ''; nC.classList.remove('unlocked'); eF.classList.remove('unlocked'); lS.classList.remove('unlocked'); return; }
 
@@ -874,7 +882,10 @@ function instantOrderStaffCheck(val, frcSt = null, frcBr = null) {
            else { mD.innerHTML = 'Invalid ID'; mD.className = 'msg error'; }
         }).catch(() => { if (document.getElementById('o-id').value.trim() === val) { mD.innerHTML = 'Network Error'; mD.className = 'msg error'; } });
       }
-  }, 400);
+  };
+
+  clearTimeout(oCheckTmr);
+  if (immediate) exec(); else oCheckTmr = setTimeout(exec, 400); // BYPASS DELAY IF IMMEDIATE
 }
 
 const JUICES = { chandarana: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "APPLEJUICE", "LIMEJUICE", "HIBISCUS", "TAMARIND", "ALOE VERA", "BEETROOT", "TANGERINE", "GINGER PLAIN", "CARROT"], carrefour: ["ORANGE", "TROPICAL MIX", "MANGO", "PASSION", "APPLE GINGER", "TREE TOMATO", "PINEAPPLE MINT", "LIME & GINGER", "TAMARIND", "CARROT", "BEETROOT"] };
