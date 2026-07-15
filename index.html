@@ -150,6 +150,11 @@ input, textarea, select { -webkit-user-select: auto; user-select: auto; -webkit-
 @keyframes floatContainer { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes floatSmallBubbles { 0% { transform: scale(0) translateY(0); opacity: 0; } 30% { transform: scale(1) translateY(0); opacity: 1; } 70% { transform: scale(1) translateY(-3px); opacity: 1; } 100% { transform: scale(0) translateY(-8px); opacity: 0; } }
 
+/* 🎨 THEME: CARTOON ORANGE REMINDER PILL */
+.reminder-bubble { position: absolute; top: -12px; left: 95px; background: #f97316; color: #fff; padding: 8px 14px; border-radius: 20px; font-weight: 900; font-size: 12px; white-space: nowrap; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); opacity: 0; transform: scale(0.8) translateX(-10px); transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; z-index: 4; }
+.reminder-bubble::after { content: ''; position: absolute; bottom: 8px; left: -5px; width: 12px; height: 12px; background: #f97316; border-radius: 50%; z-index: -1;}
+.reminder-bubble.show { opacity: 1; transform: scale(1) translateX(0); }
+
 .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; padding: 0 16px; }
 .hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0; transform: translateY(40px); }
 .hub-card:active { transform: scale(0.95) !important; transition: 0.2s; }
@@ -340,6 +345,8 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         </svg>
         <span>Profile</span>
       </div>
+      <!-- 🎨 CARTOON ORANGE REMINDER PILL -->
+      <div class="reminder-bubble" id="profileReminder">Have you updated your profile?</div>
     </div>
 
     <div class="hub-logo">STENTOR OPS</div>
@@ -459,7 +466,7 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
         <div id="o-expanded-fields" style="display:none;">
             <div class="section-card" style="display:flex; gap:12px;">
             <div style="flex:1; position:relative;">
-                <label class="input-label">Branch <span id="o-branch-lock-icon" style="font-size:10px; opacity:0.6; font-weight:700; text-transform:none; float:right;">🔒 Hold</span></label>
+                <label class="input-label">Branch <span id="o-branch-lock-icon" style="font-size:10px; opacity:0.6; font-weight:700; text-transform:none; float:right;">Hold to edit</span></label>
                 <select id="o-branch" class="ui-select" style="pointer-events:none; appearance:none;"></select>
                 <div id="o-branch-overlay" style="position:absolute; top:20px; left:0; right:0; bottom:0; z-index:11;"
                     ontouchstart="startBranchHold(event)" ontouchend="cancelBranchHold()" ontouchcancel="cancelBranchHold()"
@@ -580,7 +587,9 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <div id="orderConfirmModal" class="modal-overlay">
   <div class="modal-box">
     <h3 id="modalShopName" style="margin:0 0 10px; font-size:24px; font-weight:900; text-transform:uppercase; color: var(--dynamic-primary);"></h3>
-    <p style="font-size: 13px; color: var(--warning-text); margin-bottom: 12px; font-weight: 800; line-height: 1.4;">⚠️ Please keenly confirm your order details before submitting.</p>
+    <div style="text-align: center; margin-bottom: 12px;">
+      <span style="font-size: 12px; color: var(--error-color); font-weight: 800; line-height: 1.4; border: 1.5px solid var(--error-color); border-radius: 50px; padding: 6px 14px; display: inline-block; background: transparent; text-transform: uppercase;">⚠️ Confirm details before submitting</span>
+    </div>
     <div id="orderSummaryDetails" class="receipt-content"></div>
     <div class="modal-actions-row">
       <button class="btn-modal btn-edit" onclick="closeConfirmModal()">Edit</button>
@@ -677,13 +686,21 @@ document.addEventListener('DOMContentLoaded', function() {
   purgeCacheAtMidnight(); 
   fetchPortalDataSilent(); 
   applyAntiLongPress();
+  injectDoodleColors();
   window.addEventListener('online', () => { checkNetworkStatus(); processAttendanceQueue(); }); 
   window.addEventListener('offline', checkNetworkStatus);
 });
 
-// FEATURE: Prevent Long Pressing and Highlighting across UI
+// FEATURE: Prevent Long Pressing and Highlighting
 function applyAntiLongPress() {
     document.body.oncontextmenu = function(e) { if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') return false; };
+}
+
+// FEATURE: Add glowy colors to the background edges
+function injectDoodleColors() {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div style="position:fixed; top:-15%; left:-15%; width:60vw; height:60vw; background:radial-gradient(circle, rgba(16,185,129,0.25) 0%, rgba(16,185,129,0.05) 50%, transparent 70%); filter:blur(30px); z-index:-6; pointer-events:none;"></div><div style="position:fixed; bottom:-15%; right:-15%; width:60vw; height:60vw; background:radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.05) 50%, transparent 70%); filter:blur(30px); z-index:-6; pointer-events:none;"></div>`;
+    document.body.appendChild(wrap);
 }
 
 // 🛡️ SECURITY & BACKWARD COMPATIBILITY: Fetch single user securely 
@@ -792,11 +809,27 @@ function switchView(viewId) {
   });
 }
 
+function checkProfileReminder() {
+    let lastRemind = Storage.get('profile_remind_date');
+    let now = new Date().getTime();
+    if (!lastRemind || (now - parseInt(lastRemind)) > 1296000000) { 
+        setTimeout(() => {
+            let bubble = document.getElementById('profileReminder');
+            if(bubble) {
+                bubble.classList.add('show');
+                setTimeout(() => bubble.classList.remove('show'), 6000);
+            }
+            Storage.set('profile_remind_date', now.toString());
+        }, 800);
+    }
+}
+
 function goToMenu(e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   if (document.getElementById('view-orders').classList.contains('active') && activeStore) saveOrderState();
   if (document.getElementById('view-attendance').classList.contains('active')) stopCamera();
   updateBGLayer('layerHub'); document.body.className = ''; switchView('view-menu'); 
+  checkProfileReminder();
 }
 
 function goToWelcome() { updateBGLayer('layerWelcome'); document.body.className = 'theme-welcome'; switchView('view-welcome'); }
@@ -1016,12 +1049,12 @@ function cancelBranchHold() { clearTimeout(branchHoldTimer); }
 function lockBranchSelect(isAttendanceVerified) {
   const sel = document.getElementById('o-branch'), overlay = document.getElementById('o-branch-overlay'), icon = document.getElementById('o-branch-lock-icon');
   sel.style.pointerEvents = 'none'; sel.style.appearance = 'none'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900';
-  if (isAttendanceVerified) { icon.style.display = 'none'; overlay.style.display = 'none'; sel.style.background = 'transparent'; sel.style.borderColor = 'transparent'; } else { icon.style.display = 'inline'; icon.innerText = '🔒 Hold to edit'; overlay.style.display = 'block'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)'; }
+  if (isAttendanceVerified) { icon.style.display = 'none'; overlay.style.display = 'none'; sel.style.background = 'transparent'; sel.style.borderColor = 'transparent'; } else { icon.style.display = 'inline'; icon.innerText = 'Hold to edit'; overlay.style.display = 'block'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)'; }
 }
 
 function unlockBranchSelect() {
   const sel = document.getElementById('o-branch'), overlay = document.getElementById('o-branch-overlay'), icon = document.getElementById('o-branch-lock-icon');
-  sel.style.pointerEvents = 'auto'; sel.style.appearance = 'auto'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900'; overlay.style.display = 'none'; icon.style.display = 'inline'; icon.innerText = '🔓 Select below'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)';
+  sel.style.pointerEvents = 'auto'; sel.style.appearance = 'auto'; sel.style.color = 'var(--dynamic-primary)'; sel.style.fontWeight = '900'; overlay.style.display = 'none'; icon.style.display = 'inline'; icon.innerText = 'Select below'; sel.style.background = 'var(--input-bg)'; sel.style.borderColor = 'var(--input-border)';
 }
 
 function populateOrderBranches() {
@@ -1064,6 +1097,8 @@ function processStaffMatch(val, match, defaultStore, forcedStore, forcedBranch) 
   sel.style.color = 'var(--dynamic-primary)';
   lockBranchSelect(isAttendanceVerified); document.getElementById('o-phone').value = match.phone || '';
   nameCont.style.opacity = '1'; expFields.style.display='block'; lockedSec.classList.add('unlocked');
+  
+  // NOTE: Profile reminder purposefully removed from here to clean UI.
   msgDiv.innerHTML = `<span class="dot"></span> ID Verified`; msgDiv.className = 'msg success'; 
 }
 
@@ -1157,17 +1192,18 @@ function processOrder(e) {
 function closeConfirmModal() { document.getElementById('orderConfirmModal').style.display = 'none'; }
 
 function downloadReceipt(btn) {
-  const oldText = btn.innerHTML; btn.innerHTML = 'Wait...'; btn.disabled = true; const content = document.getElementById('orderSummaryDetails');
+  const oldText = btn.innerHTML; btn.innerHTML = 'Saving...'; btn.disabled = true; const content = document.getElementById('orderSummaryDetails');
   if (window.html2canvas) {
       const tempDiv = document.createElement('div'); tempDiv.style.width = '600px'; tempDiv.style.padding = '30px'; tempDiv.style.background = '#ffffff'; tempDiv.style.color = '#111827'; tempDiv.style.fontFamily = 'Nunito, sans-serif';
       const clone = content.cloneNode(true); clone.style.boxShadow = 'none'; clone.style.border = '2px solid #e5e7eb'; clone.style.margin = '0'; clone.style.fontSize = '16px'; clone.style.borderRadius = '16px'; clone.style.padding = '24px'; clone.style.maxHeight = 'none'; clone.style.overflow = 'visible';
       const title = document.createElement('h2'); title.innerText = activeStore.toUpperCase() + ' ORDER'; title.style.textAlign = 'center'; title.style.marginBottom = '20px'; title.style.color = activeStore === 'chandarana' ? '#10b981' : '#3b82f6';
       tempDiv.appendChild(title); tempDiv.appendChild(clone); document.body.appendChild(tempDiv); tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px';
       
-      window.html2canvas(tempDiv, { scale: 1.5, useCORS: true, logging: false }).then(canvas => {
-          const a = document.createElement('a'); a.href = canvas.toDataURL('image/jpeg', 0.85); a.download = 'Order_' + document.getElementById('o-id').value + '_' + Date.now() + '.jpg';
+      // FEATURE: Instant Saving Performance
+      window.html2canvas(tempDiv, { scale: 1, useCORS: false, logging: false }).then(canvas => {
+          const a = document.createElement('a'); a.href = canvas.toDataURL('image/jpeg', 0.7); a.download = 'Order_' + document.getElementById('o-id').value + '_' + Date.now() + '.jpg';
           document.body.appendChild(a); a.click(); document.body.removeChild(a); document.body.removeChild(tempDiv);
-          btn.innerHTML = 'Saved!'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 1500); 
+          btn.innerHTML = 'Saved!'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 800); 
       }).catch(e => { btn.innerHTML = 'Error'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 1500); document.body.removeChild(tempDiv); });
   } else { btn.innerHTML = 'Error'; setTimeout(() => { btn.innerHTML = oldText; btn.disabled = false; }, 1500); alert("Save functionality is not loaded yet. Check your connection."); }
 }
@@ -1214,7 +1250,7 @@ function switchTerminalAtt(term, isInitialOpen = false) {
   resetStepsFrom(1); 
   document.getElementById('step1').classList.add('activeStep');
   document.getElementById('staffID').value = ''; 
-  document.getElementById('attTopBar').style.display = 'flex'; // Ensure top bar shows
+  document.getElementById('attTopBar').style.display = 'flex';
 
   document.getElementById('branch').style.color = currentTerminal === 'chandarana' ? '#10b981' : '#3b82f6';
   initAppAtt();
@@ -1283,11 +1319,7 @@ function handleStaffInput() {
             autoActionDecision = (lastAction === 'Clock In') ? 'Clock Out' : 'Clock In';
             if (lastAction === 'Clock Out') { staffRestrictionError = 'You have already clocked out today.'; } else if (lastAction === 'Clock In') { const hoursSince = (Date.now() - lastTime) / (1000 * 60 * 60); const currentHour = new Date().getHours(); if (hoursSince < 6 && currentHour < 19) { staffRestrictionError = 'You already clocked in, clock out at the end of your shift.'; } }
             
-            // FEATURE: Orange Profile Reminder
-            let extraMsg = '';
-            if (!match.profile) { extraMsg = `<br><span style="color:#f97316; font-size:12px; margin-top:6px; display:inline-block; font-weight:800; line-height:1.2;">⚠️ Remember to update your Profile in the Menu.</span>`; }
-            
-            msgEl.innerHTML = `<span class="dot"></span> Welcome ${escapeHTML(staffName)}${extraMsg}`;
+            msgEl.innerHTML = `<span class="dot"></span> Welcome ${escapeHTML(staffName)}`;
             msgEl.className = 'msg success';
 
             if (!isSameUser) { if (document.getElementById('step4').classList.contains('activeStep')) resetStepsFrom(4); if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3); } else { if (!document.getElementById('step3').classList.contains('activeStep')) activateStep(3); }
@@ -1471,26 +1503,18 @@ async function processAttendanceQueue() {
 }
 setInterval(processAttendanceQueue, 30000);
 
-// FEATURE: Smooth SVG Circle drawing animation reset
-function triggerSuccessAnimation() { 
-  const circle = document.getElementById('successTickCircle'); 
-  const check = document.getElementById('successTickCheck'); 
-  
-  circle.style.animation = 'none'; check.style.animation = 'none';
-  void circle.offsetWidth; void check.offsetWidth; 
-  circle.style.animation = null; check.style.animation = null;
-
-  circle.classList.remove('animate-circle'); check.classList.remove('animate-check'); 
-  setTimeout(() => { circle.classList.add('animate-circle'); check.classList.add('animate-check'); }, 10);
-}
-
 function finishSubmission(action) {
   const firstName = staffName.split(' ')[0] || staffName, hrs = new Date().getHours(), mins = new Date().getMinutes(), timeVal = hrs + (mins / 60.0); let msg='';
   if (action === 'Clock In') { if (timeVal < 6.5) { msg="Fantastic start — you're early today! Keep it up."; } else if (timeVal <= 7.66) { msg="Great, you are on time for the morning shift."; } else if (timeVal < 11.0) { msg="Note: Late for morning shift."; } else if (timeVal < 14.0) { msg="Early for the second shift. Great job!"; } else if (timeVal <= 14.66) { msg="On time for the second shift. Have a productive afternoon!"; } else { msg="Note: Late for afternoon shift."; } } else { if (hrs < 16) { msg="Have a wonderful afternoon!"; } else { msg="Have a restful night!"; } if (hrs >= 18) { msg += " And remember to place your order."; } }
 
   let tickColor = action === 'Clock In' ? (currentTerminal === 'carrefour' ? '#3b82f6' : '#10b981') : '#f59e0b';
   document.getElementById('successBadgeText').textContent = action.toUpperCase(); 
-  const badge = document.getElementById('successBadge'); badge.style.color = tickColor; badge.style.border = `2px solid ${tickColor}`; document.getElementById('successSvg').style.stroke = tickColor; triggerSuccessAnimation();
+  const badge = document.getElementById('successBadge'); badge.style.color = tickColor; badge.style.border = `2px solid ${tickColor}`; document.getElementById('successSvg').style.stroke = tickColor; 
+  
+  const circle = document.getElementById('successTickCircle'); const check = document.getElementById('successTickCheck'); 
+  circle.style.animation = 'none'; check.style.animation = 'none'; void circle.offsetWidth; void check.offsetWidth; circle.style.animation = null; check.style.animation = null;
+  circle.classList.remove('animate-circle'); check.classList.remove('animate-check'); setTimeout(() => { circle.classList.add('animate-circle'); check.classList.add('animate-check'); }, 10);
+  
   document.getElementById('successName').textContent = escapeHTML(firstName); document.getElementById('successMsg').textContent = escapeHTML(msg);
   document.getElementById('attMainContainer').style.overflow = 'visible'; document.getElementById('attMainFormInner').style.display = 'none'; document.getElementById('attTopBar').style.display = 'none'; document.getElementById('attSuccessScreen').style.display = 'flex';
 }
