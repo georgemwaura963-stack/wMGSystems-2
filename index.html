@@ -240,8 +240,8 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 .step-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 16px; position: relative; z-index: 5;}
 
 /* 🎨 THEME: SMOOTH ATTENDANCE FIELD ACTIVATION */
-.step { opacity:0.3; pointer-events:none; transform: translateY(12px); transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; z-index: 10;}
-.step.activeStep { opacity:1; pointer-events:auto; transform: translateY(0); }
+.step { opacity:0.3; pointer-events:none; transform: scale(0.95); transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; z-index: 10;}
+.step.activeStep { opacity:1; pointer-events:auto; transform: scale(1); }
 
 .msg{ font-size:13px;font-weight:600;margin-top:8px; min-height:42px; align-items:flex-start; line-height:1.4; color:var(--text-tertiary);display:flex; transition: opacity 0.3s ease, color 0.3s ease; opacity: 1; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 .msg.success{color:var(--dynamic-primary);font-size:14px} .msg.error{color:var(--error-color)}
@@ -295,10 +295,6 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 .profile-summary-item strong { color: var(--dynamic-primary); font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 900; }
 .profile-summary-item span { color: var(--text-primary); font-size: 14px; font-weight: 700; }
 .edit-icon { font-size: 14px; opacity: 0.6; }
-
-/* 🎨 THEME: CUSTOM PROFILE BRANCH MODAL - VERTICAL LIST */
-.profile-branch-item { padding: 14px 16px; font-size: 14px; font-weight: 800; color: var(--text-primary); border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s; text-align: left; }
-.profile-branch-item:active { background: var(--dynamic-light); }
 
 #photoZoomContainer { display:none; position:fixed; inset:0; z-index:20000; pointer-events:none; }
 #photoZoomBg { position: absolute; inset:0; }
@@ -400,7 +396,9 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
           <input type="tel" id="p-phone" class="ui-input" required>
           
           <label class="input-label" style="margin-top: 15px;">Default Branch <span class="req-star">*</span></label>
-          <input type="text" id="p-branch" class="ui-input" required readonly placeholder="Select Branch" onclick="openProfileBranchSelector()" style="cursor: pointer;">
+          <select id="p-branch" class="ui-select" required onchange="triggerProfileBranchChange(this)">
+            <option value="" style="color: var(--text-primary)">Select Branch</option>
+          </select>
 
           <button type="button" class="btn-primary solid" onclick="nextProfileStep(2)" style="margin-top:20px;">Next →</button>
         </div>
@@ -588,25 +586,6 @@ body:not(.theme-chandarana):not(.theme-carrefour) .network-indicator { backgroun
 <div id="photoZoomContainer">
   <div id="photoZoomBg" class="glass-overlay" onclick="closeZoom()"></div>
   <img id="zoomedImage" src="" onclick="closeZoom()" />
-</div>
-
-<!-- 🎨 THEME: SINGLE VERTICAL PROFILE BRANCH MODAL -->
-<div id="profileBranchModal" class="modal-overlay" style="z-index: 20005;">
-  <div class="modal-box" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 75vh; max-height: 550px; width: 90%; max-width: 400px; border-radius: 24px;">
-    <div style="padding: 16px; background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); font-weight: 900; font-size: 16px; color: var(--text-primary);">
-      Select Default Branch
-    </div>
-    <div style="display: flex; flex-direction: column; flex: 1; overflow-y: auto; background: var(--bg-primary); scroll-behavior: smooth;">
-      <div style="position: sticky; top: 0; background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 16px; font-weight: 900; color: #10b981; border-bottom: 2px solid #10b981; font-size: 13px; text-transform: uppercase; z-index: 10; text-align: left;">Chandarana</div>
-      <div id="chan-branch-list"></div>
-      
-      <div style="position: sticky; top: 0; background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 16px; font-weight: 900; color: #3b82f6; border-bottom: 2px solid #3b82f6; border-top: 1px solid var(--border-color); font-size: 13px; text-transform: uppercase; z-index: 10; text-align: left;">Carrefour</div>
-      <div id="carr-branch-list" style="padding-bottom: 20px;"></div>
-    </div>
-    <div style="padding: 12px; background: var(--bg-secondary); border-top: 1px solid var(--border-color);">
-      <button class="btn-secondary" style="margin: 0; height: 46px;" onclick="closeProfileBranchSelector()">Cancel</button>
-    </div>
-  </div>
 </div>
 
 <div id="orderConfirmModal" class="modal-overlay">
@@ -880,34 +859,32 @@ function fetchPortalDataSilent() {
 // PROFILE REGISTRATION LOGIC
 function openProfile() {
   switchView('view-profile'); document.body.className = ''; updateBGLayer('layerHub');
-  document.getElementById('profileForm').reset(); document.getElementById('p-step1-fields').style.display = 'none'; document.getElementById('p-step1').style.display = 'block'; document.getElementById('p-step2').style.display = 'none'; document.getElementById('p-step3').style.display = 'none'; document.getElementById('p-staffMsg').innerHTML = ''; document.getElementById('p-branch').value = '';
-  
+  document.getElementById('profileForm').reset(); 
+  document.getElementById('p-step1-fields').style.display = 'none'; 
+  document.getElementById('p-step1').style.display = 'block'; 
+  document.getElementById('p-step2').style.display = 'none'; 
+  document.getElementById('p-step3').style.display = 'none'; 
+  document.getElementById('p-staffMsg').innerHTML = '';
+
+  const sel = document.getElementById('p-branch');
+  sel.style.color = 'var(--text-primary)';
   let chanBranches = [], carrBranches = [];
   try { const cB = JSON.parse(Storage.get('chandarana_branches')); if (cB) chanBranches = cB.map(b => b[0]); } catch(e) {}
   try { const cC = JSON.parse(Storage.get('carrefour_branches')); if (cC) carrBranches = cC.map(b => b[0]); } catch(e) {}
   
-  // Custom Modal Inject (Clean Vertical List)
-  document.getElementById('chan-branch-list').innerHTML = chanBranches.map(b => `<div class="profile-branch-item" style="color: #10b981;" onclick="selectProfileBranch('${escapeHTML(b)}', 'chandarana')">${escapeHTML(b)}</div>`).join('');
-  document.getElementById('carr-branch-list').innerHTML = carrBranches.map(b => `<div class="profile-branch-item" style="color: #3b82f6;" onclick="selectProfileBranch('${escapeHTML(b)}', 'carrefour')">${escapeHTML(b)}</div>`).join('');
+  let html = '<option value="" style="color: var(--text-primary)">Select Branch</option>';
+  html += `<optgroup label="Chandarana" style="color: #10b981; font-weight: 900;">` + chanBranches.map(b => `<option value="${escapeHTML(b)}" data-store="chandarana" style="color: #10b981; font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+  html += `<optgroup label="Carrefour" style="color: #3b82f6; font-weight: 900;">` + carrBranches.map(b => `<option value="${escapeHTML(b)}" data-store="carrefour" style="color: #3b82f6; font-weight: 700;">${escapeHTML(b)}</option>`).join('') + `</optgroup>`;
+  sel.innerHTML = html;
   
   document.getElementById('profileForm').style.display = 'block'; document.getElementById('profileSuccess').style.display = 'none';
 }
 
-function openProfileBranchSelector() { document.getElementById('profileBranchModal').style.display = 'flex'; }
-function closeProfileBranchSelector() { document.getElementById('profileBranchModal').style.display = 'none'; }
-
-function selectProfileBranch(branchName, storeName) {
-    const sel = document.getElementById('p-branch');
-    sel.value = branchName;
-    sel.setAttribute('data-store', storeName);
-    closeProfileBranchSelector();
-    triggerProfileBranchChange();
-}
-
-function triggerProfileBranchChange() {
-  const sel = document.getElementById('p-branch');
+function triggerProfileBranchChange(selEl) {
+  const sel = selEl || document.getElementById('p-branch');
   if(!sel.value) { document.body.className = ''; updateBGLayer('layerHub'); sel.style.color = 'var(--text-primary)'; return; }
-  const isChan = sel.getAttribute('data-store') === 'chandarana';
+  const opt = sel.options[sel.selectedIndex];
+  const isChan = opt && opt.getAttribute('data-store') === 'chandarana';
   document.body.className = isChan ? 'theme-chandarana' : 'theme-carrefour';
   updateBGLayer(isChan ? 'layerChandarana' : 'layerCarrefour');
   sel.style.color = isChan ? '#10b981' : '#3b82f6';
@@ -925,13 +902,18 @@ function applyProfileMatch(match, fieldsEl, msgEl) {
     fieldsEl.style.display = 'block'; 
     document.getElementById('p-name').value = match.name || ''; 
     document.getElementById('p-phone').value = match.phone || '';
+    
     const sel = document.getElementById('p-branch'); 
+    let found = Array.from(sel.options).some(o => o.value === match.branch);
+    if (!found && match.branch) {
+      const opt = document.createElement('option'); opt.value = match.branch; opt.textContent = match.branch; opt.setAttribute('data-store', match.store || 'carrefour'); sel.appendChild(opt);
+    }
     sel.value = match.branch || '';
-    if(match.store) sel.setAttribute('data-store', match.store);
+    if(match.store && sel.options[sel.selectedIndex]) sel.options[sel.selectedIndex].setAttribute('data-store', match.store);
     
     msgEl.innerHTML = `<span class="dot"></span> ID valid, details fetched.`; 
     msgEl.className = 'msg success';
-    triggerProfileBranchChange(); 
+    triggerProfileBranchChange(sel); 
     prefillProfileFromLocal(match);
 }
 
@@ -1215,11 +1197,11 @@ function processOrder(e) {
   e.preventDefault(); 
   if(!document.getElementById('o-name').value) return alert("Valid Staff ID required.");
 
-  let totalJuices = 0;
+  let totalPieces = 0;
   JUICES[activeStore].forEach(flavor => { 
     let val5 = parseInt(document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="5L"]`)?.getAttribute('data-val')) || 0; 
     let val3 = parseInt(document.querySelector(`.juice-input[data-flavor="${flavor}"][data-vol="3L"]`)?.getAttribute('data-val')) || 0; 
-    totalJuices += (val5 + val3);
+    totalPieces += (val5 / 5) + (val3 / 3);
   });
 
   const freshInputs = Array.from(document.querySelectorAll('.inp-fresh:checked')).map(el=>el.value);
@@ -1230,7 +1212,7 @@ function processOrder(e) {
   const hasSugarcane = freshInputs.some(val => val.toLowerCase().includes('sugarcane'));
   const hasBottles = bottles.length > 0;
   const hasNotes = notes.length > 0;
-  const hasJuice = totalJuices > 0;
+  const hasJuice = totalPieces > 0;
   const hasAccessories = haccp.length > 0 || freshInputs.some(val => !val.toLowerCase().includes('sugarcane'));
 
   // Validation 1: Prevent entirely empty orders
@@ -1241,14 +1223,14 @@ function processOrder(e) {
 
   // Validation 2: Prevent orders containing ONLY accessories (HACCP, Lime, Ginger)
   if (!hasJuice && !hasSugarcane && !hasBottles && !hasNotes) {
-      alert("HACCP supplies, Lime, or Ginger cannot be ordered alone.");
+      alert("Invalid order: HACCP supplies, Lime, or Ginger cannot be ordered alone.");
       return;
   }
 
-  // Validation 3: Juice orders must be >= 5 bottles UNLESS paired with Sugarcane, Bottles, or Notes
-  if (hasJuice && totalJuices < 5) {
+  // Validation 3: Juice orders must be >= 5 pieces
+  if (hasJuice && totalPieces < 5) {
       if (!hasSugarcane && !hasBottles && !hasNotes) {
-          alert("Orders for juice must be at least 5 bottles in total.");
+          alert("Minimum order for juice is 5 pieces.");
           return;
       }
   }
